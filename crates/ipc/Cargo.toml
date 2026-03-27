@@ -1,0 +1,21 @@
+[package]
+name = "lockit-ipc"
+description = "IPC protocol and transport for the lockit daemon"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+tracing.workspace = true
+serde = { workspace = true }
+rmp-serde = { workspace = true }
+zeroize = "1.8"
+tokio = { workspace = true, features = ["net", "io-util", "time"] }
+home.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }
+tempfile = "3"

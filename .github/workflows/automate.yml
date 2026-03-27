@@ -1,0 +1,126 @@
+name: Project Automation
+on:
+  issues:
+    types: [opened, closed, reopened, labeled, unlabeled, milestoned, demilestoned]
+  pull_request:
+    types: [opened, closed, reopened, labeled, unlabeled, ready_for_review, converted_to_draft, review_requested]
+permissions:
+  issues: write
+  pull-requests: write
+  repository-projects: write
+jobs:
+  update-project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const PROJECT_ID  = 'PVT_kwHOBDL8eM4BS2M_';
+            const STATUS_FID  = 'PVTSSF_lAHOBDL8eM4BS2M_zhAQwdk';
+            const OPT_TODO    = 'f75ad846';
+            const OPT_WIP     = '47fc9ee4';
+            const OPT_DONE    = '98236657';
+
+            const action = context.payload.action;
+            const isPR   = !!context.payload.pull_request;
+            const item_  = isPR ? context.payload.pull_request : context.payload.issue;
+            const number = item_.number;
+            const labels = (item_.labels || []).map(l => l.name.toLowerCase());
+
+            // ── Determine target status ─────────────────────────────────────
+            // Label shortcuts: any label containing these keywords overrides
+            const hasLabel = (...kws) => kws.some(kw => labels.some(l => l.includes(kw)));
+
+            let targetStatus = null;
+            let shouldArchive = false;
+
+            if (action === 'closed') {
+              targetStatus  = OPT_DONE;
+              shouldArchive = true;          // archive completed cards
+            } else if (action === 'reopened') {
+              targetStatus = isPR ? OPT_WIP : OPT_TODO;
+            } else if (action === 'opened') {
+              targetStatus = isPR ? OPT_WIP : OPT_TODO;
+            } else if (action === 'converted_to_draft') {
+              targetStatus = OPT_TODO;       // draft PR → Todo
+            } else if (action === 'ready_for_review') {
+              targetStatus = OPT_WIP;        // draft → ready → In Progress
+            } else if (action === 'labeled' || action === 'unlabeled') {
+              // Re-evaluate status from current labels
+              if (hasLabel('done', 'complete', 'released')) {
+                targetStatus = OPT_DONE;
+              } else if (hasLabel('in-progress', 'doing', 'wip')) {
+                targetStatus = OPT_WIP;
+              } else if (hasLabel('todo', 'waiting', 'blocked', 'on-hold', 'pending')) {
+                targetStatus = OPT_TODO;
+              } else {
+                core.info(`Label change on #${number} — no status keyword found, skipping.`);
+                return;
+              }
+            } else if (action === 'milestoned' || action === 'demilestoned') {
+              // Milestone changes: log only, no status change
+              const ms = item_.milestone ? item_.milestone.title : '(none)';
+              core.info(`#${number} milestone → ${ms} (no status change)`);
+              return;
+            } else {
+              core.info(`action="${action}" — no mapping, skipping.`);
+              return;
+            }
+
+            const statusName = targetStatus === OPT_DONE ? 'Done'
+                            : targetStatus === OPT_WIP  ? 'In Progress'
+                            : 'Todo';
+            core.info(`#${number} (${isPR ? 'PR' : 'Issue'}) ${action} → ${statusName}${shouldArchive ? ' + archive' : ''}`);
+
+            // ── 1. Ensure item is in project (add if missing) ────────────────
+            const r1 = await github.graphql(`
+              query($pid: ID!) {
+                node(id: $pid) {
+                  ... on ProjectV2 {
+                    items(first: 100) {
+                      nodes { id content { ... on Issue { number } ... on PullRequest { number } } }
+                    }
+                  }
+                }
+              }
+            `, { pid: PROJECT_ID });
+
+            let projectItem = r1.node.items.nodes.find(
+              i => i.content && i.content.number === number
+            );
+
+            if (!projectItem) {
+              const addRes = await github.graphql(`
+                mutation($pid: ID!, $cid: ID!) {
+                  addProjectV2ItemById(input: { projectId: $pid, contentId: $cid }) {
+                    item { id }
+                  }
+                }
+              `, { pid: PROJECT_ID, cid: item_.node_id });
+              projectItem = addRes.addProjectV2ItemById.item;
+              core.info(`➕ Added #${number} to project`);
+            }
+
+            // ── 2. Update Status field ───────────────────────────────────────
+            await github.graphql(`
+              mutation($pid: ID!, $iid: ID!, $fid: ID!, $oid: String!) {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: $pid itemId: $iid fieldId: $fid
+                  value: { singleSelectOptionId: $oid }
+                }) { projectV2Item { id } }
+              }
+            `, { pid: PROJECT_ID, iid: projectItem.id, fid: STATUS_FID, oid: targetStatus });
+            core.info(`✅ Status → ${statusName}`);
+
+            // ── 3. Archive if Done ───────────────────────────────────────────
+            if (shouldArchive) {
+              await github.graphql(`
+                mutation($pid: ID!, $iid: ID!) {
+                  archiveProjectV2Item(input: { projectId: $pid, itemId: $iid }) {
+                    item { id }
+                  }
+                }
+              `, { pid: PROJECT_ID, iid: projectItem.id });
+              core.info(`📦 Archived #${number}`);
+            }

@@ -1,0 +1,321 @@
+name: Project Board Automation
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Automatically adds every issue, PR, and discussion to the project board and
+# keeps the Status field in sync.
+#
+# ONE-TIME SETUP
+# ──────────────
+# 1. Create a PAT with scopes: project + repo (Classic) or
+#    "Read and Write" for Projects + Issues + Pull-Requests (Fine-grained).
+# 2. Store it as Actions secret  ADD_TO_PROJECT_PAT
+# 3. Add repository variable     PROJECT_URL
+#      personal:      https://github.com/users/xqicxx/projects/<N>
+#      organisation:  https://github.com/orgs/<ORG>/projects/<N>
+#
+# STATUS FIELD MAPPING (edit column names to match your board)
+# ─────────────────────────────────────────────────────────────
+#   Todo         – issue opened/reopened
+#   In Progress  – draft PR opened; label "in-progress" / "wip" / "doing"
+#   In Review    – PR ready; review submitted; label "needs-review"
+#   Blocked      – label "blocked"
+#   Done         – issue/PR closed/merged
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  # Issues ─────────────────────────────────────────────────────────────────
+  issues:
+    types:
+      - opened
+      - closed
+      - reopened
+      - labeled
+      - unlabeled
+      - assigned
+      - unassigned
+      - milestoned
+      - demilestoned
+      - locked
+      - unlocked
+      - transferred
+      - pinned
+      - unpinned
+      - edited
+
+  # Pull Requests ──────────────────────────────────────────────────────────
+  pull_request:
+    types:
+      - opened
+      - closed
+      - reopened
+      - synchronize
+      - ready_for_review
+      - converted_to_draft
+      - review_requested
+      - review_request_removed
+      - labeled
+      - unlabeled
+      - assigned
+      - unassigned
+      - milestoned
+      - demilestoned
+      - auto_merge_enabled
+      - auto_merge_disabled
+      - locked
+      - unlocked
+      - edited
+
+  # PR review comments ─────────────────────────────────────────────────────
+  pull_request_review:
+    types: [submitted, dismissed, edited]
+
+  pull_request_review_comment:
+    types: [created, edited, deleted]
+
+  # Discussions ────────────────────────────────────────────────────────────
+  discussion:
+    types:
+      - created
+      - closed
+      - reopened
+      - answered
+      - unanswered
+      - labeled
+      - unlabeled
+      - pinned
+      - unpinned
+      - locked
+      - unlocked
+      - transferred
+      - edited
+
+  discussion_comment:
+    types: [created, edited, deleted]
+
+  # Milestones (create notes in project) ────────────────────────────────────
+  milestone:
+    types: [created, closed, opened, edited, deleted]
+
+  # Releases (create notes in project) ─────────────────────────────────────
+  release:
+    types: [published, prereleased, released, edited]
+
+jobs:
+  # ── Job 1: Add issue / PR / discussion to project ─────────────────────────
+  add-item:
+    name: Add item to project
+    runs-on: ubuntu-latest
+    # Skip silently when the PAT / PROJECT_URL aren't configured yet.
+    # This prevents the job from failing on forks or before one-time setup.
+    if: |
+      secrets.ADD_TO_PROJECT_PAT != '' &&
+      vars.PROJECT_URL != '' &&
+      (github.event_name == 'issues' ||
+       github.event_name == 'pull_request' ||
+       github.event_name == 'pull_request_review' ||
+       github.event_name == 'pull_request_review_comment' ||
+       github.event_name == 'discussion' ||
+       github.event_name == 'discussion_comment')
+    outputs:
+      item-id: ${{ steps.add.outputs.item-id }}
+    steps:
+      - name: Add to project
+        id: add
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: ${{ vars.PROJECT_URL }}
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+
+  # ── Job 2: Sync Status field ───────────────────────────────────────────────
+  sync-status:
+    name: Sync Status field
+    runs-on: ubuntu-latest
+    needs: add-item
+    if: needs.add-item.result == 'success'
+    env:
+      GH_TOKEN: ${{ secrets.ADD_TO_PROJECT_PAT }}
+      PROJECT_URL: ${{ vars.PROJECT_URL }}
+      ITEM_ID: ${{ needs.add-item.outputs.item-id }}
+    steps:
+      - name: Determine target status
+        id: status
+        run: |
+          EVENT="${{ github.event_name }}"
+          ACTION="${{ github.event.action }}"
+          DRAFT="${{ github.event.pull_request.draft }}"
+          LABEL="${{ github.event.label.name }}"
+
+          status=""
+
+          # Label-based overrides (highest priority)
+          if [[ "$ACTION" == "labeled" ]]; then
+            case "${LABEL,,}" in
+              "in-progress"|"wip"|"doing"|"in progress")
+                status="In Progress" ;;
+              "blocked")
+                status="Blocked" ;;
+              "needs-review"|"needs review"|"review")
+                status="In Review" ;;
+              "done"|"completed")
+                status="Done" ;;
+            esac
+          fi
+
+          # State-based logic (when no label override)
+          if [[ -z "$status" ]]; then
+            if [[ "$EVENT" == "issues" ]]; then
+              case "$ACTION" in
+                opened|reopened)     status="Todo" ;;
+                closed)              status="Done" ;;
+              esac
+
+            elif [[ "$EVENT" == "pull_request" ]]; then
+              case "$ACTION" in
+                opened|reopened)
+                  [[ "$DRAFT" == "true" ]] && status="In Progress" \
+                                           || status="In Review" ;;
+                converted_to_draft)  status="In Progress" ;;
+                ready_for_review)    status="In Review" ;;
+                review_requested)    status="In Review" ;;
+                synchronize)         status="In Review" ;;
+                closed)              status="Done" ;;
+                auto_merge_enabled)  status="In Review" ;;
+              esac
+
+            elif [[ "$EVENT" == "pull_request_review" ]]; then
+              status="In Review"
+
+            elif [[ "$EVENT" == "discussion" ]]; then
+              case "$ACTION" in
+                created|reopened|unanswered)  status="Todo" ;;
+                answered)                      status="Done" ;;
+                closed)                        status="Done" ;;
+              esac
+            fi
+          fi
+
+          echo "value=$status" >> "$GITHUB_OUTPUT"
+          echo "Determined status: '${status:-<no change>}'"
+
+      - name: Resolve project metadata
+        id: meta
+        if: steps.status.outputs.value != ''
+        run: |
+          PROJECT_NUMBER=$(echo "$PROJECT_URL" | grep -oP '(?<=/projects/)\d+')
+          OWNER=$(echo "$PROJECT_URL" | grep -oP '(?<=(users|orgs)/)[^/]+')
+          OWNER_TYPE=$(echo "$PROJECT_URL" | grep -oP '(users|orgs)')
+
+          [[ "$OWNER_TYPE" == "users" ]] \
+            && OWNER_QUERY="user(login: \"$OWNER\")" \
+            || OWNER_QUERY="organization(login: \"$OWNER\")"
+
+          FIELD_DATA=$(gh api graphql -f query="
+            query {
+              $OWNER_QUERY {
+                projectV2(number: $PROJECT_NUMBER) {
+                  id
+                  field(name: \"Status\") {
+                    ... on ProjectV2SingleSelectField {
+                      id
+                      options { id name }
+                    }
+                  }
+                }
+              }
+            }
+          ")
+
+          echo "project-id=$(echo "$FIELD_DATA" | \
+            jq -r '.data | to_entries[0].value.projectV2.id')" \
+            >> "$GITHUB_OUTPUT"
+          echo "field-id=$(echo "$FIELD_DATA" | \
+            jq -r '.data | to_entries[0].value.projectV2.field.id')" \
+            >> "$GITHUB_OUTPUT"
+          echo "options=$(echo "$FIELD_DATA" | \
+            jq -c '.data | to_entries[0].value.projectV2.field.options')" \
+            >> "$GITHUB_OUTPUT"
+
+      - name: Update Status field
+        if: steps.status.outputs.value != ''
+        env:
+          TARGET_STATUS: ${{ steps.status.outputs.value }}
+          PROJECT_ID: ${{ steps.meta.outputs.project-id }}
+          FIELD_ID: ${{ steps.meta.outputs.field-id }}
+          OPTIONS: ${{ steps.meta.outputs.options }}
+        run: |
+          OPTION_ID=$(echo "$OPTIONS" | \
+            jq -r --arg s "$TARGET_STATUS" '.[] | select(.name == $s) | .id')
+
+          if [[ -z "$OPTION_ID" || "$OPTION_ID" == "null" ]]; then
+            echo "⚠ Status option '$TARGET_STATUS' not found in project — skipping."
+            exit 0
+          fi
+
+          gh api graphql -f query="
+            mutation {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: \"$PROJECT_ID\"
+                itemId: \"$ITEM_ID\"
+                fieldId: \"$FIELD_ID\"
+                value: { singleSelectOptionId: \"$OPTION_ID\" }
+              }) { projectV2Item { id } }
+            }
+          "
+          echo "✓ Set Status → '$TARGET_STATUS' on item $ITEM_ID"
+
+  # ── Job 3: Note milestones and releases as draft items ─────────────────────
+  add-note:
+    name: Add milestone / release note
+    runs-on: ubuntu-latest
+    if: github.event_name == 'milestone' || github.event_name == 'release'
+    env:
+      GH_TOKEN: ${{ secrets.ADD_TO_PROJECT_PAT }}
+      PROJECT_URL: ${{ vars.PROJECT_URL }}
+    steps:
+      - name: Compose note body
+        id: note
+        run: |
+          if [[ "${{ github.event_name }}" == "milestone" ]]; then
+            TITLE="Milestone: ${{ github.event.milestone.title }}"
+            BODY="**Action**: ${{ github.event.action }}
+          **URL**: ${{ github.event.milestone.html_url }}
+          **Due**: ${{ github.event.milestone.due_on }}
+          **Open issues**: ${{ github.event.milestone.open_issues }}"
+          else
+            TITLE="Release: ${{ github.event.release.tag_name }}"
+            BODY="**Action**: ${{ github.event.action }}
+          **URL**: ${{ github.event.release.html_url }}
+          **Pre-release**: ${{ github.event.release.prerelease }}
+          **Draft**: ${{ github.event.release.draft }}"
+          fi
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+          {
+            echo "body<<EOF"
+            echo "$BODY"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Add draft item to project
+        run: |
+          PROJECT_NUMBER=$(echo "$PROJECT_URL" | grep -oP '(?<=/projects/)\d+')
+          OWNER=$(echo "$PROJECT_URL" | grep -oP '(?<=(users|orgs)/)[^/]+')
+          OWNER_TYPE=$(echo "$PROJECT_URL" | grep -oP '(users|orgs)')
+
+          [[ "$OWNER_TYPE" == "users" ]] \
+            && OWNER_QUERY="user(login: \"$OWNER\")" \
+            || OWNER_QUERY="organization(login: \"$OWNER\")"
+
+          PROJECT_ID=$(gh api graphql -f query="
+            query { $OWNER_QUERY { projectV2(number: $PROJECT_NUMBER) { id } } }
+          " | jq -r '.data | to_entries[0].value.projectV2.id')
+
+          gh api graphql -f query="
+            mutation {
+              addProjectV2DraftIssue(input: {
+                projectId: \"$PROJECT_ID\"
+                title: \"${{ steps.note.outputs.title }}\"
+                body: \"${{ steps.note.outputs.body }}\"
+              }) { projectItem { id } }
+            }
+          "
+          echo "✓ Draft note added: '${{ steps.note.outputs.title }}'"

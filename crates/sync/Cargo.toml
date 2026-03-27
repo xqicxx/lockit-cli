@@ -1,0 +1,28 @@
+[package]
+name = "lockit-sync"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+async-trait = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+sha2 = { workspace = true }
+hex = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+secrecy = { workspace = true, features = ["serde"] }
+home = { workspace = true }
+reqwest = { workspace = true }
+quick-xml = { workspace = true }
+chrono = { workspace = true }
+git2 = { workspace = true }
+
+# S3-compatible backend
+aws-sdk-s3 = { version = "1", features = ["behavior-version-latest"] }
+aws-credential-types = "1"
+
+[dev-dependencies]
+tempfile = "3"

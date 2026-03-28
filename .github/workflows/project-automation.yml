@@ -1,0 +1,101 @@
+# PR 自动加入 GitHub Project 并设置字段
+# 文档: https://docs.github.com/zh/issues/planning-and-tracking-with-projects/automating-your-project/automating-projects-using-actions
+name: Add PR to Project
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+jobs:
+  track-pr:
+    runs-on: ubuntu-latest
+    steps:
+      # 使用 GH_PAT（需要 project 范围权限）
+      - name: Get project data
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          PROJECT_NUMBER: 3
+        run: |
+          gh api graphql -f query='
+            query($number: Int!) {
+              viewer {
+                projectV2(number: $number) {
+                  id
+                  fields(first:20) {
+                    nodes {
+                      ... on ProjectV2Field { id name }
+                      ... on ProjectV2SingleSelectField {
+                        id name
+                        options { id name }
+                      }
+                    }
+                  }
+                }
+              }
+            }' -F number=$PROJECT_NUMBER > project_data.json
+
+          echo 'PROJECT_ID='$(jq '.data.viewer.projectV2.id' project_data.json) >> $GITHUB_ENV
+          echo 'STATUS_FIELD_ID='$(jq '.data.viewer.projectV2.fields.nodes[] | select(.name=="Status") | .id' project_data.json) >> $GITHUB_ENV
+          echo 'PRIORITY_FIELD_ID='$(jq '.data.viewer.projectV2.fields.nodes[] | select(.name=="Priority") | .id' project_data.json) >> $GITHUB_ENV
+
+      # 添加 PR 到项目
+      - name: Add PR to project
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          PR_ID: ${{ github.event.pull_request.node_id }}
+        run: |
+          item_id="$(gh api graphql -f query='
+            mutation($project:ID!, $pr:ID!) {
+              addProjectV2ItemById(input: {projectId: $project, contentId: $pr}) {
+                item { id }
+              }
+            }' -f project=$PROJECT_ID -f pr=$PR_ID --jq '.data.addProjectV2ItemById.item.id')"
+
+          echo 'ITEM_ID='$item_id >> $GITHUB_ENV
+
+      # 设置 Status = In Progress, Priority 从 PR 标题自动提取
+      - name: Set fields
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          # 从 PR 标题提取优先级（如 [P1] 或 P1:）
+          TITLE="${{ github.event.pull_request.title }}"
+          if [[ "$TITLE" == *"P0"* ]]; then
+            PRIORITY_OPTION="e955db24"
+          elif [[ "$TITLE" == *"P1"* ]]; then
+            PRIORITY_OPTION="8a6424d1"
+          elif [[ "$TITLE" == *"P2"* ]]; then
+            PRIORITY_OPTION="fbed1a9c"
+          else
+            PRIORITY_OPTION="0b47e814"
+          fi
+
+          # 设置 Status 和 Priority
+          gh api graphql -f query='
+            mutation (
+              $project: ID!
+              $item: ID!
+              $status_field: ID!
+              $status_value: String!
+              $priority_field: ID!
+              $priority_value: String!
+            ) {
+              set_status: updateProjectV2ItemFieldValue(input: {
+                projectId: $project
+                itemId: $item
+                fieldId: $status_field
+                value: { singleSelectOptionId: $status_value }
+              }) { projectV2Item { id } }
+              set_priority: updateProjectV2ItemFieldValue(input: {
+                projectId: $project
+                itemId: $item
+                fieldId: $priority_field
+                value: { singleSelectOptionId: $priority_value }
+              }) { projectV2Item { id } }
+            }' \
+            -f project=$PROJECT_ID \
+            -f item=$ITEM_ID \
+            -f status_field=$STATUS_FIELD_ID \
+            -f status_value=47fc9ee4 \
+            -f priority_field=$PRIORITY_FIELD_ID \
+            -f priority_value=$PRIORITY_OPTION

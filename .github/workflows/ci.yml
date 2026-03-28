@@ -46,31 +46,31 @@ jobs:
   test-s3-integration:
     name: S3 Integration Tests (MinIO)
     runs-on: ubuntu-latest
-    services:
-      minio:
-        # Official minio/minio image is Debian-based and includes curl,
-        # so the health-cmd works. bitnami/minio is distroless — no curl.
-        image: minio/minio
-        ports:
-          - 9000:9000
-        env:
-          MINIO_ROOT_USER: minioadmin
-          MINIO_ROOT_PASSWORD: minioadmin
-        options: >-
-          --health-cmd "curl -f http://localhost:9000/minio/health/live"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 12
-        command: server /data
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio \
+            -p 9000:9000 \
+            -e MINIO_ROOT_USER=minioadmin \
+            -e MINIO_ROOT_PASSWORD=minioadmin \
+            minio/minio server /data
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:9000/minio/health/live >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
       - name: Create lockit-test bucket
         run: |
           curl -fsSL https://dl.min.io/client/mc/release/linux-amd64/mc -o /tmp/mc
           chmod +x /tmp/mc
-          /tmp/mc alias set myminio http://localhost:9000 minioadmin minioadmin
-          /tmp/mc mb myminio/lockit-test
+          /tmp/mc alias set myminio http://127.0.0.1:9000 minioadmin minioadmin
+          /tmp/mc mb myminio/lockit-test || true
       - name: Run S3 integration tests
         run: cargo test --package lockit-sync -- --ignored --test-threads=1
+      - name: Show MinIO logs on failure
+        if: failure()
+        run: docker logs minio || true

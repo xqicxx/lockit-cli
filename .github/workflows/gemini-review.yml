@@ -1,0 +1,54 @@
+# Gemini CLI 自动代码审查
+name: Gemini Code Review
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Gemini CLI
+        run: npm install -g @anthropic-ai/gemini-cli
+
+      - name: Get PR diff
+        id: diff
+        run: |
+          echo "DIFF<<EOF" >> $GITHUB_ENV
+          git diff origin/${{ github.base_ref }}..HEAD >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Run Gemini Review
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "$DIFF" | gemini -p "你是代码审查专家。审查以下 PR 的代码变更。
+          关注：安全性、代码质量、架构合理性。
+          输出中文，简洁。每个问题标注 🔴严重 / 🟡建议 / 🟢可忽略。
+          最后给结论：可以 Merge / 需要修改。" > review.md
+
+      - name: Post Review
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const review = fs.readFileSync('review.md', 'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: review
+            });

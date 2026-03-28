@@ -35,7 +35,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          echo "$DIFF" | gemini -p "你是代码审查专家。审查以下 PR 的代码变更。
+          echo "$DIFF" | gemini -m gemini-3.1-pro-preview -p "你是代码审查专家。审查以下 PR 的代码变更。
           关注：安全性、代码质量、架构合理性。
           输出中文，简洁。每个问题标注 🔴严重 / 🟡建议 / 🟢可忽略。
           最后给结论：可以 Merge / 需要修改。" > review.md

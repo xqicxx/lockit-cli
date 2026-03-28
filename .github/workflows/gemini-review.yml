@@ -28,10 +28,26 @@ jobs:
       - name: Install Gemini CLI
         run: npm install -g @anthropic-ai/gemini-cli
 
+      # GitHub App 认证 → 生成 token
+      - name: Generate GitHub App token
+        id: app_token
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GEMINI_REVIEW_APP_KEY }}
+          script: |
+            const { data: installations } = await github.rest.apps.listInstallationsForAuthenticatedUser();
+            const installation = installations.find(i => i.account.login === '${{ github.repository_owner }}');
+            if (!installation) throw new Error('App not installed on repo');
+            
+            const { data: { token } } = await github.rest.apps.createInstallationAccessToken({
+              installation_id: installation.id
+            });
+            return token;
+
       - name: Get PR diff
         id: diff
         run: |
-          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.rs' '*.ts' '*.svelte' '*.toml')
+          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.rs' '*.ts' '*.svelte' '*.toml' '*.json' | head -20000)
           if [ -z "$DIFF" ]; then
             echo "No relevant changes to review"
             echo "SKIP=true" >> $GITHUB_OUTPUT
@@ -51,7 +67,7 @@ jobs:
           ## 审查维度
           1. 安全性（密钥管理、敏感数据泄露）
           2. 代码质量（错误处理、类型安全）
-          3. 架构一致性（与现有 codebase 模式是否一致）
+          3. 架构一致性
           4. 可扩展性
 
           ## 输出格式
@@ -66,6 +82,7 @@ jobs:
         if: steps.diff.outputs.SKIP != 'true'
         uses: actions/github-script@v7
         with:
+          github-token: ${{ steps.app_token.outputs.result }}
           script: |
             const fs = require('fs');
             let review;

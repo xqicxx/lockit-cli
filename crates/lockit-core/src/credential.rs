@@ -86,22 +86,11 @@ impl CredentialType {
     }
 
     pub fn required_field_indices(&self) -> Vec<usize> {
-        match self {
-            Self::Account => vec![0, 3],
-            Self::Password => vec![0, 3],
-            Self::GitHub => vec![0, 3],
-            Self::Phone => vec![1],
-            Self::BankCard => vec![0],
-            Self::Email => vec![0, 1, 2],
-            Self::IdCard => vec![0],
-            Self::Note => vec![0],
-            Self::CodingPlan => vec![2, 4],
-            _ => {
-                let fields = crate::credential_field::TypeFieldMap::fields_for(self);
-                let last = fields.len().saturating_sub(1);
-                vec![0, last]
-            }
-        }
+        crate::credential_field::TypeFieldMap::fields_for(self)
+            .iter()
+            .enumerate()
+            .filter_map(|(i, f)| f.required.then_some(i))
+            .collect()
     }
 }
 

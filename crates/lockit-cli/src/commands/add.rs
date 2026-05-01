@@ -23,7 +23,7 @@ pub fn run(
         .cloned()
         .unwrap_or_else(|| "default".into());
 
-    let password = read_password(password, "Master password")?;
+    let password = crate::utils::read_password(password, "Master password")?;
     let mut session = unlock_vault(paths, &password)?;
     let draft = CredentialDraft::new(
         &name,
@@ -89,9 +89,3 @@ fn json_val_to_string(val: &serde_json::Value) -> String {
     }
 }
 
-fn read_password(value: Option<String>, prompt: &str) -> anyhow::Result<String> {
-    match value {
-        Some(v) => Ok(v),
-        None => rpassword::prompt_password(format!("{prompt}: ")).context("read password"),
-    }
-}

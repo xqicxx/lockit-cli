@@ -5,6 +5,7 @@ use std::path::PathBuf;
 mod commands;
 mod interactive;
 mod output;
+mod utils;
 
 #[derive(Parser)]
 #[command(name = "lockit", about = "Secure credential manager")]

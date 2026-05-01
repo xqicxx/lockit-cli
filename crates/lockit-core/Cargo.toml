@@ -17,7 +17,7 @@ sha2.workspace = true
 thiserror.workspace = true
 uuid.workspace = true
 zeroize.workspace = true
-reqwest = { version = "0.12", features = ["json", "rustls-tls"], optional = true }
+reqwest = { version = "0.12", features = ["json", "rustls-tls", "blocking"], optional = true }
 
 [features]
 default = []

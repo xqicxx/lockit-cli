@@ -2,6 +2,28 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+#[cfg(feature = "coding-plan")]
+pub mod qwen;
+#[cfg(feature = "coding-plan")]
+pub mod chatgpt;
+#[cfg(feature = "coding-plan")]
+pub mod claude;
+#[cfg(feature = "coding-plan")]
+pub mod deepseek;
+#[cfg(feature = "coding-plan")]
+pub mod mimo;
+
+#[cfg(feature = "coding-plan")]
+pub use qwen::QwenFetcher;
+#[cfg(feature = "coding-plan")]
+pub use chatgpt::ChatGptFetcher;
+#[cfg(feature = "coding-plan")]
+pub use claude::ClaudeFetcher;
+#[cfg(feature = "coding-plan")]
+pub use deepseek::DeepSeekFetcher;
+#[cfg(feature = "coding-plan")]
+pub use mimo::MimoFetcher;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum CodingPlanProvider {
@@ -32,6 +54,23 @@ impl CodingPlanProvider {
             Self::Moonshot => "moonshot",
             Self::MiniMax => "minimax",
             Self::Glm => "glm",
+        }
+    }
+
+    pub fn from_field_value(value: &str) -> Option<Self> {
+        match value.trim().to_ascii_lowercase().as_str() {
+            "qwen" | "qwen_bailian" => Some(Self::QwenBailian),
+            "openai" => Some(Self::OpenAi),
+            "chatgpt" | "chat_gpt" => Some(Self::ChatGpt),
+            "anthropic" => Some(Self::Anthropic),
+            "claude" => Some(Self::Claude),
+            "deepseek" => Some(Self::DeepSeek),
+            "mimo" | "xiaomi_mimo" => Some(Self::Mimo),
+            "google" => Some(Self::Google),
+            "moonshot" => Some(Self::Moonshot),
+            "minimax" => Some(Self::MiniMax),
+            "glm" => Some(Self::Glm),
+            _ => None,
         }
     }
 }
@@ -81,4 +120,17 @@ pub trait CodingPlanFetcher {
         &self,
         credential_fields: &BTreeMap<String, String>,
     ) -> Result<ProviderQuota, CodingPlanError>;
+}
+
+/// Case-insensitive field lookup in a credential field map.
+#[cfg(feature = "coding-plan")]
+pub(crate) fn find_field<'a>(
+    fields: &'a BTreeMap<String, String>,
+    key: &str,
+) -> Option<&'a str> {
+    let key_lower = key.to_ascii_lowercase();
+    fields
+        .iter()
+        .find(|(k, _)| k.to_ascii_lowercase() == key_lower)
+        .map(|(_, v)| v.as_str())
 }

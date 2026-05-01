@@ -5,21 +5,7 @@ pub mod list;
 pub mod show;
 pub mod edit;
 pub mod reveal;
-pub mod coding_plan {
-    pub fn list(
-        _paths: &lockit_core::vault::VaultPaths,
-        _pw: Option<String>,
-    ) -> anyhow::Result<()> {
-        anyhow::bail!("not implemented")
-    }
-    pub fn refresh(
-        _paths: &lockit_core::vault::VaultPaths,
-        _pw: Option<String>,
-        _provider: Option<String>,
-    ) -> anyhow::Result<()> {
-        anyhow::bail!("not implemented")
-    }
-}
+pub mod coding_plan;
 pub mod sync_cmd {
     pub fn status(
         _paths: &lockit_core::vault::VaultPaths,

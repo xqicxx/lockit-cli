@@ -12,7 +12,7 @@ path = "src/main.rs"
 anyhow.workspace = true
 clap.workspace = true
 inquire = "0.7"
-lockit-core = { path = "../lockit-core" }
+lockit-core = { path = "../lockit-core", features = ["coding-plan"] }
 rpassword = "7"
 serde = { version = "1", features = ["derive"] }
 serde_json.workspace = true

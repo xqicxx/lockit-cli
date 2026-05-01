@@ -1,47 +1,10 @@
 pub mod add;
 pub mod init;
 pub mod delete;
-
-// Placeholders — implemented in later tasks
-pub mod list {
-    pub fn run(
-        _paths: &lockit_core::vault::VaultPaths,
-        _pw: Option<String>,
-        _json: bool,
-        _query: Option<String>,
-    ) -> anyhow::Result<()> {
-        anyhow::bail!("not implemented")
-    }
-}
-pub mod show {
-    pub fn run(
-        _paths: &lockit_core::vault::VaultPaths,
-        _pw: Option<String>,
-        _name_or_id: &str,
-        _json: bool,
-    ) -> anyhow::Result<()> {
-        anyhow::bail!("not implemented")
-    }
-}
-pub mod edit {
-    pub fn run(
-        _paths: &lockit_core::vault::VaultPaths,
-        _pw: Option<String>,
-        _name_or_id: &str,
-    ) -> anyhow::Result<()> {
-        anyhow::bail!("not implemented")
-    }
-}
-pub mod reveal {
-    pub fn run(
-        _paths: &lockit_core::vault::VaultPaths,
-        _pw: Option<String>,
-        _name_or_id: &str,
-        _field: &str,
-    ) -> anyhow::Result<()> {
-        anyhow::bail!("not implemented")
-    }
-}
+pub mod list;
+pub mod show;
+pub mod edit;
+pub mod reveal;
 pub mod coding_plan {
     pub fn list(
         _paths: &lockit_core::vault::VaultPaths,

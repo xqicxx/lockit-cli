@@ -302,6 +302,15 @@ pub fn value_to_string_map(value: serde_json::Value) -> BTreeMap<String, String>
     }
 }
 
+/// Case-insensitive field lookup shared by vault and coding-plan modules.
+pub fn find_field_insensitive<'a>(fields: &'a BTreeMap<String, String>, key: &str) -> Option<&'a str> {
+    let key_lower = key.to_ascii_lowercase();
+    fields
+        .iter()
+        .find(|(k, _)| k.to_ascii_lowercase() == key_lower)
+        .map(|(_, v)| v.as_str())
+}
+
 fn normalize(value: &str) -> String {
     value
         .to_ascii_lowercase()

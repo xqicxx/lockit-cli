@@ -121,16 +121,3 @@ pub trait CodingPlanFetcher {
         credential_fields: &BTreeMap<String, String>,
     ) -> Result<ProviderQuota, CodingPlanError>;
 }
-
-/// Case-insensitive field lookup in a credential field map.
-#[cfg(feature = "coding-plan")]
-pub(crate) fn find_field<'a>(
-    fields: &'a BTreeMap<String, String>,
-    key: &str,
-) -> Option<&'a str> {
-    let key_lower = key.to_ascii_lowercase();
-    fields
-        .iter()
-        .find(|(k, _)| k.to_ascii_lowercase() == key_lower)
-        .map(|(_, v)| v.as_str())
-}

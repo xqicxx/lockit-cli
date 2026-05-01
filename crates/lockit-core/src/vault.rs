@@ -3,7 +3,6 @@ use crate::crypto::{encrypt_vault_bytes, open_vault_bytes, seal_opened_vault_byt
 use chrono::{DateTime, Utc};
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
 
@@ -102,14 +101,6 @@ pub struct VaultSession {
     key: Option<VaultMasterKey>,
 }
 
-fn find_field_case_insensitive<'a>(
-    fields: &'a BTreeMap<String, String>,
-    key: &str,
-) -> Option<&'a String> {
-    let key_lower = key.to_ascii_lowercase();
-    fields.iter().find(|(k, _)| k.to_ascii_lowercase() == key_lower).map(|(_, v)| v)
-}
-
 impl VaultSession {
     pub fn is_unlocked(&self) -> bool {
         self.key.is_some()
@@ -206,9 +197,9 @@ impl VaultSession {
             .iter()
             .find(|credential| credential.id == id || credential.name.eq_ignore_ascii_case(id))
             .ok_or(VaultError::CredentialNotFound)?;
-        let value = find_field_case_insensitive(&credential.fields, field)
+        let value = crate::credential::find_field_insensitive(&credential.fields, field)
             .ok_or(VaultError::FieldNotFound)?
-            .clone();
+            .to_string();
         self.payload.audit_events.push(AuditEvent {
             event: "secret_revealed".to_string(),
             credential_id: Some(credential.id.clone()),

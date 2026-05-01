@@ -1,7 +1,5 @@
-use crate::coding_plan::{
-    find_field, CodingPlanError, CodingPlanFetcher, CodingPlanProvider, ProviderQuota,
-    QuotaStatus,
-};
+use crate::coding_plan::{CodingPlanError, CodingPlanFetcher, CodingPlanProvider, ProviderQuota, QuotaStatus};
+use crate::credential::find_field_insensitive;
 use chrono::Utc;
 use std::collections::BTreeMap;
 use std::time::Duration;
@@ -17,7 +15,7 @@ impl CodingPlanFetcher for ClaudeFetcher {
         &self,
         credential_fields: &BTreeMap<String, String>,
     ) -> Result<ProviderQuota, CodingPlanError> {
-        let api_key = find_field(credential_fields, "api_key")
+        let api_key = find_field_insensitive(credential_fields, "api_key")
             .ok_or_else(|| CodingPlanError::NotConfigured("api_key".to_string()))?;
 
         let client = reqwest::blocking::Client::builder()

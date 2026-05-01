@@ -1,7 +1,5 @@
-use crate::coding_plan::{
-    find_field, CodingPlanError, CodingPlanFetcher, CodingPlanProvider, ProviderQuota,
-    QuotaStatus,
-};
+use crate::coding_plan::{CodingPlanError, CodingPlanFetcher, CodingPlanProvider, ProviderQuota, QuotaStatus};
+use crate::credential::find_field_insensitive;
 use chrono::Utc;
 use std::collections::BTreeMap;
 use std::time::Duration;
@@ -17,13 +15,13 @@ impl CodingPlanFetcher for QwenFetcher {
         &self,
         credential_fields: &BTreeMap<String, String>,
     ) -> Result<ProviderQuota, CodingPlanError> {
-        let base_url = find_field(credential_fields, "base_url")
+        let base_url = find_field_insensitive(credential_fields, "base_url")
             .map(|s| s.to_string())
             .unwrap_or_else(|| "https://dashscope.aliyuncs.com".to_string());
-        let api_key = find_field(credential_fields, "api_key")
+        let api_key = find_field_insensitive(credential_fields, "api_key")
             .ok_or_else(|| CodingPlanError::NotConfigured("api_key".to_string()))?
             .to_string();
-        let cookie = find_field(credential_fields, "cookie")
+        let cookie = find_field_insensitive(credential_fields, "cookie")
             .unwrap_or("")
             .to_string();
 

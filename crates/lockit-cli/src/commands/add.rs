@@ -74,11 +74,19 @@ fn parse_json_fields(
         .as_object()
         .map(|o| {
             o.iter()
-                .map(|(k, val)| (k.clone(), val.as_str().unwrap_or("").to_string()))
+                .map(|(k, val)| (k.clone(), json_val_to_string(val)))
                 .collect()
         })
         .unwrap_or_default();
     Ok((cred_type, fields))
+}
+
+fn json_val_to_string(val: &serde_json::Value) -> String {
+    match val {
+        serde_json::Value::String(s) => s.clone(),
+        serde_json::Value::Null => String::new(),
+        other => other.to_string(),
+    }
 }
 
 fn read_password(value: Option<String>, prompt: &str) -> anyhow::Result<String> {

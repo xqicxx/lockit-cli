@@ -11,11 +11,10 @@ pub fn select_credential_type() -> Result<CredentialType, anyhow::Error> {
         .map(|t| format!("{} — {}", t.name(), t.description()))
         .collect();
     let selection = Select::new("Credential type:", names).prompt()?;
-    let idx = selection.split(" — ").next().context("invalid selection")?;
+
     types
-        .iter()
-        .find(|t| t.name() == idx)
-        .cloned()
+        .into_iter()
+        .find(|t| selection.starts_with(&format!("{} —", t.name())))
         .context("credential type not found")
 }
 
@@ -43,11 +42,8 @@ fn prompt_single_field(field: &CredentialField) -> Result<String, anyhow::Error>
         let prompt = format!("{}: ", field.label);
         Ok(rpassword::prompt_password(prompt).context("read secret field")?)
     } else {
-        let default = if field.label == "KEY_IDENTIFIER" {
-            Some("default")
-        } else {
-            None
-        };
+        let key = field.label.to_lowercase().replace(' ', "_");
+        let default = if key == "key_identifier" { Some("default") } else { None };
         let prompt_text = format!("{}:", field.label);
         let mut p = inquire::Text::new(&prompt_text)
             .with_placeholder(field.placeholder);
@@ -72,9 +68,9 @@ fn prompt_dropdown(field: &CredentialField) -> Result<String, anyhow::Error> {
 }
 
 fn is_secret_field(label: &str) -> bool {
-    label.contains("SECRET")
-        || label.contains("PASSWORD")
-        || label.contains("TOKEN")
-        || label.contains("KEY")
-        || label.contains("VALUE")
+    matches!(
+        label,
+        "SECRET_VALUE" | "PASSWORD" | "PASSWORD_VALUE" | "TOKEN_VALUE"
+            | "PRIVATE_KEY" | "SECRET_KEY" | "API_KEY" | "CONNECTION_URL"
+    ) || label.ends_with("_VALUE") || label.ends_with("_KEY")
 }

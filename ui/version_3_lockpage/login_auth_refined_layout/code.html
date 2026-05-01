@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LOCKIT - OPERATOR_AUTH</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#000000",
+                        "secondary": "#E53935", // Tactical Red
+                        "accent": "#CC5500", // Industrial Orange
+                        "surface": "#ffffff",
+                        "outline": "#000000",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .brutalist-grid {
+            background-image: radial-gradient(#000000 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+            opacity: 0.03;
+        }
+        /* Custom logo: inward-hook circle */
+        .logo-hook {
+            width: 32px;
+            height: 32px;
+            border: 2px solid black;
+            border-radius: 50%;
+            position: relative;
+        }
+        .logo-hook::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            border: 2px solid black;
+            border-top-color: transparent;
+            border-right-color: transparent;
+            transform: translate(-50%, -70%) rotate(-45deg);
+        }
+    </style>
+</head>
+<body class="bg-surface text-primary font-body overflow-hidden min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="bg-white text-black font-['JetBrains_Mono'] uppercase tracking-tight font-bold text-[10px] border-b border-black flex justify-between items-center w-full px-4 h-10 shrink-0">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm" data-icon="terminal">terminal</span>
+<span>DEV_TERMINAL_V1.4</span>
+</div>
+<div class="flex gap-4">
+<span class="text-accent">AUTH_REQUIRED</span>
+<span>OP_ID: 8821</span>
+</div>
+</header>
+<main class="flex-grow relative flex flex-col items-center justify-center px-6 py-4 overflow-y-auto py-6">
+<!-- Background Grid -->
+<div class="absolute inset-0 brutalist-grid pointer-events-none"></div>
+<div class="w-full max-w-[340px] z-10 flex flex-col gap-6">
+<!-- Header Section: Logo + Text -->
+<div class="flex flex-col items-center gap-2"><div class="logo-hook !w-8 !h-8"></div>
+<div class="text-center">
+<h1 class="font-headline font-extrabold text-2xl tracking-tighter uppercase leading-none">LOCKIT</h1>
+<p class="font-label text-[8px] tracking-[0.2em] text-black/60 uppercase mt-1">Operator Authorization Terminal</p>
+</div></div>
+<!-- Auth Container (High Density) -->
+<div class="border border-black bg-white p-1">
+<div class="border border-black bg-white flex flex-col">
+<!-- PIN Input Display -->
+<div class="border-b border-black bg-white p-3 text-center"><div class="font-label text-[8px] uppercase text-black/50 mb-1.5">SYSTEM_STATE: AWAITING_PIN</div>
+<div class="flex justify-center gap-2">
+<div class="w-2 h-2 border border-black bg-black"></div>
+<div class="w-2 h-2 border border-black bg-black"></div>
+<div class="w-2 h-2 border border-black bg-white"></div>
+<div class="w-2 h-2 border border-black bg-white"></div>
+</div></div>
+<!-- Precision Keypad -->
+<div class="grid grid-cols-3 bg-black"><!-- Numeric Keys with 1px precision lines -->
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-r border-b border-black">1</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-r border-b border-black">2</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-b border-black">3</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-r border-b border-black">4</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-r border-b border-black">5</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-b border-black">6</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-r border-b border-black">7</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-r border-b border-black">8</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-b border-black">9</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-r border-black">
+<span class="material-symbols-outlined text-base" data-icon="backspace">backspace</span>
+</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white border-r border-black">0</button>
+<button class="bg-white aspect-[4/3] flex items-center justify-center font-label font-bold text-base hover:bg-black hover:text-white">
+<span class="material-symbols-outlined text-base text-accent" data-icon="check_circle">check_circle</span>
+</button></div>
+<!-- Quick Actions -->
+<div class="border-t border-black p-3 bg-white space-y-2">
+<button class="w-full h-10 bg-black text-white font-label text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="fingerprint">fingerprint</span>
+                            BIOMETRIC_LINK
+                        </button>
+<div class="flex gap-2">
+<button class="flex-1 h-8 bg-white text-black font-label text-[9px] uppercase border border-black hover:bg-black hover:text-white transition-none">RECOVER_ID</button>
+<button class="flex-1 h-8 bg-white text-black font-label text-[9px] uppercase border border-black hover:bg-secondary hover:text-white transition-none">EMERGENCY_SOS</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Alert Message -->
+<div class="border border-secondary text-secondary p-2.5 font-label text-[9px] uppercase flex items-start gap-3 bg-white">
+<span class="material-symbols-outlined text-sm shrink-0" data-icon="warning">warning</span>
+<span class="leading-tight">Security Alert: Unauthorized access attempt detected. Retry limit: 2/5. System lockdown imminent.</span>
+</div>
+</div>
+</main>
+<!-- High-Density Status Footer -->
+<footer class="bg-black text-accent font-label text-[9px] w-full px-4 py-2 shrink-0 border-t border-black">
+<div class="max-w-4xl mx-auto flex flex-wrap justify-between gap-y-1">
+<div class="flex gap-4">
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
+                    ENC_LINK: ACTIVE
+                </span>
+<span>OS_VER: 4.1.0_LOCKED</span>
+<span class="text-white/40">NODE_ID: LX-88</span>
+</div>
+<div class="flex gap-4">
+<span>PING: 14ms</span>
+<span>PORT: 8081</span>
+<span class="text-white">2023-10-27 14:22:11</span>
+</div>
+</div>
+</footer>
+</body></html>

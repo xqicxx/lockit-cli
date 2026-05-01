@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "secondary-fixed-dim": "#ff8c54",
+                        "surface-dim": "#dadada",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#351000",
+                        "surface-variant": "#e2e2e2",
+                        "primary-container": "#3b3b3b",
+                        "surface-tint": "#5e5e5e",
+                        "on-secondary-fixed-variant": "#692600",
+                        "secondary": "#a23f00",
+                        "on-background": "#1b1b1b",
+                        "surface-container": "#eeeeee",
+                        "outline-variant": "#c6c6c6",
+                        "secondary-container": "#ffc9b1",
+                        "on-surface": "#1b1b1b",
+                        "primary": "#000000",
+                        "on-primary-container": "#ffffff",
+                        "on-primary-fixed-variant": "#e2e2e2",
+                        "on-tertiary-container": "#ffffff",
+                        "primary-fixed": "#5e5e5e",
+                        "tertiary-container": "#db3424",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-surface-variant": "#474747",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e2e2e2",
+                        "inverse-primary": "#c6c6c6",
+                        "on-tertiary-fixed-variant": "#ffdad4",
+                        "error": "#ba1a1a",
+                        "tertiary": "#7e0000",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#ffffff",
+                        "outline": "#777777",
+                        "on-primary-fixed": "#ffffff",
+                        "on-error-container": "#410002",
+                        "background": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-container": "#351000",
+                        "on-primary": "#e2e2e2",
+                        "primary-fixed-dim": "#474747",
+                        "on-tertiary": "#ffdad4",
+                        "tertiary-fixed-dim": "#930000",
+                        "tertiary-fixed": "#ba1a0f",
+                        "inverse-surface": "#303030",
+                        "secondary-fixed": "#ffb695",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "0px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .block-shadow {
+            box-shadow: 2px 2px 0px 0px #000000;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f9f9f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #000000;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-white text-black font-['Inter'] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-black border-b border-black dark:border-white fixed top-0 w-full z-50 h-12 flex justify-between items-center px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-black dark:text-white" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] font-extrabold text-lg text-black dark:text-white">DEV_TERMINAL_V1</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-['Inter'] uppercase tracking-tighter font-bold text-sm text-black dark:text-white">OP_ID: 8821</span>
+<div class="h-8 w-8 bg-black dark:bg-white flex items-center justify-center">
+<span class="material-symbols-outlined text-white dark:text-black text-sm" data-icon="lock">lock</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="mt-12 mb-16 flex-grow flex flex-col md:flex-row">
+<!-- SideNav (Simulated for Web) -->
+<aside class="hidden md:flex flex-col w-64 border-r border-black bg-surface-container-low min-h-[calc(100vh-7rem)]">
+<div class="p-4 border-b border-black">
+<p class="font-['JetBrains_Mono'] text-[10px] font-bold text-gray-500 uppercase">System Status</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="w-2 h-2 bg-secondary animate-pulse"></div>
+<p class="font-['JetBrains_Mono'] text-xs font-bold uppercase">Vault: UNLOCKED</p>
+</div>
+</div>
+<nav class="flex flex-col flex-grow">
+<a class="flex items-center gap-3 px-4 py-3 bg-black text-white font-['JetBrains_Mono'] text-xs font-bold uppercase" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="database">database</span>
+                    REPOS
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 hover:bg-black hover:text-white transition-none text-black font-['JetBrains_Mono'] text-xs font-bold uppercase border-b border-black" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="vpn_key">vpn_key</span>
+                    KEYS
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 hover:bg-black hover:text-white transition-none text-black font-['JetBrains_Mono'] text-xs font-bold uppercase border-b border-black" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="terminal">terminal</span>
+                    LOGS
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 hover:bg-black hover:text-white transition-none text-black font-['JetBrains_Mono'] text-xs font-bold uppercase border-b border-black" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="settings">settings</span>
+                    CONFIG
+                </a>
+</nav>
+</aside>
+<!-- Content Canvas -->
+<div class="flex-grow p-4 md:p-6 bg-white overflow-y-auto">
+<!-- Page Header -->
+<div class="mb-8 border-b-2 border-black pb-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+<div>
+<h1 class="font-['Inter'] text-4xl font-extrabold tracking-tighter uppercase">Vault Explorer</h1>
+<p class="font-['JetBrains_Mono'] text-xs text-gray-600 mt-1 uppercase">Unified Terminal View // Alpha-04 // [Read/Write]</p>
+</div>
+<div class="bg-surface-container p-2 flex items-center gap-4 border border-black w-full md:w-auto">
+<div class="flex flex-col">
+<span class="font-['JetBrains_Mono'] text-[10px] text-gray-500 uppercase">Entropy Level</span>
+<span class="font-['JetBrains_Mono'] text-sm font-bold uppercase">0.9992-SEC</span>
+</div>
+<div class="h-8 w-[1px] bg-black"></div>
+<button class="bg-secondary text-white font-['JetBrains_Mono'] px-4 py-1 text-xs font-bold uppercase hover:bg-black transition-none">
+                        Refresh Node
+                    </button>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- CLI Command Component -->
+<div class="md:col-span-12 bg-surface-container-highest border border-black p-3 flex items-center gap-4">
+<span class="font-['JetBrains_Mono'] text-secondary font-bold text-lg leading-none">&gt;</span>
+<input class="bg-transparent border-none focus:ring-0 font-['JetBrains_Mono'] text-sm w-full p-0" placeholder="VAULT --EXPLORE --ID=8821 --SILENT_MODE=OFF" type="text"/>
+<button class="font-['JetBrains_Mono'] text-[10px] font-bold bg-black text-white px-3 py-1 uppercase">EXEC</button>
+</div>
+<!-- Main Vault Cards -->
+<div class="md:col-span-8 flex flex-col gap-6">
+<!-- Secret Card 1: Compromised -->
+<div class="border-2 border-black p-4 bg-white relative">
+<div class="absolute top-0 right-0 bg-tertiary-container text-white px-3 py-1 font-['JetBrains_Mono'] text-[10px] font-bold uppercase">
+                            Status: Compromised
+                        </div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-['Inter'] font-extrabold text-lg uppercase tracking-tight">AWS_PROD_SECRET_KEY</h3>
+<p class="font-['JetBrains_Mono'] text-[10px] text-gray-500">ID: AWS-001-A4Z // REV: 09</p>
+</div>
+<button class="border border-black p-1 hover:bg-black hover:text-white transition-none group">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest border border-black p-3 font-['JetBrains_Mono'] text-sm mb-4">
+<code class="text-tertiary font-bold">AKIA********TUAL_RED_ERR_403</code>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="bg-black text-white px-3 py-1 text-[10px] font-bold font-['JetBrains_Mono'] uppercase hover:bg-secondary transition-none">Rotation Required</button>
+<button class="border border-black text-black px-3 py-1 text-[10px] font-bold font-['JetBrains_Mono'] uppercase hover:bg-black hover:text-white transition-none">View History</button>
+<button class="border border-black text-black px-3 py-1 text-[10px] font-bold font-['JetBrains_Mono'] uppercase hover:bg-black hover:text-white transition-none">Permissions</button>
+</div>
+</div>
+<!-- Secret Card 2: Secure -->
+<div class="border border-black p-4 bg-white">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-['Inter'] font-extrabold text-lg uppercase tracking-tight">STRIPE_WEBHOOK_SEC</h3>
+<p class="font-['JetBrains_Mono'] text-[10px] text-gray-500">ID: STR-992-00X // REV: 01</p>
+</div>
+<div class="flex gap-2">
+<button class="border border-black p-1 hover:bg-black hover:text-white transition-none">
+<span class="material-symbols-outlined text-sm" data-icon="visibility_off">visibility_off</span>
+</button>
+<button class="border border-black p-1 hover:bg-black hover:text-white transition-none">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<div class="bg-surface-container-low border border-black p-3 font-['JetBrains_Mono'] text-sm mb-4 opacity-50">
+<code>whsec_******************************</code>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex gap-2">
+<span class="bg-surface-container-highest border border-black px-2 py-1 text-[9px] font-['JetBrains_Mono'] uppercase">Production</span>
+<span class="bg-surface-container-highest border border-black px-2 py-1 text-[9px] font-['JetBrains_Mono'] uppercase">Ecom-Team</span>
+</div>
+<span class="font-['JetBrains_Mono'] text-[10px] text-secondary font-bold uppercase">Secure // Last Accessed 2m ago</span>
+</div>
+</div>
+<!-- Secret Card 3: Secure -->
+<div class="border border-black p-4 bg-white">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-['Inter'] font-extrabold text-lg uppercase tracking-tight">GITLAB_CI_TOKEN_CI</h3>
+<p class="font-['JetBrains_Mono'] text-[10px] text-gray-500">ID: GL-102-SYS // REV: 14</p>
+</div>
+<div class="flex gap-2">
+<button class="border border-black p-1 hover:bg-black hover:text-white transition-none">
+<span class="material-symbols-outlined text-sm" data-icon="visibility_off">visibility_off</span>
+</button>
+<button class="border border-black p-1 hover:bg-black hover:text-white transition-none">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<div class="bg-surface-container-low border border-black p-3 font-['JetBrains_Mono'] text-sm mb-4 opacity-50">
+<code>glpat-********************</code>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-1">
+<div class="w-6 h-6 border border-black bg-white flex items-center justify-center font-bold text-[8px]">JD</div>
+<div class="w-6 h-6 border border-black bg-black text-white flex items-center justify-center font-bold text-[8px]">AM</div>
+<div class="w-6 h-6 border border-black bg-white flex items-center justify-center font-bold text-[8px]">+3</div>
+</div>
+<span class="font-['JetBrains_Mono'] text-[10px] text-gray-400 uppercase">Shared with Ops Team</span>
+</div>
+</div>
+</div>
+<!-- Sidebar Analysis Column -->
+<div class="md:col-span-4 flex flex-col gap-6">
+<!-- Metrics Card -->
+<div class="border-2 border-black p-4 bg-surface-container-low">
+<h4 class="font-['JetBrains_Mono'] text-xs font-bold uppercase mb-4 border-b border-black pb-2">Vault Metrics</h4>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-[10px] font-['JetBrains_Mono'] font-bold uppercase mb-1">
+<span>Memory Load</span>
+<span>84%</span>
+</div>
+<div class="w-full bg-white border border-black h-2">
+<div class="bg-black h-full w-[84%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-[10px] font-['JetBrains_Mono'] font-bold uppercase mb-1">
+<span>Sync Latency</span>
+<span>12ms</span>
+</div>
+<div class="w-full bg-white border border-black h-2">
+<div class="bg-secondary h-full w-[12%]"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-2">
+<div class="border border-black bg-white p-2 text-center">
+<p class="text-[9px] text-gray-500 uppercase">Total Items</p>
+<p class="font-['JetBrains_Mono'] text-xl font-extrabold">1,204</p>
+</div>
+<div class="border border-black bg-white p-2 text-center">
+<p class="text-[9px] text-gray-500 uppercase">Active CLI</p>
+<p class="font-['JetBrains_Mono'] text-xl font-extrabold text-secondary">03</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Visual Data / Card -->
+<div class="border border-black relative overflow-hidden group h-48">
+<img class="w-full h-full object-cover grayscale contrast-125 brightness-110" data-alt="Cybersecurity terminal screen with green glowing code lines on dark background representing data flow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-v2e0bBM9DzBIlRKc9ZzHbzNka_1G4dv1IRAczOG39EHxyqlkBxKkbplIjCy3o-XVbUHBdWPtKSePfC3bYpvubn3Yk_7g4h5xEFc4ZSY9g_mNv-fnSY3QKG4s4uyoMLtQvMdUi4eRCoD_4IQFSAF13f_1gS50Klx6NLndsTSvVTOUZ0UHI4XoZxy9EtMHfjNyjS9GGhRrMILWyg_da6yzNF44IHWR3kjCTKasTPtB5WjpGJoTff8et-5uDDS_lh5rR5tXVGjnYsU"/>
+<div class="absolute inset-0 bg-black/40 flex flex-col justify-end p-4">
+<p class="font-['JetBrains_Mono'] text-white text-[10px] font-bold uppercase tracking-widest bg-black/80 inline-block px-2 py-1 mb-2 self-start">Visual_Capture_X8</p>
+<p class="text-white font-['Inter'] font-bold text-sm">ENCRYPTION_LAYER: OVERRIDE_ENABLED</p>
+</div>
+</div>
+<!-- Quick Logs -->
+<div class="border border-black bg-black p-4 text-white font-['JetBrains_Mono'] text-[9px] leading-tight space-y-1 overflow-hidden h-40">
+<p><span class="text-secondary">[08:44:21]</span> AUTH_SUCCESS: USER_8821</p>
+<p><span class="text-secondary">[08:44:23]</span> FETCHING: REPO_LIST</p>
+<p><span class="text-secondary">[08:44:25]</span> <span class="text-tertiary">WARN: COMPROMISED_KEY_DETECTED</span></p>
+<p><span class="text-secondary">[08:44:26]</span> SCAN_COMPLETE: 1204_ITEMS</p>
+<p><span class="text-secondary">[08:45:01]</span> HEARTBEAT: NODE_01_OK</p>
+<p><span class="text-secondary">[08:45:10]</span> CLI_SESSION: STARTED</p>
+<p><span class="text-secondary">[08:45:12]</span> CMD: --EXPLORE --ID=8821</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed right-6 bottom-20 md:bottom-6 w-14 h-14 bg-secondary text-white block-shadow flex items-center justify-center hover:bg-black transition-none z-[60]">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar -->
+<footer class="md:hidden bg-white dark:bg-black border-t border-black dark:border-white fixed bottom-0 w-full z-50 flex h-16 justify-around items-stretch">
+<a class="flex flex-col items-center justify-center bg-black dark:bg-white text-white dark:text-black h-full w-full" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="database">database</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">REPOS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="vpn_key">vpn_key</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">KEYS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">LOGS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">CONFIG</span>
+</a>
+</footer>
+</body></html>

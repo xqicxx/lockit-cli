@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#303030",
+                        "on-surface": "#1b1b1b",
+                        "tertiary-container": "#db3424",
+                        "on-tertiary-fixed-variant": "#ffdad4",
+                        "on-tertiary": "#ffdad4",
+                        "outline-variant": "#c6c6c6",
+                        "on-primary": "#e2e2e2",
+                        "on-tertiary-fixed": "#ffffff",
+                        "tertiary": "#7e0000",
+                        "on-error": "#ffffff",
+                        "background": "#f9f9f9",
+                        "surface-variant": "#e2e2e2",
+                        "on-primary-fixed-variant": "#e2e2e2",
+                        "outline": "#777777",
+                        "primary-container": "#3b3b3b",
+                        "on-secondary-fixed": "#351000",
+                        "on-surface-variant": "#474747",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-fixed-variant": "#692600",
+                        "tertiary-fixed": "#ba1a0f",
+                        "secondary-container": "#ffc9b1",
+                        "primary-fixed": "#5e5e5e",
+                        "surface-dim": "#dadada",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-on-surface": "#f1f1f1",
+                        "inverse-primary": "#c6c6c6",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#ff8c54",
+                        "secondary": "#a23f00",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-secondary-container": "#351000",
+                        "on-primary-fixed": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-container": "#eeeeee",
+                        "tertiary-fixed-dim": "#930000",
+                        "on-primary-container": "#ffffff",
+                        "primary-fixed-dim": "#474747",
+                        "surface-container-high": "#e8e8e8",
+                        "on-background": "#1b1b1b",
+                        "primary": "#000000",
+                        "surface": "#f9f9f9",
+                        "surface-tint": "#5e5e5e",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#ffb695",
+                        "on-error-container": "#410002",
+                        "on-tertiary-container": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["JetBrains Mono"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #FFFFFF; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .border-black { border-color: #000000 !important; }
+        .bg-black { background-color: #000000 !important; }
+        .text-black { color: #000000 !important; }
+        .active-glow { box-shadow: 2px 2px 0px #000000; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-white text-black min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-black text-black dark:text-white font-['Inter'] uppercase tracking-tighter font-bold text-sm docked full-width top-0 border-b border-black dark:border-white border-b-1 flat no shadows flex justify-between items-center w-full px-4 h-12 fixed z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base">terminal</span>
+<span class="font-['JetBrains_Mono'] font-extrabold text-lg text-black dark:text-white">DEV_TERMINAL_V1</span>
+</div>
+<div class="font-['Inter'] uppercase tracking-tighter font-bold text-sm">
+            OP_ID: 8821
+        </div>
+</header>
+<main class="pt-16 px-4 space-y-6">
+<!-- System Overview Section -->
+<section class="space-y-3">
+<div class="flex items-center justify-between border-b border-black pb-1">
+<h2 class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest text-gray-500">System Overview</h2>
+<span class="font-['JetBrains_Mono'] text-[10px] text-secondary font-bold">STATUS: NOMINAL</span>
+</div>
+<div class="grid grid-cols-2 gap-0 border border-black">
+<div class="p-4 border-r border-black flex flex-col gap-1">
+<span class="font-['Inter'] text-[10px] font-bold uppercase">Uptime</span>
+<span class="font-['JetBrains_Mono'] text-2xl font-extrabold tracking-tighter">99.98%</span>
+<div class="h-1 w-full bg-surface-container-highest mt-2">
+<div class="h-full bg-black w-[99.98%]"></div>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-1">
+<span class="font-['Inter'] text-[10px] font-bold uppercase">Latency</span>
+<span class="font-['JetBrains_Mono'] text-2xl font-extrabold tracking-tighter">14ms</span>
+<div class="flex gap-1 mt-2">
+<div class="h-1 flex-1 bg-black"></div>
+<div class="h-1 flex-1 bg-black"></div>
+<div class="h-1 flex-1 bg-black"></div>
+<div class="h-1 flex-1 bg-surface-container-highest"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Active Agents Cluster -->
+<section class="space-y-3">
+<div class="flex items-center justify-between border-b border-black pb-1">
+<h2 class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest text-gray-500">Active Agents Cluster</h2>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold">COUNT: 04</span>
+</div>
+<div class="border border-black overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-black text-white font-['JetBrains_Mono'] text-[10px] uppercase">
+<th class="p-2 border-r border-white/20">Agent_ID</th>
+<th class="p-2 border-r border-white/20">Task</th>
+<th class="p-2">Status</th>
+</tr>
+</thead>
+<tbody class="font-['JetBrains_Mono'] text-xs">
+<tr class="border-b border-black">
+<td class="p-2 border-r border-black font-bold">LKT-001</td>
+<td class="p-2 border-r border-black">ENCRYPT_V3</td>
+<td class="p-2 text-secondary font-bold">STANDBY</td>
+</tr>
+<tr class="border-b border-black">
+<td class="p-2 border-r border-black font-bold">LKT-002</td>
+<td class="p-2 border-r border-black">KEY_ROTATION</td>
+<td class="p-2 bg-black text-white font-bold">EXEC</td>
+</tr>
+<tr class="border-b border-black">
+<td class="p-2 border-r border-black font-bold">LKT-003</td>
+<td class="p-2 border-r border-black">S_SYNC</td>
+<td class="p-2 text-tertiary font-bold">CRITICAL</td>
+</tr>
+<tr>
+<td class="p-2 border-r border-black font-bold">LKT-004</td>
+<td class="p-2 border-r border-black">AUTH_SWEEP</td>
+<td class="p-2 text-secondary font-bold">STANDBY</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Recent Events Log -->
+<section class="space-y-3">
+<div class="flex items-center justify-between border-b border-black pb-1">
+<h2 class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest text-gray-500">Recent Events Log</h2>
+<button class="font-['JetBrains_Mono'] text-[10px] font-bold underline">CLEAR_LOG</button>
+</div>
+<div class="space-y-0 border border-black bg-surface-container-low">
+<!-- Log Entry 1 -->
+<div class="p-3 border-b border-black flex gap-3 items-start bg-white">
+<span class="font-['JetBrains_Mono'] text-[10px] text-gray-400 mt-1">14:22:01</span>
+<div class="flex-1 space-y-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-tertiary"></span>
+<span class="font-['JetBrains_Mono'] font-bold text-xs">SECURITY_BREACH_ATTEMPT</span>
+</div>
+<p class="font-['JetBrains_Mono'] text-[10px] leading-relaxed text-gray-600">IP: 192.168.1.104 rejected from /admin. Node localized.</p>
+</div>
+</div>
+<!-- Log Entry 2 -->
+<div class="p-3 border-b border-black flex gap-3 items-start bg-white">
+<span class="font-['JetBrains_Mono'] text-[10px] text-gray-400 mt-1">14:20:45</span>
+<div class="flex-1 space-y-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary"></span>
+<span class="font-['JetBrains_Mono'] font-bold text-xs">LATENCY_SPIKE_DETECTED</span>
+</div>
+<p class="font-['JetBrains_Mono'] text-[10px] leading-relaxed text-gray-600">Cluster 4 response time &gt; 200ms. Re-routing traffic to backup.</p>
+</div>
+</div>
+<!-- Log Entry 3 -->
+<div class="p-3 flex gap-3 items-start bg-white">
+<span class="font-['JetBrains_Mono'] text-[10px] text-gray-400 mt-1">14:18:12</span>
+<div class="flex-1 space-y-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-black"></span>
+<span class="font-['JetBrains_Mono'] font-bold text-xs">SYSTEM_CHECK_COMPLETE</span>
+</div>
+<p class="font-['JetBrains_Mono'] text-[10px] leading-relaxed text-gray-600">Integrity check: 100%. No anomalies found in local storage.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- CLI Command Component -->
+<div class="bg-surface-container-highest border border-black p-3 flex items-center gap-3">
+<span class="font-['JetBrains_Mono'] font-bold text-secondary text-sm">&gt;</span>
+<input class="bg-transparent border-none focus:ring-0 font-['JetBrains_Mono'] text-xs w-full p-0 uppercase placeholder:text-gray-400" placeholder="ENTER_COMMAND_ID..." type="text"/>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-white dark:bg-black text-black dark:text-white fixed bottom-0 left-0 w-full z-50 flex h-16 justify-around items-stretch border-t border-black dark:border-white border-t-1 flat no shadows">
+<!-- LOGS Active Item -->
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase mt-1">REPOS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined" data-icon="vpn_key">vpn_key</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase mt-1">KEYS</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-black dark:bg-white text-white dark:text-black h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase mt-1">LOGS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase mt-1">CONFIG</span>
+</a>
+</nav>
+</body></html>

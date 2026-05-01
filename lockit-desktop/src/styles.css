@@ -1,0 +1,139 @@
+:root {
+  --bg: #0b0b0b;
+  --surface: #131313;
+  --surface-low: #0e0e0e;
+  --surface-mid: #1b1b1b;
+  --surface-high: #2a2a2a;
+  --text: #f3f3f3;
+  --muted: #777;
+  --dim: #555;
+  --critical: #b52619;
+  --line: #242424;
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: var(--bg); overflow: hidden; }
+button, input { font: inherit; border-radius: 0; }
+button { cursor: pointer; }
+#app { min-height: 100vh; display: grid; place-items: center; padding: 12px; }
+
+.panel {
+  width: 360px;
+  height: 560px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--surface-high);
+  display: flex;
+  flex-direction: column;
+}
+
+.topline {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+.brand-lockup { display: flex; align-items: center; gap: 8px; }
+.brand-icon { width: 18px; height: 18px; display: block; }
+.topline strong { font-family: Inter, sans-serif; font-weight: 900; letter-spacing: 0.16em; }
+.topline span { color: var(--critical); font-size: 9px; letter-spacing: 0.16em; }
+
+.unlock-panel { padding-bottom: 14px; }
+.hero-label, .search-block label {
+  display: block;
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  margin-bottom: 8px;
+}
+.unlock-panel .hero-label { padding: 24px 14px 0; }
+h1 {
+  font-family: Inter, sans-serif;
+  font-size: 46px;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  margin: 10px 14px 14px;
+}
+.muted { color: var(--muted); font-size: 11px; line-height: 1.55; margin: 0 14px 18px; }
+.input {
+  width: calc(100% - 28px);
+  margin: 0 14px 12px;
+  padding: 11px 10px;
+  background: #050505;
+  color: var(--text);
+  border: 0;
+  outline: 1px solid transparent;
+}
+.input:focus { outline-color: var(--critical); }
+.button-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 14px; }
+.button-row.compact { margin-bottom: 12px; }
+.button { border: 0; padding: 10px; font-size: 10px; font-weight: 900; letter-spacing: 0.12em; }
+.primary { background: white; color: #111; }
+.secondary { background: var(--surface-high); color: white; }
+.error { color: #ffb4ab; font-size: 10px; margin: 14px; line-height: 1.4; }
+
+.search-block { padding: 14px 0 0; }
+.tabs { display: flex; gap: 12px; padding: 0 14px 10px; color: var(--muted); font-size: 9px; letter-spacing: 0.14em; }
+.tabs .active { color: white; }
+.content-split { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+.list { height: 100%; overflow: auto; padding: 0 14px 10px; }
+.secret-row {
+  width: 100%;
+  display: block;
+  text-align: left;
+  background: var(--surface-low);
+  color: #aaa;
+  border: 0;
+  padding: 11px;
+  margin-bottom: 7px;
+}
+.secret-row.selected { background: #1f1f1f; color: white; border-left: 3px solid var(--critical); }
+.secret-row span, .secret-row small { display: block; }
+.secret-row span { font-size: 12px; }
+.secret-row small { color: var(--muted); font-size: 9px; margin-top: 4px; }
+.detail {
+  position: absolute;
+  inset: 0;
+  background: var(--surface);
+  padding: 14px;
+  transform: translateX(100%);
+  transition: transform 160ms ease;
+}
+.has-detail .detail { transform: translateX(0); }
+.back { background: transparent; border: 0; color: var(--muted); padding: 0; margin-bottom: 14px; font-size: 10px; }
+.detail h2 {
+  font-family: Inter, sans-serif;
+  color: white;
+  font-size: 34px;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  margin: 0 0 18px;
+}
+.secret-value {
+  background: #050505;
+  border-left: 3px solid var(--critical);
+  color: var(--muted);
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.35;
+  word-break: break-all;
+  margin-bottom: 12px;
+}
+dl { display: grid; gap: 9px; margin: 0; }
+dt { color: var(--dim); font-size: 9px; margin-bottom: 3px; }
+dd { margin: 0 0 9px; background: var(--surface-low); color: white; padding: 10px; font-size: 11px; }
+footer {
+  background: var(--surface-low);
+  color: var(--muted);
+  font-size: 9px;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 14px;
+}
+footer span:last-child { color: var(--critical); }

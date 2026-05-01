@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Secret Details (Unified Light)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "secondary-fixed-dim": "#ff8c54",
+                        "surface-dim": "#dadada",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#351000",
+                        "surface-variant": "#e2e2e2",
+                        "primary-container": "#3b3b3b",
+                        "surface-tint": "#5e5e5e",
+                        "on-secondary-fixed-variant": "#692600",
+                        "secondary": "#a23f00",
+                        "on-background": "#1b1b1b",
+                        "surface-container": "#eeeeee",
+                        "outline-variant": "#c6c6c6",
+                        "secondary-container": "#ffc9b1",
+                        "on-surface": "#1b1b1b",
+                        "primary": "#000000",
+                        "on-primary-container": "#ffffff",
+                        "on-primary-fixed-variant": "#e2e2e2",
+                        "on-tertiary-container": "#ffffff",
+                        "primary-fixed": "#5e5e5e",
+                        "tertiary-container": "#db3424",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-surface-variant": "#474747",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e2e2e2",
+                        "inverse-primary": "#c6c6c6",
+                        "on-tertiary-fixed-variant": "#ffdad4",
+                        "error": "#ba1a1a",
+                        "tertiary": "#7e0000",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#ffffff",
+                        "outline": "#777777",
+                        "on-primary-fixed": "#ffffff",
+                        "on-error-container": "#410002",
+                        "background": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-container": "#351000",
+                        "on-primary": "#e2e2e2",
+                        "primary-fixed-dim": "#474747",
+                        "on-tertiary": "#ffdad4",
+                        "tertiary-fixed-dim": "#930000",
+                        "tertiary-fixed": "#ba1a0f",
+                        "inverse-surface": "#303030",
+                        "secondary-fixed": "#ffb695",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        /* Overriding tailwind-config border radius to ensure 0px as per Design System */
+        * { border-radius: 0px !important; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-['Inter'] selection:bg-secondary selection:text-white">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-black text-black dark:text-white font-['Inter'] uppercase tracking-tighter font-bold text-sm docked full-width top-0 border-b border-black dark:border-white border-b-1 flat no shadows flex justify-between items-center w-full px-4 h-12 sticky z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] font-extrabold text-lg text-black dark:text-white">DEV_TERMINAL_V1</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-xs opacity-50">STATUS: ENCRYPTED</span>
+<span class="font-bold">OP_ID: 8821</span>
+</div>
+</header>
+<main class="min-h-screen pb-32">
+<!-- Breadcrumb / System Path -->
+<div class="px-4 py-3 bg-surface-container-low border-b border-black flex items-center gap-2">
+<span class="font-mono text-[10px] font-bold text-secondary uppercase tracking-widest">SYSTEM_ROOT</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="font-mono text-[10px] font-bold text-black uppercase tracking-widest">VAULT_01</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="font-mono text-[10px] font-bold text-black uppercase tracking-widest">SECRET_DETAILS_V1</span>
+</div>
+<!-- Hero Section: Identity Header -->
+<section class="border-b border-black grid grid-cols-1 md:grid-cols-3">
+<div class="md:col-span-2 p-8 border-r border-black">
+<h1 class="text-5xl font-extrabold tracking-tighter uppercase mb-4 leading-none">SECRET: PROMETHEUS_KEY_04</h1>
+<div class="flex flex-wrap gap-4">
+<div class="px-3 py-1 bg-black text-white text-[10px] font-mono font-bold uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-xs" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+                        AES-256-GCM
+                    </div>
+<div class="px-3 py-1 bg-surface-container-highest text-black border border-black text-[10px] font-mono font-bold uppercase">
+                        OWNER: ADMIN_88
+                    </div>
+<div class="px-3 py-1 bg-secondary text-white text-[10px] font-mono font-bold uppercase">
+                        TTL: 24:00:00
+                    </div>
+</div>
+</div>
+<div class="p-8 bg-surface-container-lowest flex flex-col justify-center items-center text-center">
+<div class="text-[10px] font-mono font-bold uppercase text-black mb-2">ACCESS_QR_TOKEN</div>
+<div class="w-32 h-32 border-4 border-black p-2 bg-white">
+<img alt="System QR Code" class="w-full h-full grayscale" data-alt="high contrast monochromatic abstract geometric pattern representing a digital encrypted security token in square format" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKqF19QcUQoPeEe7_ByVDXUw0Q33Njz0PBSHKSIq96EjRS1U_mQV2CqvFXFFrbGxAWhOU_tey4comavbfv-tdC9io2BZR05g3gBZk29djZMrDLyXyWeDRSlOzLqRYiWgD1Ile0UnsFqWE4puFlANayGZ0nruFHWPPPIljocN9pBGqX9WqNzOmQE4eLMJU6RWNoTG9pxdK-KF7aQl8xBpLdVCFUnxgTtAg712qVZF4Upzzwe84Q28-H9ADIU4db1mJWq80nYEsDbe0"/>
+</div>
+</div>
+</section>
+<!-- Main Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 border-b border-black h-auto">
+<!-- Left: Metadata Panel -->
+<div class="md:col-span-1 border-r border-black p-6 bg-surface-container-low">
+<h2 class="font-mono text-[10px] font-extrabold uppercase mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">info</span>
+                    METADATA_ARRAY
+                </h2>
+<div class="space-y-6">
+<div>
+<div class="text-[10px] font-mono opacity-50 uppercase tracking-widest mb-1">Created_At</div>
+<div class="font-mono text-sm font-bold">2023-11-21T09:44:12Z</div>
+</div>
+<div>
+<div class="text-[10px] font-mono opacity-50 uppercase tracking-widest mb-1">Rotation_Policy</div>
+<div class="font-mono text-sm font-bold">STRICT_WEEKLY</div>
+</div>
+<div>
+<div class="text-[10px] font-mono opacity-50 uppercase tracking-widest mb-1">Version_ID</div>
+<div class="font-mono text-sm font-bold">v.9.04.22-ALPHA</div>
+</div>
+<div class="pt-4">
+<button class="w-full border-2 border-black py-2 font-mono text-[10px] font-extrabold uppercase hover:bg-black hover:text-white transition-none">
+                            GENERATE_REPORT
+                        </button>
+</div>
+</div>
+</div>
+<!-- Middle: Secret Content / Payload -->
+<div class="md:col-span-2 border-r border-black p-0 flex flex-col">
+<div class="border-b border-black p-4 bg-surface-container flex justify-between items-center">
+<span class="font-mono text-[10px] font-extrabold uppercase tracking-widest">Encrypted_Payload</span>
+<button class="flex items-center gap-2 text-secondary font-mono text-[10px] font-extrabold hover:underline">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                        REVEAL_VALUES
+                    </button>
+</div>
+<div class="flex-grow p-6 space-y-4">
+<div class="border border-black p-4 bg-white relative">
+<div class="absolute top-0 right-0 px-2 py-1 bg-black text-white text-[8px] font-mono uppercase font-bold">KEY_NAME</div>
+<div class="font-mono text-sm text-black pt-2">API_ENDPOINT_PRIMARY</div>
+</div>
+<div class="border border-black p-4 bg-white relative">
+<div class="absolute top-0 right-0 px-2 py-1 bg-black text-white text-[8px] font-mono uppercase font-bold">SECRET_VALUE</div>
+<div class="font-mono text-sm text-black flex items-center justify-between pt-2">
+<span>••••••••••••••••••••••••••••••••</span>
+<span class="material-symbols-outlined text-lg cursor-pointer">content_copy</span>
+</div>
+</div>
+<div class="border border-black p-4 bg-white relative">
+<div class="absolute top-0 right-0 px-2 py-1 bg-black text-white text-[8px] font-mono uppercase font-bold">AWS_IAM_ARN</div>
+<div class="font-mono text-sm text-black pt-2">arn:aws:iam::882190123:secret/prometheus/k04</div>
+</div>
+</div>
+</div>
+<!-- Right: Access Logs -->
+<div class="md:col-span-1 p-6 bg-white overflow-hidden">
+<h2 class="font-mono text-[10px] font-extrabold uppercase mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-secondary">history</span>
+                    ACCESS_LOGS
+                </h2>
+<div class="space-y-4 font-mono">
+<div class="border-l-2 border-secondary pl-3 py-1">
+<div class="text-[9px] opacity-50 uppercase">Today 14:22:01</div>
+<div class="text-[11px] font-bold">ADMIN_88_AUTH_SUCCESS</div>
+</div>
+<div class="border-l-2 border-black pl-3 py-1">
+<div class="text-[9px] opacity-50 uppercase">Today 12:05:44</div>
+<div class="text-[11px] font-bold">SYSTEM_AUTO_ROTATE_SUCCESS</div>
+</div>
+<div class="border-l-2 border-black pl-3 py-1">
+<div class="text-[9px] opacity-50 uppercase">Yesterday 23:59:00</div>
+<div class="text-[11px] font-bold">BACKUP_TRIGGERED_VAULT_02</div>
+</div>
+<div class="border-l-2 border-tertiary pl-3 py-1">
+<div class="text-[9px] opacity-50 uppercase">Nov 20 18:44:12</div>
+<div class="text-[11px] font-bold text-tertiary">UNAUTHORIZED_ATTEMPT_REJECTED</div>
+</div>
+</div>
+<div class="mt-8">
+<div class="h-[100px] w-full border border-black bg-surface-container relative">
+<!-- Simulated small density graph -->
+<div class="absolute bottom-0 w-full h-1/2 bg-black opacity-10 flex items-end">
+<div class="h-[60%] w-2 bg-black mr-[1px]"></div>
+<div class="h-[80%] w-2 bg-black mr-[1px]"></div>
+<div class="h-[40%] w-2 bg-black mr-[1px]"></div>
+<div class="h-[90%] w-2 bg-black mr-[1px]"></div>
+<div class="h-[70%] w-2 bg-black mr-[1px]"></div>
+<div class="h-[50%] w-2 bg-black mr-[1px]"></div>
+<div class="h-[30%] w-2 bg-black mr-[1px]"></div>
+<div class="h-[100%] w-2 bg-black mr-[1px]"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-[9px] font-mono font-bold uppercase tracking-widest text-black">ACCESS_DENSITY_24H</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Command Line Strip -->
+<section class="bg-surface-container-highest border-b border-black p-3 flex items-center gap-4">
+<span class="text-secondary font-mono font-extrabold text-lg">&gt;</span>
+<input class="bg-transparent border-none focus:ring-0 w-full font-mono text-sm uppercase font-bold placeholder:text-black placeholder:opacity-30" placeholder="ENTER SYSTEM COMMAND (e.g. rotate --force)" type="text"/>
+<span class="font-mono text-[10px] opacity-40">AUTO_COMPLETE_ENABLED</span>
+</section>
+<!-- Danger Zone - Prominent Bottom Section -->
+<section class="bg-[#E53935] border-y border-black p-10 text-white relative overflow-hidden">
+<!-- Diagonal Warning Patterns -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #000, #000 20px, transparent 20px, transparent 40px);"></div>
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-6xl" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div>
+<h2 class="text-3xl font-extrabold tracking-tighter uppercase leading-none mb-2">CRITICAL_DANGER_ZONE</h2>
+<p class="font-mono text-xs font-bold uppercase tracking-widest max-w-md opacity-90">Actions in this section are irreversible. Purging this secret will revoke all active session tokens immediately across the fleet.</p>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+<button class="bg-white text-black font-mono font-extrabold text-xs uppercase px-8 py-4 border-2 border-black hover:bg-black hover:text-white transition-none">
+                        REVOKE_ACCESS_NODES
+                    </button>
+<button class="bg-black text-white font-mono font-extrabold text-xs uppercase px-8 py-4 border-2 border-white hover:bg-white hover:text-black transition-none">
+                        PURGE_SECRET_SYSTEM
+                    </button>
+</div>
+</div>
+</section>
+<!-- System Table / Permissions Cluster -->
+<section class="p-8">
+<h3 class="font-mono text-[12px] font-extrabold uppercase mb-4 border-b-2 border-black inline-block">ACCESS_CONTROL_LIST_V2</h3>
+<div class="border border-black">
+<table class="w-full font-mono text-sm text-left">
+<thead class="bg-black text-white border-b border-black">
+<tr>
+<th class="p-4 text-[10px] font-extrabold uppercase tracking-widest">Entity_ID</th>
+<th class="p-4 text-[10px] font-extrabold uppercase tracking-widest">Permission</th>
+<th class="p-4 text-[10px] font-extrabold uppercase tracking-widest">Source_IP</th>
+<th class="p-4 text-[10px] font-extrabold uppercase tracking-widest">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-black">
+<tr>
+<td class="p-4 font-bold">SVC_PROMETHEUS_CORE</td>
+<td class="p-4">READ_WRITE_ROTATE</td>
+<td class="p-4">10.0.4.122</td>
+<td class="p-4"><span class="px-2 py-1 bg-black text-white text-[9px] font-bold">ACTIVE</span></td>
+</tr>
+<tr>
+<td class="p-4 font-bold">USER_OPS_LEAD</td>
+<td class="p-4">READ_ONLY</td>
+<td class="p-4">192.168.1.15</td>
+<td class="p-4"><span class="px-2 py-1 bg-black text-white text-[9px] font-bold">ACTIVE</span></td>
+</tr>
+<tr>
+<td class="p-4 font-bold">ANALYTICS_DASHBOARD</td>
+<td class="p-4">READ_ONLY</td>
+<td class="p-4">10.0.9.88</td>
+<td class="p-4"><span class="px-2 py-1 bg-surface-container-highest text-black text-[9px] font-bold">DISABLED</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex h-16 justify-around items-stretch bg-white dark:bg-black text-black dark:text-white font-['JetBrains_Mono'] text-[10px] font-bold uppercase fixed bottom-0 w-full z-50 border-t border-black dark:border-white border-t-1 flat no shadows">
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined text-lg mb-1" data-icon="database">database</span>
+<span>REPOS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined text-lg mb-1" data-icon="vpn_key">vpn_key</span>
+<span>KEYS</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-black dark:bg-white text-white dark:text-black h-full w-full hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined text-lg mb-1" data-icon="terminal">terminal</span>
+<span>LOGS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none" href="#">
+<span class="material-symbols-outlined text-lg mb-1" data-icon="settings">settings</span>
+<span>CONFIG</span>
+</a>
+</nav>
+</body></html>

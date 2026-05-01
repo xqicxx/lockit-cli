@@ -1,0 +1,16 @@
+[package]
+name = "lockit-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "lockit"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+lockit-core = { path = "../lockit-core" }
+rpassword = "7"
+serde_json.workspace = true

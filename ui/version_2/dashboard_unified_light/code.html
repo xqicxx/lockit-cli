@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard (Unified Light)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f9f9f9",
+                    "secondary-fixed-dim": "#ff8c54",
+                    "surface-dim": "#dadada",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#351000",
+                    "surface-variant": "#e2e2e2",
+                    "primary-container": "#3b3b3b",
+                    "surface-tint": "#5e5e5e",
+                    "on-secondary-fixed-variant": "#692600",
+                    "secondary": "#a23f00",
+                    "on-background": "#1b1b1b",
+                    "surface-container": "#eeeeee",
+                    "outline-variant": "#c6c6c6",
+                    "secondary-container": "#ffc9b1",
+                    "on-surface": "#1b1b1b",
+                    "primary": "#000000",
+                    "on-primary-container": "#ffffff",
+                    "on-primary-fixed-variant": "#e2e2e2",
+                    "on-tertiary-container": "#ffffff",
+                    "primary-fixed": "#5e5e5e",
+                    "tertiary-container": "#db3424",
+                    "surface-bright": "#f9f9f9",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-surface-variant": "#474747",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e2e2e2",
+                    "inverse-primary": "#c6c6c6",
+                    "on-tertiary-fixed-variant": "#ffdad4",
+                    "error": "#ba1a1a",
+                    "tertiary": "#7e0000",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#ffffff",
+                    "outline": "#777777",
+                    "on-primary-fixed": "#ffffff",
+                    "on-error-container": "#410002",
+                    "background": "#f9f9f9",
+                    "surface-container-high": "#e8e8e8",
+                    "surface-container-low": "#f3f3f3",
+                    "on-secondary-container": "#351000",
+                    "on-primary": "#e2e2e2",
+                    "primary-fixed-dim": "#474747",
+                    "on-tertiary": "#ffdad4",
+                    "tertiary-fixed-dim": "#930000",
+                    "tertiary-fixed": "#ba1a0f",
+                    "inverse-surface": "#303030",
+                    "secondary-fixed": "#ffb695",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { background-color: #ffffff; color: #000000; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #ffffff; }
+        ::-webkit-scrollbar-thumb { background: #000000; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-['Inter'] selection:bg-secondary selection:text-white">
+<header class="bg-white dark:bg-black text-black dark:text-white font-['Inter'] uppercase tracking-tighter font-bold text-sm docked full-width top-0 border-b border-black dark:border-white border-b-1 flat no shadows flex justify-between items-center w-full px-4 h-12 sticky z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-black dark:text-white" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] font-extrabold text-lg text-black dark:text-white">DEV_TERMINAL_V1</span>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex items-center gap-4 h-full">
+<a class="px-2 h-full flex items-center text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-none" href="#">REPOS</a>
+<a class="px-2 h-full flex items-center text-gray-500 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-none" href="#">KEYS</a>
+<a class="px-2 h-full flex items-center text-gray-500 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-none" href="#">LOGS</a>
+<a class="px-2 h-full flex items-center text-gray-500 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-none" href="#">CONFIG</a>
+</nav>
+<span class="text-[10px] font-['JetBrains_Mono'] bg-black text-white px-2 py-1">OP_ID: 8821</span>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto p-4 md:p-8 mb-24">
+<div class="flex flex-col md:flex-row justify-between items-end border-b border-black pb-4 mb-8">
+<div>
+<h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter uppercase mb-2">SYSTEM_STATUS</h1>
+<p class="font-['JetBrains_Mono'] text-sm text-secondary font-bold">READY :: ALL SYSTEMS OPERATIONAL [0.003ms LATENCY]</p>
+</div>
+<div class="mt-4 md:mt-0 font-['JetBrains_Mono'] text-[10px] uppercase text-right">
+<div class="text-gray-500">Uptime: 142:12:08</div>
+<div class="text-black font-bold">Kernel: v6.4.2-tactical-brutal</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-0 border-l border-t border-black">
+<section class="md:col-span-8 border-r border-b border-black">
+<div class="bg-black text-white p-2 font-['JetBrains_Mono'] text-[10px] font-bold uppercase flex justify-between">
+<span>Active_Deployments</span>
+<span class="text-secondary-fixed-dim">[REC_09]</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-['JetBrains_Mono'] text-sm border-collapse">
+<thead>
+<tr class="border-b border-black bg-surface-container-highest">
+<th class="p-3 font-bold border-r border-black uppercase text-[11px]">ID</th>
+<th class="p-3 font-bold border-r border-black uppercase text-[11px]">TARGET_PATH</th>
+<th class="p-3 font-bold border-r border-black uppercase text-[11px]">HEALTH</th>
+<th class="p-3 font-bold uppercase text-[11px]">IO_LOAD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-black hover:bg-surface-container-low transition-none cursor-crosshair">
+<td class="p-3 border-r border-black font-bold">#DP-912</td>
+<td class="p-3 border-r border-black text-secondary">/srv/cluster/node-01</td>
+<td class="p-3 border-r border-black">
+<span class="flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary block"></span>
+                                        STABLE
+                                    </span>
+</td>
+<td class="p-3">2.41 MB/s</td>
+</tr>
+<tr class="border-b border-black hover:bg-surface-container-low transition-none cursor-crosshair">
+<td class="p-3 border-r border-black font-bold">#DP-882</td>
+<td class="p-3 border-r border-black text-secondary">/srv/cluster/node-05</td>
+<td class="p-3 border-r border-black">
+<span class="flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary block"></span>
+                                        STABLE
+                                    </span>
+</td>
+<td class="p-3">0.12 MB/s</td>
+</tr>
+<tr class="border-b border-black bg-red-50 hover:bg-red-100 transition-none cursor-crosshair">
+<td class="p-3 border-r border-black font-bold text-tertiary">#DP-441</td>
+<td class="p-3 border-r border-black text-tertiary">/srv/edge/lon-04</td>
+<td class="p-3 border-r border-black text-tertiary">
+<span class="flex items-center gap-2">
+<span class="w-2 h-2 bg-tertiary block animate-pulse"></span>
+                                        CRITICAL_ERR
+                                    </span>
+</td>
+<td class="p-3 text-tertiary font-bold">0.00 MB/s</td>
+</tr>
+<tr class="border-b border-black hover:bg-surface-container-low transition-none cursor-crosshair">
+<td class="p-3 border-r border-black font-bold">#DP-102</td>
+<td class="p-3 border-r border-black text-secondary">/srv/db/primary-01</td>
+<td class="p-3 border-r border-black">
+<span class="flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary block"></span>
+                                        STABLE
+                                    </span>
+</td>
+<td class="p-3">44.8 MB/s</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="bg-surface-container-highest p-4 flex flex-col md:flex-row gap-4 border-t border-black">
+<div class="flex-1 bg-white border border-black p-3 relative group">
+<div class="absolute -top-2 -left-2 bg-black text-white text-[9px] px-1 font-mono uppercase">MEM_UTIL</div>
+<div class="text-2xl font-black font-mono">64.2%</div>
+<div class="w-full h-1 bg-surface-variant mt-2 overflow-hidden">
+<div class="h-full bg-black" style="width: 64.2%"></div>
+</div>
+</div>
+<div class="flex-1 bg-white border border-black p-3 relative group">
+<div class="absolute -top-2 -left-2 bg-black text-white text-[9px] px-1 font-mono uppercase">CPU_CORE_0</div>
+<div class="text-2xl font-black font-mono">12.8%</div>
+<div class="w-full h-1 bg-surface-variant mt-2 overflow-hidden">
+<div class="h-full bg-secondary" style="width: 12.8%"></div>
+</div>
+</div>
+<div class="flex-1 bg-white border border-black p-3 relative group">
+<div class="absolute -top-2 -left-2 bg-black text-white text-[9px] px-1 font-mono uppercase">DISK_W_LAT</div>
+<div class="text-2xl font-black font-mono text-tertiary">842ms</div>
+<div class="w-full h-1 bg-surface-variant mt-2 overflow-hidden">
+<div class="h-full bg-tertiary" style="width: 85%"></div>
+</div>
+</div>
+</div>
+</section>
+<aside class="md:col-span-4 border-r border-b border-black bg-surface-container-low">
+<div class="bg-black text-white p-2 font-['JetBrains_Mono'] text-[10px] font-bold uppercase">System_Logs_Stream</div>
+<div class="p-4 h-[300px] overflow-y-auto font-['JetBrains_Mono'] text-[12px] leading-relaxed">
+<div class="flex gap-2 mb-2">
+<span class="text-gray-400">14:02:11</span>
+<span class="text-secondary font-bold">[AUTH]</span>
+<span>User 'root' authenticated via SSH-RSA-4096</span>
+</div>
+<div class="flex gap-2 mb-2">
+<span class="text-gray-400">14:02:44</span>
+<span class="text-black font-bold">[INFO]</span>
+<span>Compiling kernel modules...</span>
+</div>
+<div class="flex gap-2 mb-2">
+<span class="text-gray-400">14:03:02</span>
+<span class="text-black font-bold">[INFO]</span>
+<span>Optimizing page cache for Node-01</span>
+</div>
+<div class="flex gap-2 mb-2 bg-red-100 p-1 border-l-4 border-tertiary">
+<span class="text-tertiary font-bold">14:04:12</span>
+<span class="text-tertiary font-bold">[FAIL]</span>
+<span>lon-04 link integrity check failed: CRC_ERROR</span>
+</div>
+<div class="flex gap-2 mb-2">
+<span class="text-gray-400">14:04:59</span>
+<span class="text-black font-bold">[INFO]</span>
+<span>Attempting automated recovery for lon-04...</span>
+</div>
+<div class="flex gap-2 mb-2">
+<span class="text-gray-400">14:05:15</span>
+<span class="text-black font-bold">[INFO]</span>
+<span>Recovery step 1/5: Power cycle SFP+ module</span>
+</div>
+<div class="flex gap-2 mb-2">
+<span class="text-gray-400">14:06:22</span>
+<span class="text-secondary font-bold">[WARN]</span>
+<span>High temperature warning: Rack-B, Unit-4</span>
+</div>
+</div>
+<div class="border-t border-black p-4 bg-white">
+<div class="text-[10px] font-bold uppercase mb-2">Active_Command</div>
+<div class="flex bg-surface-container-highest border border-black p-2">
+<span class="text-secondary font-bold mr-2">&gt;</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 w-full font-mono text-xs uppercase" placeholder="Enter shell command..." type="text" value="RECOVER --NODE LON-04 --FORCE"/>
+</div>
+</div>
+</aside>
+<section class="md:col-span-12 border-r border-b border-black">
+<div class="bg-black text-white p-2 font-['JetBrains_Mono'] text-[10px] font-bold uppercase">Security_Vulnerabilities_Matrix</div>
+<div class="grid grid-cols-1 md:grid-cols-4 divide-x divide-black">
+<div class="p-6 flex flex-col items-center justify-center border-b md:border-b-0 border-black">
+<span class="material-symbols-outlined text-4xl mb-2 text-tertiary" data-icon="security">security</span>
+<div class="text-3xl font-black font-mono">03</div>
+<div class="text-[10px] font-bold uppercase text-tertiary">High_Risk</div>
+</div>
+<div class="p-6 flex flex-col items-center justify-center border-b md:border-b-0 border-black">
+<span class="material-symbols-outlined text-4xl mb-2 text-secondary" data-icon="warning">warning</span>
+<div class="text-3xl font-black font-mono">12</div>
+<div class="text-[10px] font-bold uppercase text-secondary">Med_Risk</div>
+</div>
+<div class="p-6 flex flex-col items-center justify-center border-b md:border-b-0 border-black">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="verified_user">verified_user</span>
+<div class="text-3xl font-black font-mono">142</div>
+<div class="text-[10px] font-bold uppercase text-gray-500">Resolved</div>
+</div>
+<div class="p-6 flex flex-col items-center justify-center">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="update">update</span>
+<div class="text-3xl font-black font-mono text-secondary">98%</div>
+<div class="text-[10px] font-bold uppercase text-gray-500">Patch_Level</div>
+</div>
+</div>
+</section>
+</div>
+<div class="mt-8 flex flex-wrap gap-4">
+<button class="bg-black text-white px-6 py-3 font-bold text-sm uppercase flex items-center gap-2 border border-black hover:bg-white hover:text-black transition-none group">
+<span class="material-symbols-outlined text-sm" data-icon="add_circle">add_circle</span>
+                Launch_Instance
+            </button>
+<button class="bg-white text-black px-6 py-3 font-bold text-sm uppercase flex items-center gap-2 border border-black hover:bg-black hover:text-white transition-none">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                Export_Audit_Log
+            </button>
+<button class="bg-secondary text-white px-6 py-3 font-bold text-sm font-mono uppercase flex items-center gap-2 border border-black hover:bg-white hover:text-secondary transition-none">
+<span class="material-symbols-outlined text-sm" data-icon="bolt">bolt</span>
+                Sys_Optimize
+            </button>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex h-16 justify-around items-stretch bg-white dark:bg-black border-t border-black dark:border-white md:hidden">
+<a class="flex flex-col items-center justify-center bg-black dark:bg-white text-white dark:text-black h-full w-full" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">REPOS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0" href="#">
+<span class="material-symbols-outlined" data-icon="vpn_key">vpn_key</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">KEYS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">LOGS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">CONFIG</span>
+</a>
+</nav>
+</body></html>

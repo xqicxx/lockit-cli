@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@400;500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-primary": "#b52619",
+                      "on-tertiary-fixed": "#ffffff",
+                      "on-primary-container": "#000000",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "secondary-container": "#454747",
+                      "primary": "#ffffff",
+                      "secondary-fixed-dim": "#aaabab",
+                      "background": "#131313",
+                      "on-primary": "#410000",
+                      "error-container": "#93000a",
+                      "on-primary-fixed-variant": "#ffdad4",
+                      "on-error": "#690005",
+                      "surface-bright": "#393939",
+                      "surface-container": "#1f1f1f",
+                      "surface-container-highest": "#353535",
+                      "tertiary-container": "#929090",
+                      "on-surface": "#e2e2e2",
+                      "outline": "#919191",
+                      "surface-container-high": "#2a2a2a",
+                      "primary-fixed": "#b52619",
+                      "on-tertiary-container": "#000000",
+                      "on-error-container": "#ffdad6",
+                      "surface": "#131313",
+                      "inverse-surface": "#e2e2e2",
+                      "error": "#ffb4ab",
+                      "primary-fixed-dim": "#920703",
+                      "surface-container-low": "#1b1b1b",
+                      "surface-variant": "#353535",
+                      "surface-tint": "#ffb4a8",
+                      "on-primary-fixed": "#ffffff",
+                      "on-background": "#e2e2e2",
+                      "tertiary-fixed-dim": "#474746",
+                      "on-secondary": "#1a1c1c",
+                      "on-surface-variant": "#c6c6c6",
+                      "on-tertiary": "#1c1b1b",
+                      "tertiary": "#e5e2e1",
+                      "primary-container": "#ffc7bf",
+                      "on-secondary-fixed-variant": "#3a3c3c",
+                      "on-tertiary-fixed-variant": "#e5e2e1",
+                      "secondary": "#c6c6c7",
+                      "tertiary-fixed": "#5f5e5e",
+                      "surface-container-lowest": "#0e0e0e",
+                      "outline-variant": "#474747",
+                      "surface-dim": "#131313",
+                      "inverse-on-surface": "#303030",
+                      "secondary-fixed": "#c6c6c7",
+                      "on-secondary-container": "#e2e2e2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0px",
+                      "lg": "0px",
+                      "xl": "0px",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Inter"],
+                      "body": ["Inter"],
+                      "label": ["Space Grotesk"],
+                      "mono": ["JetBrains Mono"]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #131313; }
+        ::-webkit-scrollbar-thumb { background: #353535; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body selection:bg-primary-fixed selection:text-white">
+<!-- TopAppBar -->
+<header class="bg-[#131313] dark:bg-[#131313] docked full-width top-0 border-b-0 flex justify-between items-center w-full px-6 py-4 sticky z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white" data-icon="terminal">terminal</span>
+<span class="text-xl font-black text-white tracking-widest font-['Inter'] uppercase">LOCKIT</span>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="text-white font-mono text-[10px] uppercase tracking-[0.2em] transition-colors duration-75" href="#">Dashboard</a>
+<a class="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.2em] hover:text-white transition-colors duration-75" href="#">Vaults</a>
+<a class="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.2em] hover:text-white transition-colors duration-75" href="#">Infrastructure</a>
+<a class="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.2em] hover:text-white transition-colors duration-75" href="#">Config</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="h-2 w-2 bg-primary-fixed"></div>
+<span class="font-mono text-[10px] text-primary-fixed uppercase tracking-widest">System Status: Optimal</span>
+</div>
+</header>
+<main class="min-h-screen p-6 md:p-12 max-w-[1600px] mx-auto pb-24 md:pb-12">
+<!-- Hero Metrics Section -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-px bg-outline-variant/20 border border-outline-variant/20 mb-12">
+<div class="lg:col-span-8 bg-surface p-8 border-r-0 lg:border-r border-outline-variant/20">
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-[10px] uppercase tracking-[0.3em] text-zinc-500">Global Encryption Metrics</span>
+<span class="font-mono text-[10px] text-zinc-500">v4.2.0-STABLE</span>
+</div>
+<h1 class="text-7xl md:text-9xl font-black text-white tracking-tighter mb-4">1,284</h1>
+<p class="font-mono text-xs uppercase tracking-[0.4em] text-white/60">Total Secrets Encrypted</p>
+</div>
+<div class="lg:col-span-4 grid grid-rows-2 gap-px">
+<div class="bg-surface-container-low p-8">
+<span class="font-mono text-[10px] uppercase tracking-[0.3em] text-zinc-500 block mb-2">Network Load</span>
+<div class="text-4xl font-mono text-white">0.04<span class="text-lg text-zinc-600">ms</span></div>
+<div class="mt-4 w-full bg-surface-container-highest h-[2px]">
+<div class="bg-primary h-full w-1/4"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-8">
+<span class="font-mono text-[10px] uppercase tracking-[0.3em] text-zinc-500 block mb-2">Active Sessions</span>
+<div class="text-4xl font-mono text-white">42</div>
+<div class="flex gap-1 mt-4">
+<div class="h-1 w-4 bg-primary-fixed"></div>
+<div class="h-1 w-4 bg-primary-fixed"></div>
+<div class="h-1 w-4 bg-surface-container-highest"></div>
+<div class="h-1 w-4 bg-surface-container-highest"></div>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<!-- Active Agents Table -->
+<section>
+<div class="flex justify-between items-end mb-6 border-b border-outline-variant/30 pb-2">
+<h2 class="font-headline font-black text-2xl uppercase tracking-tighter">Active Agents</h2>
+<span class="font-mono text-[10px] text-zinc-500">08 DAEMON PROCESSES</span>
+</div>
+<div class="bg-surface-container-lowest overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-highest">
+<th class="p-3 font-mono text-[10px] uppercase tracking-widest text-zinc-400 font-normal">Process ID</th>
+<th class="p-3 font-mono text-[10px] uppercase tracking-widest text-zinc-400 font-normal">Location</th>
+<th class="p-3 font-mono text-[10px] uppercase tracking-widest text-zinc-400 font-normal">Load</th>
+<th class="p-3 font-mono text-[10px] uppercase tracking-widest text-zinc-400 font-normal text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-3 font-mono text-xs text-white">AGENT_OMEGA_01</td>
+<td class="p-3 font-mono text-xs text-zinc-400">US-EAST-1</td>
+<td class="p-3 font-mono text-xs text-zinc-400">12%</td>
+<td class="p-3 text-right"><span class="inline-block h-2 w-2 bg-white"></span></td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-3 font-mono text-xs text-white">AGENT_SIGMA_09</td>
+<td class="p-3 font-mono text-xs text-zinc-400">EU-WEST-2</td>
+<td class="p-3 font-mono text-xs text-zinc-400">44%</td>
+<td class="p-3 text-right"><span class="inline-block h-2 w-2 bg-white"></span></td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-3 font-mono text-xs text-white">AGENT_KAPPA_04</td>
+<td class="p-3 font-mono text-xs text-zinc-400">AP-SOUTH-1</td>
+<td class="p-3 font-mono text-xs text-zinc-400">02%</td>
+<td class="p-3 text-right"><span class="inline-block h-2 w-2 bg-white"></span></td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-3 font-mono text-xs text-white">AGENT_THETA_12</td>
+<td class="p-3 font-mono text-xs text-zinc-400">SA-EAST-1</td>
+<td class="p-3 font-mono text-xs text-zinc-400">91%</td>
+<td class="p-3 text-right"><span class="inline-block h-2 w-2 bg-primary-fixed"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Recent Security Logs -->
+<section>
+<div class="flex justify-between items-end mb-6 border-b border-outline-variant/30 pb-2">
+<h2 class="font-headline font-black text-2xl uppercase tracking-tighter">Security Logs</h2>
+<span class="font-mono text-[10px] text-zinc-500">LIVE FEED</span>
+</div>
+<div class="space-y-1">
+<div class="bg-surface-container-low p-4 flex items-center justify-between group hover:bg-surface-container-high transition-all">
+<div class="flex items-center gap-4">
+<span class="font-mono text-[10px] text-primary-fixed">14:02:11</span>
+<p class="font-mono text-xs text-zinc-200">KEY_ROTATION_SUCCESS [VAULT_MAIN]</p>
+</div>
+<span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors" data-icon="terminal">terminal</span>
+</div>
+<div class="bg-surface-container-low p-4 flex items-center justify-between group hover:bg-surface-container-high transition-all">
+<div class="flex items-center gap-4">
+<span class="font-mono text-[10px] text-primary-fixed">13:58:45</span>
+<p class="font-mono text-xs text-zinc-200">UNAUTHORIZED_ATTEMPT [BLOCKED] IP: 192.168.1.1</p>
+</div>
+<span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors" data-icon="security">security</span>
+</div>
+<div class="bg-surface-container-low p-4 flex items-center justify-between group hover:bg-surface-container-high transition-all">
+<div class="flex items-center gap-4">
+<span class="font-mono text-[10px] text-primary-fixed">13:42:01</span>
+<p class="font-mono text-xs text-zinc-200">DB_BACKUP_SNAPSHOT_COMPLETE</p>
+</div>
+<span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors" data-icon="database">database</span>
+</div>
+<div class="bg-surface-container-low p-4 flex items-center justify-between group hover:bg-surface-container-high transition-all">
+<div class="flex items-center gap-4">
+<span class="font-mono text-[10px] text-primary-fixed">13:33:19</span>
+<p class="font-mono text-xs text-zinc-200">AGENT_OMEGA_01 HANDSHAKE_INIT</p>
+</div>
+<span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors" data-icon="sync">sync</span>
+</div>
+</div>
+</section>
+</div>
+<!-- System Architecture Visualization (Pseudo-Bento) -->
+<section class="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="md:col-span-2 bg-surface-container p-6 relative overflow-hidden group">
+<div class="relative z-10">
+<span class="font-mono text-[10px] uppercase tracking-widest text-zinc-500 block mb-4">Encryption Layer</span>
+<h3 class="text-3xl font-black mb-4">AES-256-GCM</h3>
+<p class="text-sm text-zinc-400 font-mono leading-relaxed">Military-grade encryption protocols enforced across all distributed nodes. Quantum-resistant kernels active.</p>
+</div>
+<div class="absolute -bottom-8 -right-8 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-[120px]" data-icon="shield">shield</span>
+</div>
+</div>
+<div class="bg-surface-container-highest p-6 flex flex-col justify-between">
+<span class="font-mono text-[10px] uppercase tracking-widest text-zinc-400">Uptime</span>
+<div>
+<div class="text-4xl font-mono text-white">99.99<span class="text-xl">%</span></div>
+<p class="text-[10px] font-mono text-zinc-500 mt-2">LAST 365 DAYS</p>
+</div>
+</div>
+<div class="bg-primary text-on-primary-container p-6 flex flex-col justify-between">
+<span class="font-mono text-[10px] uppercase tracking-widest text-on-primary-container/60">New Vault</span>
+<div>
+<span class="material-symbols-outlined text-4xl" data-icon="add_box">add_box</span>
+<p class="text-xs font-mono font-bold mt-2">INITIALIZE SECURE STORAGE</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-stretch items-stretch h-16 bg-[#0E0E0E] dark:bg-[#0E0E0E] border-t-0">
+<a class="flex items-center justify-center bg-white text-black p-4 flex-1" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</a>
+<a class="flex items-center justify-center text-zinc-600 p-4 flex-1 hover:text-white hover:bg-[#1F1F1F] transition-all duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+</a>
+<a class="flex items-center justify-center text-zinc-600 p-4 flex-1 hover:text-white hover:bg-[#1F1F1F] transition-all duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+</a>
+<a class="flex items-center justify-center text-zinc-600 p-4 flex-1 hover:text-white hover:bg-[#1F1F1F] transition-all duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</nav>
+</body></html>

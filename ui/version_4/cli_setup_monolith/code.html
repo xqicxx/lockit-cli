@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LOCKIT | CLI &amp; AGENT SETUP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#b52619",
+                        "on-tertiary-fixed": "#ffffff",
+                        "on-primary-container": "#000000",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "secondary-container": "#454747",
+                        "primary": "#ffffff",
+                        "secondary-fixed-dim": "#aaabab",
+                        "background": "#131313",
+                        "on-primary": "#410000",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#ffdad4",
+                        "on-error": "#690005",
+                        "surface-bright": "#393939",
+                        "surface-container": "#1f1f1f",
+                        "surface-container-highest": "#353535",
+                        "tertiary-container": "#929090",
+                        "on-surface": "#e2e2e2",
+                        "outline": "#919191",
+                        "surface-container-high": "#2a2a2a",
+                        "primary-fixed": "#b52619",
+                        "on-tertiary-container": "#000000",
+                        "on-error-container": "#ffdad6",
+                        "surface": "#131313",
+                        "inverse-surface": "#e2e2e2",
+                        "error": "#ffb4ab",
+                        "primary-fixed-dim": "#920703",
+                        "surface-container-low": "#1b1b1b",
+                        "surface-variant": "#353535",
+                        "surface-tint": "#ffb4a8",
+                        "on-primary-fixed": "#ffffff",
+                        "on-background": "#e2e2e2",
+                        "tertiary-fixed-dim": "#474746",
+                        "on-secondary": "#1a1c1c",
+                        "on-surface-variant": "#c6c6c6",
+                        "on-tertiary": "#1c1b1b",
+                        "tertiary": "#e5e2e1",
+                        "primary-container": "#ffc7bf",
+                        "on-secondary-fixed-variant": "#3a3c3c",
+                        "on-tertiary-fixed-variant": "#e5e2e1",
+                        "secondary": "#c6c6c7",
+                        "tertiary-fixed": "#5f5e5e",
+                        "surface-container-lowest": "#0e0e0e",
+                        "outline-variant": "#474747",
+                        "surface-dim": "#131313",
+                        "inverse-on-surface": "#303030",
+                        "secondary-fixed": "#c6c6c7",
+                        "on-secondary-container": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #131313;
+            color: #e2e2e2;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0e0e0e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #353535;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body selection:bg-primary-fixed selection:text-white">
+<!-- TopAppBar -->
+<header class="bg-[#131313] fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white" data-icon="terminal">terminal</span>
+<span class="font-['Inter'] font-black tracking-widest uppercase text-xl text-white">LOCKIT</span>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 hover:text-white transition-colors duration-75" href="#">Dashboard</a>
+<a class="font-mono text-[10px] uppercase tracking-[0.2em] text-white" href="#">Security</a>
+<a class="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 hover:text-white transition-colors duration-75" href="#">Analytics</a>
+<a class="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 hover:text-white transition-colors duration-75" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="font-mono text-[10px] text-zinc-600 uppercase">System: Online</span>
+<div class="w-2 h-2 bg-white"></div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 md:px-12 max-w-7xl mx-auto">
+<!-- Hero Header Area -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16 items-end">
+<div class="md:col-span-8">
+<span class="font-mono text-[10px] text-primary-fixed uppercase tracking-[0.3em] block mb-4">Configuration / v2.4.0-Alpha</span>
+<h1 class="text-6xl md:text-8xl font-black uppercase leading-none tracking-tighter text-white">
+                    Monolith<br/>Control
+                </h1>
+</div>
+<div class="md:col-span-4 flex flex-col items-start md:items-end gap-2">
+<p class="font-mono text-[11px] text-zinc-500 text-left md:text-right max-w-xs leading-relaxed">
+                    Deploy secure agents across your infrastructure. The CLI interface provides direct encrypted tunneling between node endpoints.
+                </p>
+<div class="h-[1px] w-full bg-outline-variant opacity-20 my-2"></div>
+<span class="font-mono text-[10px] text-zinc-400">SESSION_ID: 9X-0042-ALPHA-K</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Left Column: Instructions & CLI -->
+<div class="lg:col-span-7 space-y-12">
+<!-- Setup Section -->
+<section>
+<div class="flex items-baseline gap-4 mb-6">
+<span class="text-4xl font-black text-white">01</span>
+<h2 class="text-xl font-bold uppercase tracking-tight text-white">Initialize Environment</h2>
+</div>
+<div class="bg-surface-container-lowest p-6 space-y-4">
+<p class="font-body text-sm text-zinc-400">Run the following command in your terminal to authenticate the Lockit CLI with your current session credentials.</p>
+<div class="bg-[#050505] p-5 relative group border-l-2 border-primary">
+<div class="absolute top-4 right-4 flex gap-2">
+<button class="p-1 hover:text-white text-zinc-600 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<code class="font-mono text-sm block leading-relaxed overflow-x-auto whitespace-pre">
+<span class="text-zinc-600"># Install the core binary</span>
+<span class="text-white">$ curl -sSL https://get.lockit.sh | sh</span>
+<span class="text-zinc-600"># Authenticate with monolith node</span>
+<span class="text-white">$ lockit auth login --token </span><span class="text-primary-fixed">LKT-8842-XXXX-XXXX</span>
+</code>
+</div>
+</div>
+</section>
+<!-- Token Management -->
+<section>
+<div class="flex items-baseline gap-4 mb-6">
+<span class="text-4xl font-black text-white">02</span>
+<h2 class="text-xl font-bold uppercase tracking-tight text-white">Access Protocol</h2>
+</div>
+<div class="bg-surface-container p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+<div>
+<label class="font-mono text-[10px] text-zinc-500 uppercase block mb-2">Primary Access Token</label>
+<div class="font-mono text-sm bg-surface-container-lowest p-3 text-white truncate">
+                                ****************************429X
+                            </div>
+</div>
+<div class="flex items-end">
+<button class="w-full bg-primary-fixed text-white font-mono text-[10px] uppercase tracking-widest py-4 hover:bg-red-800 transition-all active:scale-95">
+                                Regenerate Token
+                            </button>
+</div>
+</div>
+<div class="mt-4 p-4 bg-primary-fixed/5 border border-primary-fixed/20">
+<p class="font-mono text-[10px] text-primary-fixed leading-relaxed">
+                            WARNING: Regenerating your token will immediately disconnect all active CLI sessions and invalidates current automation scripts.
+                        </p>
+</div>
+</section>
+</div>
+<!-- Right Column: Agent Status & Metadata -->
+<div class="lg:col-span-5 space-y-12">
+<!-- Authorized Agents List -->
+<section class="bg-surface-container-lowest p-0 border border-outline-variant/10">
+<div class="p-6 bg-surface-container flex justify-between items-center">
+<h3 class="font-mono text-[10px] uppercase tracking-[0.2em] text-white">Authorized Agents</h3>
+<span class="font-mono text-[10px] text-zinc-500">Total: 04</span>
+</div>
+<div class="divide-y divide-outline-variant/10">
+<!-- Agent 01 -->
+<div class="p-6 flex items-center justify-between group hover:bg-surface-container/30 transition-colors">
+<div class="flex flex-col gap-1">
+<span class="font-mono text-sm text-white">us-east-prod-01</span>
+<span class="font-mono text-[10px] text-zinc-500">192.168.1.104 • Linux/X64</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-mono text-[9px] px-2 py-0.5 bg-white text-black font-bold">ACTIVE</span>
+<button class="text-zinc-600 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Agent 02 -->
+<div class="p-6 flex items-center justify-between group hover:bg-surface-container/30 transition-colors">
+<div class="flex flex-col gap-1">
+<span class="font-mono text-sm text-white">local-dev-tunnel</span>
+<span class="font-mono text-[10px] text-zinc-500">127.0.0.1 • MacOS/Arm64</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-mono text-[9px] px-2 py-0.5 bg-zinc-800 text-zinc-500 font-bold">IDLE</span>
+<button class="text-zinc-600 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Agent 03 -->
+<div class="p-6 flex items-center justify-between group hover:bg-surface-container/30 transition-colors">
+<div class="flex flex-col gap-1">
+<span class="font-mono text-sm text-white">eu-west-backup</span>
+<span class="font-mono text-[10px] text-zinc-500">45.22.11.09 • Linux/X64</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-mono text-[9px] px-2 py-0.5 bg-white text-black font-bold">ACTIVE</span>
+<button class="text-zinc-600 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Agent 04 -->
+<div class="p-6 flex items-center justify-between group hover:bg-surface-container/30 transition-colors">
+<div class="flex flex-col gap-1">
+<span class="font-mono text-sm text-white">aws-lambda-adapter</span>
+<span class="font-mono text-[10px] text-zinc-500">Dynamic IP • Serverless</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-mono text-[9px] px-2 py-0.5 bg-zinc-800 text-zinc-500 font-bold">IDLE</span>
+<button class="text-zinc-600 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- System Logs / Terminal Component -->
+<section class="bg-surface-container-lowest p-6 border border-outline-variant/10">
+<h3 class="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-4 flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-primary-fixed"></span> 
+                        Real-time Audit Log
+                    </h3>
+<div class="space-y-3">
+<div class="flex gap-4">
+<span class="font-mono text-[10px] text-primary-fixed shrink-0">12:44:01</span>
+<span class="font-mono text-[10px] text-zinc-300">New agent registered: us-east-prod-01</span>
+</div>
+<div class="flex gap-4">
+<span class="font-mono text-[10px] text-primary-fixed shrink-0">12:45:22</span>
+<span class="font-mono text-[10px] text-zinc-300">Session 9X-0042 encrypted via TLS 1.3</span>
+</div>
+<div class="flex gap-4">
+<span class="font-mono text-[10px] text-primary-fixed shrink-0">12:50:00</span>
+<span class="font-mono text-[10px] text-zinc-500 italic">Ping-pong keepalive success</span>
+</div>
+</div>
+</section>
+<!-- Visualization Aspect -->
+<div class="relative h-48 bg-surface-container-high overflow-hidden group">
+<img alt="infrastructure visualization" class="w-full h-full object-cover mix-blend-overlay opacity-30 grayscale group-hover:scale-105 transition-transform duration-1000" data-alt="Abstract cinematic view of glowing server racks in a dark data center with sharp red leading lights and futuristic industrial aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPVRXMKBHpzvEXfbxzPidUShxXht_3ewC_gFc9OFXaUhHBEcWgswfqnLL6MkvytP4KQI6TeevL1K-4KYz_9JIr8M986bHdo0nJLacYfQz13wiTYirF7qXcxkQS_VoLkHYyNfmEmysPbA57jxHeLb3AmGoJyj5xqs1y28FvESt6gE_0zSGGK1qP4DPmByIA0XWAe2VrOixyxb2Pk_WQmt8XZrEq4vP1kaEjYZTLxC8K1gNSD6CFy-TvQoXpzXGuKGojE00BcGfH4j8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<span class="font-mono text-[10px] text-white bg-black/50 px-2 py-1">INFRASTRUCTURE_VIEW_01</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-stretch items-stretch h-16 bg-[#0e0e0e]">
+<a class="flex items-center justify-center text-zinc-600 p-4 w-1/4 hover:text-white hover:bg-[#1f1f1f] transition-all duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</a>
+<a class="flex items-center justify-center bg-white text-black p-4 w-1/4 transition-all duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+</a>
+<a class="flex items-center justify-center text-zinc-600 p-4 w-1/4 hover:text-white hover:bg-[#1f1f1f] transition-all duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+</a>
+<a class="flex items-center justify-center text-zinc-600 p-4 w-1/4 hover:text-white hover:bg-[#1f1f1f] transition-all duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</nav>
+<!-- Contextual FAB (Hidden on this transactional setup screen as per rules) -->
+<!-- The FAB is suppressed because the user is in a focused configuration journey -->
+</body></html>

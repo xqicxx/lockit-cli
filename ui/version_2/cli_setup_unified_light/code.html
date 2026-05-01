@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CLI Setup (Unified Light)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface": "#f9f9f9",
+                "secondary-fixed-dim": "#ff8c54",
+                "surface-dim": "#dadada",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary-fixed": "#351000",
+                "surface-variant": "#e2e2e2",
+                "primary-container": "#3b3b3b",
+                "surface-tint": "#5e5e5e",
+                "on-secondary-fixed-variant": "#692600",
+                "secondary": "#a23f00",
+                "on-background": "#1b1b1b",
+                "surface-container": "#eeeeee",
+                "outline-variant": "#c6c6c6",
+                "secondary-container": "#ffc9b1",
+                "on-surface": "#1b1b1b",
+                "primary": "#000000",
+                "on-primary-container": "#ffffff",
+                "on-primary-fixed-variant": "#e2e2e2",
+                "on-tertiary-container": "#ffffff",
+                "primary-fixed": "#5e5e5e",
+                "tertiary-container": "#db3424",
+                "surface-bright": "#f9f9f9",
+                "inverse-on-surface": "#f1f1f1",
+                "on-surface-variant": "#474747",
+                "error-container": "#ffdad6",
+                "surface-container-highest": "#e2e2e2",
+                "inverse-primary": "#c6c6c6",
+                "on-tertiary-fixed-variant": "#ffdad4",
+                "error": "#ba1a1a",
+                "tertiary": "#7e0000",
+                "on-error": "#ffffff",
+                "on-tertiary-fixed": "#ffffff",
+                "outline": "#777777",
+                "on-primary-fixed": "#ffffff",
+                "on-error-container": "#410002",
+                "background": "#f9f9f9",
+                "surface-container-high": "#e8e8e8",
+                "surface-container-low": "#f3f3f3",
+                "on-secondary-container": "#351000",
+                "on-primary": "#e2e2e2",
+                "primary-fixed-dim": "#474747",
+                "on-tertiary": "#ffdad4",
+                "tertiary-fixed-dim": "#930000",
+                "tertiary-fixed": "#ba1a0f",
+                "inverse-surface": "#303030",
+                "secondary-fixed": "#ffb695",
+                "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                "DEFAULT": "0px",
+                "lg": "0px",
+                "xl": "0px",
+                "full": "9999px"
+            },
+            "fontFamily": {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .block-shadow { box-shadow: 2px 2px 0px 0px #000000; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface">
+<!-- TopAppBar -->
+<nav class="bg-white dark:bg-black text-black dark:text-white font-['Inter'] uppercase tracking-tighter font-bold text-sm docked full-width top-0 border-b border-black dark:border-white flex justify-between items-center w-full px-4 h-12 fixed z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] font-extrabold text-lg text-black dark:text-white">DEV_TERMINAL_V1</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-gray-500">OP_ID: 8821</span>
+</div>
+</nav>
+<main class="pt-20 pb-24 px-4 max-w-4xl mx-auto min-h-screen">
+<!-- Header Section -->
+<header class="mb-12 border-l-4 border-black pl-6 py-2">
+<h1 class="text-4xl font-extrabold tracking-tighter uppercase mb-2">CLI Setup</h1>
+<p class="text-on-surface-variant font-medium">Initialize the unified command-line interface for the core repository. Follow the step-by-step sequence below to authenticate and configure your local environment.</p>
+</header>
+<!-- Step 1 -->
+<section class="mb-12">
+<div class="flex items-start gap-4 mb-4">
+<div class="bg-black text-white w-8 h-8 flex items-center justify-center font-bold mono shrink-0">01</div>
+<div>
+<h2 class="text-xl font-bold uppercase tracking-tight">INSTALL CORE BINARIES</h2>
+<p class="text-sm text-on-surface-variant">Fetch the latest stable build from the central repo.</p>
+</div>
+</div>
+<div class="border border-black bg-primary-container p-4 overflow-x-auto block-shadow">
+<div class="flex justify-between items-center mb-2 border-b border-on-surface-variant pb-2">
+<span class="mono text-[10px] text-surface-variant uppercase font-bold tracking-widest">shell — bash</span>
+<button class="text-surface-variant hover:text-white flex items-center gap-1 transition-none">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+<span class="mono text-[10px] font-bold">COPY</span>
+</button>
+</div>
+<code class="mono text-sm leading-relaxed block whitespace-pre text-surface-variant">
+<span class="text-secondary-fixed-dim">curl</span> -sSL https://get.dev-terminal.v1 | <span class="text-tertiary-fixed">bash</span>
+<span class="text-gray-500"># verify installation</span>
+dev-v1 --version
+                </code>
+</div>
+</section>
+<!-- Step 2 -->
+<section class="mb-12">
+<div class="flex items-start gap-4 mb-4">
+<div class="bg-black text-white w-8 h-8 flex items-center justify-center font-bold mono shrink-0">02</div>
+<div>
+<h2 class="text-xl font-bold uppercase tracking-tight">AUTHENTICATION HANDSHAKE</h2>
+<p class="text-sm text-on-surface-variant">Bridge your session using the provided OP_ID key.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+<div class="border border-black bg-white p-6 block-shadow">
+<label class="block mono text-[10px] font-bold mb-2 text-black">ENTER API TOKEN</label>
+<div class="relative">
+<input class="w-full border border-black p-3 mono text-sm focus:outline-none focus:border-b-4 focus:border-secondary transition-none" placeholder="XXXX-XXXX-XXXX-XXXX" type="text"/>
+<div class="absolute right-3 top-3">
+<span class="material-symbols-outlined text-gray-400" data-icon="vpn_key">vpn_key</span>
+</div>
+</div>
+<button class="mt-4 w-full bg-black text-white font-bold py-3 uppercase text-sm hover:bg-white hover:text-black hover:border hover:border-black transition-none">INITIALIZE HANDSHAKE</button>
+</div>
+<div class="bg-surface-container-low border border-black p-4">
+<h3 class="mono text-[10px] font-extrabold mb-2 text-secondary uppercase tracking-widest">Security Warning</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                        Session keys are valid for 24 hours. Do not commit tokens to version control. Use environment variables for continuous integration workflows.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Step 3 -->
+<section class="mb-12">
+<div class="flex items-start gap-4 mb-4">
+<div class="bg-black text-white w-8 h-8 flex items-center justify-center font-bold mono shrink-0">03</div>
+<div>
+<h2 class="text-xl font-bold uppercase tracking-tight">CONFIG SYNC</h2>
+<p class="text-sm text-on-surface-variant">Align local parameters with the global config schema.</p>
+</div>
+</div>
+<div class="border border-black bg-primary-container p-4 overflow-x-auto block-shadow">
+<code class="mono text-sm leading-relaxed block whitespace-pre text-surface-variant">
+<span class="text-secondary-fixed-dim">dev-v1</span> config sync <span class="text-tertiary-fixed">--force</span>
+<span class="text-gray-500">&gt;&gt; Synchronizing local nodes...</span>
+<span class="text-gray-500">&gt;&gt; [SUCCESS] 12 nodes updated.</span>
+<span class="text-gray-500">&gt;&gt; [SUCCESS] Schema v2.1.4 applied.</span>
+</code>
+</div>
+</section>
+<!-- Action Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-16 border-t border-black pt-8">
+<div class="border border-black p-4 hover:bg-black hover:text-white transition-none group cursor-pointer">
+<span class="material-symbols-outlined mb-2 group-hover:text-secondary-fixed-dim" data-icon="description">description</span>
+<h4 class="font-bold text-xs uppercase mono">Documentation</h4>
+<p class="text-[10px] mt-1 opacity-70">Read detailed CLI flags and command references.</p>
+</div>
+<div class="border border-black p-4 hover:bg-black hover:text-white transition-none group cursor-pointer">
+<span class="material-symbols-outlined mb-2 group-hover:text-secondary-fixed-dim" data-icon="bug_report">bug_report</span>
+<h4 class="font-bold text-xs uppercase mono">Troubleshoot</h4>
+<p class="text-[10px] mt-1 opacity-70">Run self-diagnostic routines on local machine.</p>
+</div>
+<div class="border border-black p-4 hover:bg-black hover:text-white transition-none group cursor-pointer">
+<span class="material-symbols-outlined mb-2 group-hover:text-secondary-fixed-dim" data-icon="forum">forum</span>
+<h4 class="font-bold text-xs uppercase mono">Support</h4>
+<p class="text-[10px] mt-1 opacity-70">Direct bridge to regional tech operations.</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex h-16 justify-around items-stretch bg-white dark:bg-black text-black dark:text-white border-t border-black dark:border-white">
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">REPOS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white" href="#">
+<span class="material-symbols-outlined" data-icon="vpn_key">vpn_key</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">KEYS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">LOGS</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-black dark:bg-white text-white dark:text-black h-full w-full hover:bg-orange-600 hover:text-white" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">CONFIG</span>
+</a>
+</footer>
+</body></html>

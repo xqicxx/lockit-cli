@@ -1,0 +1,5 @@
+/target
+/lockit-desktop/node_modules
+/lockit-desktop/dist
+/lockit-desktop/src-tauri/target
+.DS_Store

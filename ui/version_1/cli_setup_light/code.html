@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lockit CLI Setup Guide</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-surface": "#303030",
+                    "on-surface": "#1b1b1b",
+                    "tertiary-container": "#db3424",
+                    "on-tertiary-fixed-variant": "#ffdad4",
+                    "on-tertiary": "#ffdad4",
+                    "outline-variant": "#c6c6c6",
+                    "on-primary": "#e2e2e2",
+                    "on-tertiary-fixed": "#ffffff",
+                    "tertiary": "#7e0000",
+                    "on-error": "#ffffff",
+                    "background": "#f9f9f9",
+                    "surface-variant": "#e2e2e2",
+                    "on-primary-fixed-variant": "#e2e2e2",
+                    "outline": "#777777",
+                    "primary-container": "#3b3b3b",
+                    "on-secondary-fixed": "#351000",
+                    "on-surface-variant": "#474747",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f3f3f3",
+                    "on-secondary-fixed-variant": "#692600",
+                    "tertiary-fixed": "#ba1a0f",
+                    "secondary-container": "#ffc9b1",
+                    "primary-fixed": "#5e5e5e",
+                    "surface-dim": "#dadada",
+                    "surface-bright": "#f9f9f9",
+                    "inverse-on-surface": "#f1f1f1",
+                    "inverse-primary": "#c6c6c6",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#ff8c54",
+                    "secondary": "#a23f00",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-secondary-container": "#351000",
+                    "on-primary-fixed": "#ffffff",
+                    "error": "#ba1a1a",
+                    "surface-container": "#eeeeee",
+                    "tertiary-fixed-dim": "#930000",
+                    "on-primary-container": "#ffffff",
+                    "primary-fixed-dim": "#474747",
+                    "surface-container-high": "#e8e8e8",
+                    "on-background": "#1b1b1b",
+                    "primary": "#000000",
+                    "surface": "#f9f9f9",
+                    "surface-tint": "#5e5e5e",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#ffb695",
+                    "on-error-container": "#410002",
+                    "on-tertiary-container": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { background-color: #f9f9f9; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body text-on-surface mb-20">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-black text-black dark:text-white font-['Inter'] uppercase tracking-tighter font-bold text-sm docked full-width top-0 border-b border-black dark:border-white border-b-1 flat no shadows flex justify-between items-center w-full px-4 h-12 sticky z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] font-extrabold text-lg text-black dark:text-white">DEV_TERMINAL_V1</span>
+</div>
+<div class="text-gray-500 font-mono">OP_ID: 8821</div>
+</header>
+<main class="p-4 max-w-2xl mx-auto">
+<!-- Hero Branding -->
+<section class="mt-8 mb-12 border-l-4 border-primary pl-4">
+<h1 class="text-4xl font-extrabold tracking-tighter uppercase mb-2">Lockit</h1>
+<p class="font-mono text-xs uppercase text-secondary font-bold tracking-widest">Protocol Version 4.0.2 // Deployment Guide</p>
+</section>
+<!-- Step 01 -->
+<div class="mb-16">
+<div class="flex items-baseline gap-4 mb-4">
+<span class="font-mono text-4xl font-extrabold text-primary">01</span>
+<h2 class="font-headline font-bold text-xl uppercase tracking-tight">Binary Deployment</h2>
+</div>
+<div class="bg-primary-container p-6 border-2 border-black relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-2 opacity-20">
+<span class="material-symbols-outlined text-6xl text-white" data-icon="download">download</span>
+</div>
+<p class="font-mono text-white text-xs mb-4 uppercase opacity-70">Execute in root directory:</p>
+<code class="font-mono text-sm block leading-relaxed">
+<span class="text-secondary">$</span> <span class="text-white">curl -sSfL https://lockit.io/install.sh | sh</span><br/>
+<span class="text-secondary">$</span> <span class="text-white">mv ./lockit /usr/local/bin/</span><br/>
+<span class="text-secondary">$</span> <span class="text-white">chmod +x /usr/local/bin/lockit</span>
+</code>
+</div>
+<p class="mt-4 text-sm font-body text-on-surface-variant">Ensure your architecture matches the specified binary requirements before proceeding with the move command.</p>
+</div>
+<!-- Step 02 -->
+<div class="mb-16">
+<div class="flex items-baseline gap-4 mb-4">
+<span class="font-mono text-4xl font-extrabold text-primary">02</span>
+<h2 class="font-headline font-bold text-xl uppercase tracking-tight">Auth Handshake</h2>
+</div>
+<div class="bg-primary-container p-6 border-2 border-black">
+<p class="font-mono text-white text-xs mb-4 uppercase opacity-70">Initialize secure session:</p>
+<code class="font-mono text-sm block leading-relaxed">
+<span class="text-secondary">$</span> <span class="text-white">lockit login</span><br/>
+<span class="text-secondary-fixed">&gt;&gt;</span> <span class="text-white">Enter Org ID: </span><span class="bg-secondary px-1 text-white">_</span><br/>
+<span class="text-secondary-fixed">&gt;&gt;</span> <span class="text-white">Awaiting WebSocket Handshake...</span><br/>
+<span class="text-white">[</span><span class="text-secondary">SUCCESS</span><span class="text-white">] Session established with Node 08.</span>
+</code>
+</div>
+<div class="mt-4 p-4 border border-black bg-surface-container-low">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary" data-icon="warning" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-mono font-bold text-xs uppercase">Security Advisory</span>
+</div>
+<p class="text-[11px] font-mono text-on-surface leading-tight">HANDSHAKE TIMEOUT IS SET TO 300 SECONDS. RE-INITIALIZE IF SESSION EXPIRES BEFORE STEP 03 COMPLETION.</p>
+</div>
+</div>
+<!-- Step 03 -->
+<div class="mb-20">
+<div class="flex items-baseline gap-4 mb-4">
+<span class="font-mono text-4xl font-extrabold text-primary">03</span>
+<h2 class="font-headline font-bold text-xl uppercase tracking-tight">Verification</h2>
+</div>
+<div class="bg-primary-container p-6 border-2 border-black">
+<p class="font-mono text-white text-xs mb-4 uppercase opacity-70">Confirm Node Health:</p>
+<code class="font-mono text-sm block leading-relaxed">
+<span class="text-secondary">$</span> <span class="text-white">lockit check-health --verbose</span><br/>
+<span class="text-white">LOCAL_NODE: </span><span class="text-secondary">ONLINE</span><br/>
+<span class="text-white">ENCRYPTION: </span><span class="text-secondary">AES-256-GCM</span><br/>
+<span class="text-white">LATENCY:    </span><span class="text-secondary">12ms</span><br/>
+<span class="text-white">STATUS:     </span><span class="text-secondary">READY_FOR_TRAFFIC</span>
+</code>
+</div>
+<div class="grid grid-cols-2 mt-4 gap-4">
+<div class="border border-black p-3 bg-white">
+<span class="font-mono text-[10px] uppercase text-outline">Encryption Keys</span>
+<div class="font-mono text-xs font-bold">SHA256: 88A...F01</div>
+</div>
+<div class="border border-black p-3 bg-white">
+<span class="font-mono text-[10px] uppercase text-outline">Node Identity</span>
+<div class="font-mono text-xs font-bold">US-EAST-1-C</div>
+</div>
+</div>
+</div>
+<!-- Final Action -->
+<section class="pb-24">
+<button class="w-full bg-primary text-white font-headline font-bold py-6 uppercase tracking-widest text-lg hover:bg-white hover:text-black border-2 border-primary transition-colors flex items-center justify-center gap-3">
+                Finalize Installation
+                <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<p class="text-center font-mono text-[10px] uppercase text-outline mt-4">By finalizing, you agree to the Lockit Master Services Agreement v1.2</p>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex h-16 justify-around items-stretch bg-white dark:bg-black border-t border-black dark:border-white flat no shadows">
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">REPOS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white" href="#">
+<span class="material-symbols-outlined" data-icon="vpn_key">vpn_key</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">KEYS</span>
+</a>
+<div class="flex flex-col items-center justify-center bg-black dark:bg-white text-white dark:text-black h-full w-full border-r border-black last:border-r-0">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">LOGS</span>
+</div>
+<a class="flex flex-col items-center justify-center text-black dark:text-white h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">CONFIG</span>
+</a>
+</nav>
+</body></html>

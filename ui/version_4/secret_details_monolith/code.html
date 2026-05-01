@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#b52619",
+                    "on-tertiary-fixed": "#ffffff",
+                    "on-primary-container": "#000000",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "secondary-container": "#454747",
+                    "primary": "#ffffff",
+                    "secondary-fixed-dim": "#aaabab",
+                    "background": "#131313",
+                    "on-primary": "#410000",
+                    "error-container": "#93000a",
+                    "on-primary-fixed-variant": "#ffdad4",
+                    "on-error": "#690005",
+                    "surface-bright": "#393939",
+                    "surface-container": "#1f1f1f",
+                    "surface-container-highest": "#353535",
+                    "tertiary-container": "#929090",
+                    "on-surface": "#e2e2e2",
+                    "outline": "#919191",
+                    "surface-container-high": "#2a2a2a",
+                    "primary-fixed": "#b52619",
+                    "on-tertiary-container": "#000000",
+                    "on-error-container": "#ffdad6",
+                    "surface": "#131313",
+                    "inverse-surface": "#e2e2e2",
+                    "error": "#ffb4ab",
+                    "primary-fixed-dim": "#920703",
+                    "surface-container-low": "#1b1b1b",
+                    "surface-variant": "#353535",
+                    "surface-tint": "#ffb4a8",
+                    "on-primary-fixed": "#ffffff",
+                    "on-background": "#e2e2e2",
+                    "tertiary-fixed-dim": "#474746",
+                    "on-secondary": "#1a1c1c",
+                    "on-surface-variant": "#c6c6c6",
+                    "on-tertiary": "#1c1b1b",
+                    "tertiary": "#e5e2e1",
+                    "primary-container": "#ffc7bf",
+                    "on-secondary-fixed-variant": "#3a3c3c",
+                    "on-tertiary-fixed-variant": "#e5e2e1",
+                    "secondary": "#c6c6c7",
+                    "tertiary-fixed": "#5f5e5e",
+                    "surface-container-lowest": "#0e0e0e",
+                    "outline-variant": "#474747",
+                    "surface-dim": "#131313",
+                    "inverse-on-surface": "#303030",
+                    "secondary-fixed": "#c6c6c7",
+                    "on-secondary-container": "#e2e2e2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #131313;
+            color: #e2e2e2;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body selection:bg-primary-fixed selection:text-white">
+<!-- TopAppBar -->
+<header class="bg-[#131313] dark:bg-[#131313] docked full-width top-0 border-b-0 flex justify-between items-center w-full px-6 py-4 sticky z-50">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-white" data-icon="terminal">terminal</span>
+<h1 class="text-xl font-black text-white tracking-widest font-['Inter'] uppercase">LOCKIT</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:bg-[#353535] transition-colors duration-75 px-3 py-2" href="#">VAULTS</a>
+<a class="font-label text-[10px] uppercase tracking-widest text-white px-3 py-2" href="#">SECRETS</a>
+<a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:bg-[#353535] transition-colors duration-75 px-3 py-2" href="#">AUDIT</a>
+<a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:bg-[#353535] transition-colors duration-75 px-3 py-2" href="#">SETTINGS</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" data-icon="person">person</span>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 pt-12 pb-24">
+<!-- Navigation Breadcrumb -->
+<div class="mb-12 flex items-center gap-4">
+<span class="font-label text-[10px] uppercase tracking-widest text-zinc-500">ROOT / PRODUCTION /</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-white">OPENAI API KEY</span>
+</div>
+<!-- Header Section: Asymmetric Title & Metadata -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16 items-end">
+<div class="md:col-span-8">
+<h2 class="text-5xl md:text-7xl font-black tracking-tighter text-white uppercase mb-4">OpenAI API Key</h2>
+<p class="text-zinc-500 max-w-xl font-body text-sm leading-relaxed">
+                    Primary authentication token for the production GPT-4o inference cluster. Created by Infrastructure Service Mesh on 2024-03-12.
+                </p>
+</div>
+<div class="md:col-span-4 flex flex-col items-start md:items-end gap-2">
+<div class="text-right">
+<p class="font-label text-[10px] text-zinc-600 uppercase mb-1">Status</p>
+<div class="inline-flex items-center gap-2 bg-white/5 px-3 py-1">
+<div class="w-1.5 h-1.5 bg-green-500"></div>
+<span class="font-label text-xs text-white uppercase">ACTIVE_DEPOLYED</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content Canvas -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-1 px-1 bg-outline-variant/20">
+<!-- Secret Display Area -->
+<div class="lg:col-span-8 bg-surface p-8">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-label text-[10px] uppercase tracking-[0.2em] text-zinc-500">Secret Value</h3>
+<button class="flex items-center gap-2 text-white hover:text-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+<span class="font-label text-[10px] uppercase tracking-widest">Copy Raw</span>
+</button>
+</div>
+<!-- Large Code Block -->
+<div class="bg-surface-container-lowest p-10 relative group border-l-4 border-primary-fixed">
+<div class="flex flex-col gap-4 overflow-hidden">
+<code class="font-label text-xl md:text-2xl break-all text-zinc-700 tracking-tighter select-none">
+                            sk-proj-••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+                        </code>
+<div class="mt-8">
+<button class="bg-white text-on-primary-container px-6 py-3 font-label text-xs uppercase font-bold flex items-center gap-3 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="visibility">visibility</span>
+                                SHOW SECRET VALUE
+                            </button>
+</div>
+</div>
+<div class="absolute top-4 right-4 opacity-10">
+<span class="material-symbols-outlined text-6xl" data-icon="lock">lock</span>
+</div>
+</div>
+<!-- Audit Logs: Dense Tabular -->
+<div class="mt-20">
+<div class="flex items-center justify-between mb-8 border-b border-outline-variant/20 pb-4">
+<h3 class="font-label text-[10px] uppercase tracking-[0.2em] text-zinc-500">Audit Log History</h3>
+<span class="font-label text-[10px] text-zinc-600">Showing last 48 entries</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/20">
+<th class="py-4 font-label text-[10px] uppercase text-zinc-600 tracking-widest">Timestamp</th>
+<th class="py-4 font-label text-[10px] uppercase text-zinc-600 tracking-widest">Actor</th>
+<th class="py-4 font-label text-[10px] uppercase text-zinc-600 tracking-widest">Action</th>
+<th class="py-4 font-label text-[10px] uppercase text-zinc-600 tracking-widest">Origin</th>
+</tr>
+</thead>
+<tbody class="font-label text-[11px]">
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low transition-colors">
+<td class="py-4 text-primary-fixed">2023.10.24 14:02:11</td>
+<td class="py-4 text-zinc-400">svc_mesh_prod_01</td>
+<td class="py-4 text-white">DECRYPT_ACCESS</td>
+<td class="py-4 text-zinc-500">10.0.14.225</td>
+</tr>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low transition-colors">
+<td class="py-4 text-primary-fixed">2023.10.24 12:45:01</td>
+<td class="py-4 text-zinc-400">admin_jt_monolith</td>
+<td class="py-4 text-white">ROTATE_SECRET</td>
+<td class="py-4 text-zinc-500">203.0.113.12</td>
+</tr>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low transition-colors">
+<td class="py-4 text-primary-fixed">2023.10.24 09:12:55</td>
+<td class="py-4 text-zinc-400">svc_mesh_prod_01</td>
+<td class="py-4 text-white">DECRYPT_ACCESS</td>
+<td class="py-4 text-zinc-500">10.0.14.225</td>
+</tr>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low transition-colors">
+<td class="py-4 text-primary-fixed">2023.10.23 23:59:59</td>
+<td class="py-4 text-zinc-400">system_kernel</td>
+<td class="py-4 text-white">INTEGRITY_CHECK</td>
+<td class="py-4 text-zinc-500">localhost</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Metadata Sidebar -->
+<div class="lg:col-span-4 bg-surface-container-low p-8 flex flex-col gap-12 border-l border-outline-variant/20">
+<div>
+<h4 class="font-label text-[10px] uppercase tracking-widest text-zinc-500 mb-6">Properties</h4>
+<div class="space-y-6">
+<div>
+<span class="block font-label text-[9px] text-zinc-600 uppercase mb-1">UUID</span>
+<span class="block font-label text-xs text-white">8f2e-4b91-9c31-7d1a2c3b4e5f</span>
+</div>
+<div>
+<span class="block font-label text-[9px] text-zinc-600 uppercase mb-1">Encryption Algorithm</span>
+<span class="block font-label text-xs text-white uppercase">AES-256-GCM-HKDF</span>
+</div>
+<div>
+<span class="block font-label text-[9px] text-zinc-600 uppercase mb-1">KMS Provider</span>
+<span class="block font-label text-xs text-white uppercase">AWS_KMS_REGION_1</span>
+</div>
+</div>
+</div>
+<div class="pt-8 border-t border-outline-variant/20">
+<h4 class="font-label text-[10px] uppercase tracking-widest text-zinc-500 mb-6">Policy Constraints</h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-label text-xs text-zinc-400">Auto-Rotation</span>
+<span class="font-label text-xs text-white">90d</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label text-xs text-zinc-400">Multi-Factor Req.</span>
+<span class="font-label text-xs text-primary-fixed">ENABLED</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label text-xs text-zinc-400">Environment</span>
+<span class="font-label text-xs text-white">PRODUCTION</span>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-12">
+<button class="w-full bg-primary-fixed text-white font-label text-xs font-bold py-4 uppercase tracking-widest hover:bg-primary-fixed-dim transition-colors active:scale-[0.98]">
+                        REVOKE ACCESS
+                    </button>
+<p class="mt-4 font-label text-[9px] text-zinc-600 leading-tight">
+                        WARNING: Revoking access will immediately terminate all active sessions using this credential. This action is irreversible.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<footer class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-stretch items-stretch h-16 bg-surface-container-lowest border-t border-outline-variant">
+<a class="flex-1 flex items-center justify-center text-zinc-400 p-4 transition-all duration-100 ease-in-out hover:text-white hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</a>
+<a class="flex-1 flex items-center justify-center text-zinc-400 p-4 transition-all duration-100 ease-in-out hover:text-white hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center bg-primary-fixed text-white p-4 transition-all duration-100 ease-in-out border-t-2 border-primary-fixed" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</a>
+<a class="flex-1 flex items-center justify-center text-zinc-400 p-4 transition-all duration-100 ease-in-out hover:text-white hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</footer>
+</body></html>

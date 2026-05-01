@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LOCKIT // BIOMETRIC_HANDSHAKE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#ffffff",
+                        "tertiary": "#682800",
+                        "surface-dim": "#dadada",
+                        "tertiary-container": "#c45100",
+                        "inverse-surface": "#2f3131",
+                        "inverse-primary": "#c6c6c6",
+                        "on-surface-variant": "#474747",
+                        "secondary-fixed-dim": "#ff8a78",
+                        "surface-tint": "#5e5e5e",
+                        "surface": "#f9f9f9",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-fixed": "#410000",
+                        "surface-container-high": "#e8e8e8",
+                        "secondary-container": "#ffc7bf",
+                        "secondary": "#b52619",
+                        "on-tertiary": "#ffdbcc",
+                        "on-primary-container": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f9f9f9",
+                        "on-primary": "#e2e2e2",
+                        "on-secondary-container": "#410000",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "on-tertiary-fixed": "#ffffff",
+                        "on-error-container": "#410002",
+                        "tertiary-fixed": "#a04100",
+                        "outline": "#777777",
+                        "on-primary-fixed-variant": "#e2e2e2",
+                        "background": "#f9f9f9",
+                        "on-primary-fixed": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#5e5e5e",
+                        "on-secondary-fixed-variant": "#7e0000",
+                        "secondary-fixed": "#ffb4a8",
+                        "inverse-on-surface": "#f1f1f1",
+                        "outline-variant": "#c6c6c6",
+                        "primary": "#000000",
+                        "primary-fixed-dim": "#474747",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#3b3b3b",
+                        "on-tertiary-fixed-variant": "#ffdbcc",
+                        "tertiary-fixed-dim": "#7a3000",
+                        "on-background": "#1a1c1c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-grid {
+            background-image: radial-gradient(circle, #000 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body overflow-hidden">
+<!-- Blurred Dashboard Background -->
+<div class="fixed inset-0 z-0 blur-[8px] opacity-40 select-none pointer-events-none p-8">
+<header class="flex justify-between items-center mb-8 border-b border-black pb-4">
+<h1 class="font-['JetBrains_Mono'] font-extrabold text-2xl">LOCKIT_DASHBOARD_V4</h1>
+<div class="flex gap-4">
+<div class="w-12 h-12 border border-black bg-white"></div>
+<div class="w-12 h-12 border border-black bg-white"></div>
+</div>
+</header>
+<div class="grid grid-cols-3 gap-6">
+<div class="h-64 border border-black bg-surface-container flex flex-col p-4">
+<div class="w-full h-4 bg-black mb-4"></div>
+<div class="flex-grow bg-white border border-black"></div>
+</div>
+<div class="h-64 border border-black bg-surface-container flex flex-col p-4">
+<div class="w-full h-4 bg-black mb-4"></div>
+<div class="flex-grow bg-white border border-black"></div>
+</div>
+<div class="h-64 border border-black bg-surface-container flex flex-col p-4">
+<div class="w-full h-4 bg-black mb-4"></div>
+<div class="flex-grow bg-white border border-black"></div>
+</div>
+</div>
+<div class="mt-8 border border-black bg-surface-container p-6 h-96">
+<div class="grid grid-cols-4 gap-4">
+<div class="h-4 bg-black opacity-10"></div>
+<div class="h-4 bg-black opacity-10"></div>
+<div class="h-4 bg-black opacity-10"></div>
+<div class="h-4 bg-black opacity-10"></div>
+</div>
+</div>
+</div>
+<!-- Overlay Scrim -->
+<div class="fixed inset-0 z-10 bg-black/5 backdrop-blur-sm"></div>
+<!-- Modal Container -->
+<div class="fixed inset-0 z-20 flex items-center justify-center p-4">
+<!-- The Modal -->
+<div class="w-full bg-white border border-black relative max-w-xs">
+<!-- Modal Header -->
+<div class="bg-black text-white px-4 h-10 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<svg class="inline-block" fill="none" height="18" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="9" stroke="white" stroke-dasharray="50 6" stroke-width="1"></circle>
+<path d="M12 7V12L15 15" stroke="#E53935" stroke-linecap="round" stroke-width="1.5"></path>
+</svg>
+<span class="font-['JetBrains_Mono'] text-xs font-bold tracking-widest uppercase">BIOMETRIC_HANDSHAKE</span>
+</div>
+<div class="flex gap-1">
+<div class="w-2 h-2 bg-white/20"></div>
+<div class="w-2 h-2 bg-white/40"></div>
+<div class="w-2 h-2 bg-white"></div>
+</div>
+</div>
+<!-- Content Body -->
+<div class="p-6 flex flex-col items-center text-center relative overflow-hidden">
+<!-- Background Decoration (Grid) -->
+<div class="absolute inset-0 bg-grid pointer-events-none"></div>
+<!-- Main Icon -->
+<div class="mb-8 relative">
+<div class="absolute -inset-4 border border-secondary opacity-20"></div>
+<div class="w-24 h-24 flex items-center justify-center text-secondary border border-black bg-white">
+<span class="material-symbols-outlined !text-6xl" style="color: #E53935;">fingerprint</span>
+</div>
+</div>
+<!-- Status Text -->
+<div class="mb-2">
+<span class="font-['JetBrains_Mono'] text-lg font-bold text-black tracking-tighter uppercase">VERIFYING IDENTITY...</span>
+</div>
+<!-- ID Hash / Meta -->
+<div class="mb-10 px-4 py-1 bg-surface-container border border-outline-variant">
+<span class="font-['JetBrains_Mono'] text-[10px] text-outline font-medium tracking-tight">SESSION_TOKEN: 0x8821_LOCKIT_AUTH_ALPHA</span>
+</div>
+<!-- Action Button -->
+<button class="w-full py-3 border border-black bg-white hover:bg-black hover:text-white transition-none group flex items-center justify-center gap-2"><span class="font-['JetBrains_Mono'] text-[10px] font-bold tracking-widest uppercase">TERMINATE_PROCEDURE</span>
+<span class="material-symbols-outlined text-[14px] group-hover:invert">close</span></button>
+</div>
+<!-- Status Bar (Design System: Component) -->
+<div class="h-8 bg-black flex items-center justify-between px-4">
+<div class="flex items-center gap-2">
+<!-- Status Light -->
+<div class="w-2 h-2 rounded-full animate-pulse" style="background-color: #CC5500;"></div>
+<span class="font-['JetBrains_Mono'] text-[10px] text-[#CC5500] font-bold uppercase">AWAITING_INPUT</span>
+</div>
+<span class="font-['JetBrains_Mono'] text-[10px] text-white/50 font-bold uppercase">OP_ID: 8821</span>
+</div>
+<!-- Shadow Mimic (Brutalist Depth) -->
+<div class="absolute -right-2 -bottom-2 w-full h-full border-r border-b border-black -z-10 pointer-events-none"></div>
+</div>
+</div>
+<!-- Top Navigation (Shared Component Integration) -->
+<nav class="fixed top-0 left-0 w-full z-30 px-4 h-12 bg-white border-b border-black flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-black">terminal</span>
+<span class="font-['JetBrains_Mono'] font-extrabold text-lg text-black">DEV_TERMINAL_V1</span>
+</div>
+<div class="font-['Inter'] uppercase tracking-tighter font-bold text-sm text-black">
+            OP_ID: 8821
+        </div>
+</nav>
+<!-- Bottom Nav (Shared Component Integration) -->
+<nav class="fixed bottom-0 left-0 w-full z-30 flex h-16 justify-around items-stretch bg-white border-t border-black">
+<div class="flex flex-col items-center justify-center bg-black text-white h-full w-full">
+<span class="material-symbols-outlined">database</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">REPOS</span>
+</div>
+<div class="flex flex-col items-center justify-center text-black h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none cursor-not-allowed opacity-50">
+<span class="material-symbols-outlined">vpn_key</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">KEYS</span>
+</div>
+<div class="flex flex-col items-center justify-center text-black h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none cursor-not-allowed opacity-50">
+<span class="material-symbols-outlined">terminal</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">LOGS</span>
+</div>
+<div class="flex flex-col items-center justify-center text-black h-full w-full border-r border-black last:border-r-0 hover:bg-orange-600 hover:text-white transition-none cursor-not-allowed opacity-50">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['JetBrains_Mono'] text-[10px] font-bold uppercase">CONFIG</span>
+</div>
+</nav>
+</body></html>

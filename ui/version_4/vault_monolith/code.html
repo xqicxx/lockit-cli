@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LOCKIT | Secrets Vault</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@300;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#b52619",
+                    "on-tertiary-fixed": "#ffffff",
+                    "on-primary-container": "#000000",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "secondary-container": "#454747",
+                    "primary": "#ffffff",
+                    "secondary-fixed-dim": "#aaabab",
+                    "background": "#131313",
+                    "on-primary": "#410000",
+                    "error-container": "#93000a",
+                    "on-primary-fixed-variant": "#ffdad4",
+                    "on-error": "#690005",
+                    "surface-bright": "#393939",
+                    "surface-container": "#1f1f1f",
+                    "surface-container-highest": "#353535",
+                    "tertiary-container": "#929090",
+                    "on-surface": "#e2e2e2",
+                    "outline": "#919191",
+                    "surface-container-high": "#2a2a2a",
+                    "primary-fixed": "#b52619",
+                    "on-tertiary-container": "#000000",
+                    "on-error-container": "#ffdad6",
+                    "surface": "#131313",
+                    "inverse-surface": "#e2e2e2",
+                    "error": "#ffb4ab",
+                    "primary-fixed-dim": "#920703",
+                    "surface-container-low": "#1b1b1b",
+                    "surface-variant": "#353535",
+                    "surface-tint": "#ffb4a8",
+                    "on-primary-fixed": "#ffffff",
+                    "on-background": "#e2e2e2",
+                    "tertiary-fixed-dim": "#474746",
+                    "on-secondary": "#1a1c1c",
+                    "on-surface-variant": "#c6c6c6",
+                    "on-tertiary": "#1c1b1b",
+                    "tertiary": "#e5e2e1",
+                    "primary-container": "#ffc7bf",
+                    "on-secondary-fixed-variant": "#3a3c3c",
+                    "on-tertiary-fixed-variant": "#e5e2e1",
+                    "secondary": "#c6c6c7",
+                    "tertiary-fixed": "#5f5e5e",
+                    "surface-container-lowest": "#0e0e0e",
+                    "outline-variant": "#474747",
+                    "surface-dim": "#131313",
+                    "inverse-on-surface": "#303030",
+                    "secondary-fixed": "#c6c6c7",
+                    "on-secondary-container": "#e2e2e2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        body {
+            background-color: #131313;
+            color: #e2e2e2;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-[#131313] flex justify-between items-center px-6 py-4 border-b-0">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-white" data-icon="terminal">terminal</span>
+<h1 class="font-['Inter'] font-black tracking-tighter uppercase text-xl text-white">LOCKIT</h1>
+</div>
+<div class="hidden md:flex gap-8">
+<a class="font-label text-xs uppercase tracking-widest text-white transition-colors duration-75" href="#">Vault</a>
+<a class="font-label text-xs uppercase tracking-widest text-zinc-500 hover:bg-[#353535] transition-colors duration-75 px-2 py-1" href="#">Identity</a>
+<a class="font-label text-xs uppercase tracking-widest text-zinc-500 hover:bg-[#353535] transition-colors duration-75 px-2 py-1" href="#">Nodes</a>
+<a class="font-label text-xs uppercase tracking-widest text-zinc-500 hover:bg-[#353535] transition-colors duration-75 px-2 py-1" href="#">Audit</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-label text-[10px] text-zinc-500 uppercase tracking-tighter">System: Stable</span>
+<div class="w-2 h-2 bg-white animate-pulse"></div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 md:px-12 max-w-7xl mx-auto">
+<!-- Hero / Header Section -->
+<section class="mb-16 grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
+<div class="md:col-span-8">
+<span class="font-label text-xs uppercase tracking-[0.3em] text-primary-fixed mb-4 block">Secure Asset Management</span>
+<h2 class="text-5xl md:text-7xl font-black tracking-tighter text-white uppercase leading-[0.9]">Secrets<br/>Vault</h2>
+</div>
+<div class="md:col-span-4 flex flex-col gap-2 bg-surface-container-lowest p-6 border-l-2 border-primary-fixed">
+<p class="font-label text-[10px] uppercase text-zinc-500">Active Session ID</p>
+<p class="font-label text-xs text-white">X-4492-00-LKIT-PROD</p>
+<div class="mt-4 flex gap-2">
+<button class="bg-primary text-on-primary font-black px-4 py-2 text-xs uppercase tracking-widest hover:bg-zinc-200 transition-colors">Generate New</button>
+</div>
+</div>
+</section>
+<!-- Filter Tabs -->
+<nav class="flex gap-12 border-b border-outline-variant/20 mb-12 overflow-x-auto hide-scrollbar">
+<button class="pb-4 border-b-2 border-white text-white font-label text-sm uppercase tracking-widest">APIs</button>
+<button class="pb-4 border-b-2 border-transparent text-zinc-500 font-label text-sm uppercase tracking-widest hover:text-white transition-all">Passwords</button>
+<button class="pb-4 border-b-2 border-transparent text-zinc-500 font-label text-sm uppercase tracking-widest hover:text-white transition-all">Cookies</button>
+<button class="pb-4 border-b-2 border-transparent text-zinc-500 font-label text-sm uppercase tracking-widest hover:text-white transition-all">SSH Keys</button>
+</nav>
+<!-- Secrets List -->
+<section class="space-y-4">
+<!-- Header Row -->
+<div class="hidden md:grid grid-cols-12 px-4 py-2 font-label text-[10px] uppercase tracking-widest text-zinc-500">
+<div class="col-span-4">Identifier</div>
+<div class="col-span-4">Value</div>
+<div class="col-span-2">Created</div>
+<div class="col-span-2 text-right">Actions</div>
+</div>
+<!-- Secret Entry 1 -->
+<div class="grid grid-cols-1 md:grid-cols-12 items-center bg-surface-container-lowest hover:bg-surface-container transition-colors group">
+<div class="col-span-4 p-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="key">key</span>
+<div>
+<p class="text-white font-bold text-sm tracking-tight">AWS_PROD_ACCESS_KEY</p>
+<p class="font-label text-[10px] text-zinc-600">arn:aws:iam::0123456789:root</p>
+</div>
+</div>
+<div class="col-span-4 p-4 font-label text-sm tracking-widest text-white">
+                    ••••••••••••••••A9X2
+                </div>
+<div class="col-span-2 p-4 font-label text-[10px] text-zinc-500 uppercase">
+                    2023-10-24 14:02
+                </div>
+<div class="col-span-2 p-4 flex justify-end gap-2">
+<button class="bg-surface-container-highest text-white p-2 hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="bg-surface-container-highest text-white px-3 py-2 font-label text-[10px] uppercase tracking-widest hover:bg-primary-fixed transition-colors">
+                        Copy CLI
+                    </button>
+</div>
+</div>
+<!-- Secret Entry 2 -->
+<div class="grid grid-cols-1 md:grid-cols-12 items-center bg-surface-container-lowest hover:bg-surface-container transition-colors group">
+<div class="col-span-4 p-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="database">database</span>
+<div>
+<p class="text-white font-bold text-sm tracking-tight">POSTGRES_MASTER_PASS</p>
+<p class="font-label text-[10px] text-zinc-600">db-cluster-01.internal</p>
+</div>
+</div>
+<div class="col-span-4 p-4 font-label text-sm tracking-widest text-white">
+                    ••••••••••••••••••••
+                </div>
+<div class="col-span-2 p-4 font-label text-[10px] text-zinc-500 uppercase">
+                    2023-11-02 09:44
+                </div>
+<div class="col-span-2 p-4 flex justify-end gap-2">
+<button class="bg-surface-container-highest text-white p-2 hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="bg-surface-container-highest text-white px-3 py-2 font-label text-[10px] uppercase tracking-widest hover:bg-primary-fixed transition-colors">
+                        Copy CLI
+                    </button>
+</div>
+</div>
+<!-- Secret Entry 3 -->
+<div class="grid grid-cols-1 md:grid-cols-12 items-center bg-surface-container-lowest hover:bg-surface-container transition-colors group">
+<div class="col-span-4 p-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="api">api</span>
+<div>
+<p class="text-white font-bold text-sm tracking-tight">STRIPE_SECRET_LIVE</p>
+<p class="font-label text-[10px] text-zinc-600">sk_live_51Mzc...</p>
+</div>
+</div>
+<div class="col-span-4 p-4 font-label text-sm tracking-widest text-white">
+                    ••••••••••••••••4H77
+                </div>
+<div class="col-span-2 p-4 font-label text-[10px] text-zinc-500 uppercase">
+                    2024-01-15 11:20
+                </div>
+<div class="col-span-2 p-4 flex justify-end gap-2">
+<button class="bg-surface-container-highest text-white p-2 hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="bg-surface-container-highest text-white px-3 py-2 font-label text-[10px] uppercase tracking-widest hover:bg-primary-fixed transition-colors">
+                        Copy CLI
+                    </button>
+</div>
+</div>
+<!-- Secret Entry 4 -->
+<div class="grid grid-cols-1 md:grid-cols-12 items-center bg-surface-container-lowest hover:bg-surface-container transition-colors group border-l-2 border-primary-fixed-dim">
+<div class="col-span-4 p-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="security">security</span>
+<div>
+<p class="text-white font-bold text-sm tracking-tight">ENCRYPTION_SALT_V2</p>
+<p class="font-label text-[10px] text-zinc-600">global-shard-core</p>
+</div>
+</div>
+<div class="col-span-4 p-4 font-label text-sm tracking-widest text-white">
+                    ••••••••••••••••••••
+                </div>
+<div class="col-span-2 p-4 font-label text-[10px] text-zinc-500 uppercase">
+                    2024-02-01 16:15
+                </div>
+<div class="col-span-2 p-4 flex justify-end gap-2">
+<button class="bg-surface-container-highest text-white p-2 hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="bg-surface-container-highest text-white px-3 py-2 font-label text-[10px] uppercase tracking-widest hover:bg-primary-fixed transition-colors">
+                        Copy CLI
+                    </button>
+</div>
+</div>
+</section>
+<!-- Technical Metadata Aside (Asymmetric Layout) -->
+<aside class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="p-6 bg-surface-container-low">
+<p class="font-label text-[10px] uppercase tracking-widest text-zinc-500 mb-4">Integrity Report</p>
+<div class="h-1 w-full bg-zinc-800 mb-4">
+<div class="h-full bg-white w-3/4"></div>
+</div>
+<p class="text-xs text-white">99.98% Secret Entropy Verified</p>
+</div>
+<div class="p-6 bg-surface-container-low md:col-span-2 flex flex-col justify-between">
+<div>
+<p class="font-label text-[10px] uppercase tracking-widest text-zinc-500 mb-4">Security Notice</p>
+<p class="text-sm leading-relaxed text-zinc-400">All access attempts are logged via hardware security modules (HSM). Misuse of CLI commands results in immediate token revocation.</p>
+</div>
+<div class="mt-8 flex justify-between items-center">
+<p class="font-label text-[10px] text-primary-fixed uppercase tracking-widest">Emergency Shutdown Protocol Enabled</p>
+<span class="material-symbols-outlined text-primary-fixed text-sm" data-icon="bolt">bolt</span>
+</div>
+</div>
+</aside>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-stretch items-stretch h-16 bg-[#0E0E0E]">
+<a class="flex-1 flex items-center justify-center bg-white text-black p-4 transition-all duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</a>
+<a class="flex-1 flex items-center justify-center text-zinc-600 p-4 hover:text-white hover:bg-[#1F1F1F] transition-all duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+</a>
+<a class="flex-1 flex items-center justify-center text-zinc-600 p-4 hover:text-white hover:bg-[#1F1F1F] transition-all duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+</a>
+<a class="flex-1 flex items-center justify-center text-zinc-600 p-4 hover:text-white hover:bg-[#1F1F1F] transition-all duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</nav>
+</body></html>

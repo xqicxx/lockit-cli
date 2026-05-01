@@ -59,7 +59,7 @@ pub fn list(paths: &VaultPaths, password: Option<String>) -> anyhow::Result<()> 
         .map(|c| {
             let provider = c
                 .fields
-                .get("PROVIDER")
+                .get("provider")
                 .cloned()
                 .unwrap_or_else(|| String::from("—"));
             CodingPlanRow {
@@ -102,7 +102,7 @@ pub fn refresh(
             .filter(|c| c.r#type == CredentialType::CodingPlan)
             .filter(|c| {
                 if let Some(ref filter) = provider_filter {
-                    let prov = c.fields.get("PROVIDER").map(|s| s.as_str()).unwrap_or("");
+                    let prov = c.fields.get("provider").map(|s| s.as_str()).unwrap_or("");
                     prov.to_ascii_lowercase().contains(&filter.to_ascii_lowercase())
                 } else {
                     true
@@ -122,7 +122,7 @@ pub fn refresh(
 
     for info in &cp_infos {
         // Reveal needed fields
-        let api_key = match session.reveal_secret(&info.id, "API_KEY") {
+        let api_key = match session.reveal_secret(&info.id, "api_key") {
             Ok(v) => v,
             Err(e) => {
                 output::error(&format!("{}: could not read API_KEY: {}", info.name, e));
@@ -132,13 +132,13 @@ pub fn refresh(
 
         let provider_field =
             session
-                .reveal_secret(&info.id, "PROVIDER")
+                .reveal_secret(&info.id, "provider")
                 .unwrap_or_default();
         let cookie = session
-            .reveal_secret(&info.id, "COOKIE")
+            .reveal_secret(&info.id, "cookie")
             .unwrap_or_default();
         let base_url = session
-            .reveal_secret(&info.id, "BASE_URL")
+            .reveal_secret(&info.id, "base_url")
             .unwrap_or_default();
 
         // Resolve provider

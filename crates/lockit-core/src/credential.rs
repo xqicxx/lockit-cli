@@ -86,7 +86,7 @@ impl CredentialType {
     }
 
     pub fn required_field_indices(&self) -> Vec<usize> {
-        crate::credential_field::TypeFieldMap::fields_for(self)
+        crate::credential_field::credential_fields_for(self)
             .iter()
             .enumerate()
             .filter_map(|(i, f)| f.required.then_some(i))

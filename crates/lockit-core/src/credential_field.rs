@@ -1,133 +1,154 @@
 use crate::credential::CredentialType;
 
+static SERVICE_PRESETS: &[&str] = &[
+    "google", "github", "openai", "anthropic", "aws", "vercel", "stripe", "netlify",
+    "cloudflare", "alibaba", "tencent",
+];
+
+static CODING_PLAN_PROVIDERS: &[&str] = &[
+    "openai", "chatgpt", "anthropic", "claude", "google", "deepseek",
+    "moonshot", "minimax", "glm", "qwen", "qwen_bailian", "xiaomi_mimo",
+];
+
+static CODING_PLAN_BASE_URLS: &[&str] = &[
+    "https://api.openai.com", "https://api.anthropic.com",
+    "https://api.deepseek.com", "https://dashscope.aliyuncs.com",
+];
+
+static GITHUB_TOKEN_TYPES: &[&str] = &["PAT", "SSH", "OAuth", "GitHub App"];
+static GITHUB_SCOPES: &[&str] = &["repo", "read:org", "workflow"];
+static REGION_PRESETS: &[&str] = &["CN", "US", "JP", "KR", "SG"];
+static BANK_PRESETS: &[&str] = &["ICBC", "BOC", "CMB", "CCB", "ABC"];
+static EMAIL_SERVICE_PRESETS: &[&str] = &["gmail", "outlook", "qq", "163", "protonmail"];
+static KEY_TYPE_PRESETS: &[&str] = &["ed25519", "rsa-4096"];
+static WEBHOOK_SERVICE_PRESETS: &[&str] = &["github", "stripe", "vercel"];
+static DB_PRESETS: &[&str] = &["postgres", "mysql", "mongo", "redis"];
+
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CredentialFieldDef {
-    pub label: String,
-    pub placeholder: String,
+pub struct CredentialField {
+    pub label: &'static str,
+    pub placeholder: &'static str,
     pub required: bool,
-    pub is_dropdown: bool,
-    pub presets: Vec<String>,
+    pub presets: &'static [&'static str],
 }
 
-pub struct TypeFieldMap;
-
-impl TypeFieldMap {
-    pub fn fields_for(ct: &CredentialType) -> Vec<CredentialFieldDef> {
-        match ct {
-            CredentialType::ApiKey => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. OPENAI_API_KEY".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. openai, anthropic...".into(), required: false, is_dropdown: true, presets: service_presets() },
-                CredentialFieldDef { label: "KEY_IDENTIFIER".into(), placeholder: "e.g. default, production...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SECRET_VALUE".into(), placeholder: "Paste or enter the secret...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::GitHub => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. GITHUB_TOKEN".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "TOKEN_TYPE".into(), placeholder: "Select token type".into(), required: false, is_dropdown: true, presets: vec!["PAT".into(), "SSH".into(), "OAuth".into(), "GitHub App".into()] },
-                CredentialFieldDef { label: "ACCOUNT".into(), placeholder: "GitHub username".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "TOKEN_VALUE".into(), placeholder: "Paste token or SSH key...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SCOPE".into(), placeholder: "Select scopes".into(), required: false, is_dropdown: true, presets: vec!["repo".into(), "read:org".into(), "workflow".into()] },
-            ],
-            CredentialType::Account => vec![
-                CredentialFieldDef { label: "USERNAME".into(), placeholder: "Enter username...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. google, github...".into(), required: false, is_dropdown: true, presets: service_presets() },
-                CredentialFieldDef { label: "EMAIL".into(), placeholder: "Associated email".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "PASSWORD".into(), placeholder: "Enter password...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::CodingPlan => vec![
-                CredentialFieldDef { label: "PROVIDER".into(), placeholder: "Select provider".into(), required: false, is_dropdown: true, presets: vec!["openai".into(), "chatgpt".into(), "anthropic".into(), "claude".into(), "google".into(), "deepseek".into(), "moonshot".into(), "minimax".into(), "glm".into(), "qwen".into(), "qwen_bailian".into(), "xiaomi_mimo".into()] },
-                CredentialFieldDef { label: "RAW_CURL".into(), placeholder: "Paste curl command (auto-extracts)...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "API_KEY".into(), placeholder: "Paste your API key here...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "COOKIE".into(), placeholder: "Bailian console cookie...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "BASE_URL".into(), placeholder: "Select base URL".into(), required: true, is_dropdown: true, presets: vec!["https://api.openai.com".into(), "https://api.anthropic.com".into(), "https://api.deepseek.com".into(), "https://dashscope.aliyuncs.com".into()] },
-            ],
-            CredentialType::Password => vec![
-                CredentialFieldDef { label: "PASSWORD_LABEL".into(), placeholder: "Enter password...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. google, github...".into(), required: false, is_dropdown: true, presets: service_presets() },
-                CredentialFieldDef { label: "USERNAME".into(), placeholder: "Associated username".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "PASSWORD_VALUE".into(), placeholder: "Enter password again...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::Phone => vec![
-                CredentialFieldDef { label: "REGION".into(), placeholder: "Select region".into(), required: false, is_dropdown: true, presets: vec!["CN".into(), "US".into(), "JP".into(), "KR".into(), "SG".into()] },
-                CredentialFieldDef { label: "PHONE_NUMBER".into(), placeholder: "138 0000 0000".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "NOTE".into(), placeholder: "e.g. delivery, work contact...".into(), required: false, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::BankCard => vec![
-                CredentialFieldDef { label: "CARD_NUMBER".into(), placeholder: "Card number...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "BANK".into(), placeholder: "e.g. ICBC, BOC...".into(), required: false, is_dropdown: true, presets: vec!["ICBC".into(), "BOC".into(), "CMB".into(), "CCB".into(), "ABC".into()] },
-                CredentialFieldDef { label: "CARDHOLDER".into(), placeholder: "Cardholder name...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "CVV_EXPIRY".into(), placeholder: "CVV or expiry".into(), required: false, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::Email => vec![
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "Select provider".into(), required: true, is_dropdown: true, presets: vec!["gmail".into(), "outlook".into(), "qq".into(), "163".into(), "protonmail".into()] },
-                CredentialFieldDef { label: "EMAIL_PREFIX".into(), placeholder: "e.g. john.doe".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "PASSWORD".into(), placeholder: "Password or app code...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "REGION".into(), placeholder: "Select region...".into(), required: false, is_dropdown: true, presets: vec!["CN".into(), "US".into(), "JP".into()] },
-                CredentialFieldDef { label: "STREET".into(), placeholder: "123 Main St".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "CITY".into(), placeholder: "New York".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "STATE_ZIP".into(), placeholder: "NY 10001".into(), required: false, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::Token => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. JWT_TOKEN".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. my-app...".into(), required: false, is_dropdown: true, presets: service_presets() },
-                CredentialFieldDef { label: "KEY_IDENTIFIER".into(), placeholder: "e.g. default, production...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "TOKEN_VALUE".into(), placeholder: "Paste token...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::SshKey => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. GITHUB_SSH".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. github, aws...".into(), required: false, is_dropdown: true, presets: service_presets() },
-                CredentialFieldDef { label: "KEY_IDENTIFIER".into(), placeholder: "e.g. ed25519, rsa-4096...".into(), required: false, is_dropdown: true, presets: vec!["ed25519".into(), "rsa-4096".into()] },
-                CredentialFieldDef { label: "PRIVATE_KEY".into(), placeholder: "Paste private key...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::WebhookSecret => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. GITHUB_WEBHOOK".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. github, stripe...".into(), required: false, is_dropdown: true, presets: vec!["github".into(), "stripe".into(), "vercel".into()] },
-                CredentialFieldDef { label: "HEADER_KEY".into(), placeholder: "e.g. X-Hub-Signature...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SECRET_VALUE".into(), placeholder: "Paste webhook secret...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::OAuthClient => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. GOOGLE_OAUTH".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. google, github...".into(), required: false, is_dropdown: true, presets: service_presets() },
-                CredentialFieldDef { label: "CLIENT_ID".into(), placeholder: "Enter client ID...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "CLIENT_SECRET".into(), placeholder: "Paste client secret...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::AwsCredential => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. AWS_PROD".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. aws, aws-prod...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "ACCESS_KEY".into(), placeholder: "Enter access key ID...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SECRET_KEY".into(), placeholder: "Paste secret key...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::GpgKey => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. PERSONAL_GPG".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. personal, ci-cd...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "KEY_ID".into(), placeholder: "e.g. key fingerprint...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "PRIVATE_KEY".into(), placeholder: "Paste GPG private key...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::DatabaseUrl => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. POSTGRES_PROD".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. postgres, mongo...".into(), required: false, is_dropdown: true, presets: vec!["postgres".into(), "mysql".into(), "mongo".into(), "redis".into()] },
-                CredentialFieldDef { label: "KEY_IDENTIFIER".into(), placeholder: "e.g. primary, replica...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "CONNECTION_URL".into(), placeholder: "Paste connection string...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::IdCard => vec![
-                CredentialFieldDef { label: "CARDHOLDER".into(), placeholder: "Name on ID...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "ISSUER".into(), placeholder: "e.g. government, company...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "ID_NUMBER".into(), placeholder: "ID number...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "EXTRA".into(), placeholder: "Notes".into(), required: false, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::Note => vec![
-                CredentialFieldDef { label: "TITLE".into(), placeholder: "e.g. WiFi Password, Server Info...".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "TAGS".into(), placeholder: "e.g. wifi, network, home...".into(), required: false, is_dropdown: false, presets: vec![] },
-            ],
-            CredentialType::Custom => vec![
-                CredentialFieldDef { label: "NAME".into(), placeholder: "e.g. MY_CUSTOM_KEY".into(), required: true, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "SERVICE".into(), placeholder: "e.g. my-service...".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "KEY".into(), placeholder: "custom_key_identifier".into(), required: false, is_dropdown: false, presets: vec![] },
-                CredentialFieldDef { label: "VALUE".into(), placeholder: "Paste or enter the secret...".into(), required: true, is_dropdown: false, presets: vec![] },
-            ],
-        }
+impl CredentialField {
+    pub fn is_dropdown(&self) -> bool {
+        !self.presets.is_empty()
     }
 }
 
-fn service_presets() -> Vec<String> {
-    vec!["google".into(), "github".into(), "openai".into(), "anthropic".into(), "aws".into(), "vercel".into(), "stripe".into(), "netlify".into(), "cloudflare".into(), "alibaba".into(), "tencent".into()]
+pub fn credential_fields_for(ct: &CredentialType) -> Vec<CredentialField> {
+    match ct {
+        CredentialType::ApiKey => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. OPENAI_API_KEY", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. openai, anthropic...", required: false, presets: SERVICE_PRESETS },
+            CredentialField { label: "KEY_IDENTIFIER", placeholder: "e.g. default, production...", required: false, presets: &[] },
+            CredentialField { label: "SECRET_VALUE", placeholder: "Paste or enter the secret...", required: true, presets: &[] },
+        ],
+        CredentialType::GitHub => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. GITHUB_TOKEN", required: true, presets: &[] },
+            CredentialField { label: "TOKEN_TYPE", placeholder: "Select token type", required: false, presets: GITHUB_TOKEN_TYPES },
+            CredentialField { label: "ACCOUNT", placeholder: "GitHub username", required: false, presets: &[] },
+            CredentialField { label: "TOKEN_VALUE", placeholder: "Paste token or SSH key...", required: true, presets: &[] },
+            CredentialField { label: "SCOPE", placeholder: "Select scopes", required: false, presets: GITHUB_SCOPES },
+        ],
+        CredentialType::Account => vec![
+            CredentialField { label: "USERNAME", placeholder: "Enter username...", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. google, github...", required: false, presets: SERVICE_PRESETS },
+            CredentialField { label: "EMAIL", placeholder: "Associated email", required: false, presets: &[] },
+            CredentialField { label: "PASSWORD", placeholder: "Enter password...", required: true, presets: &[] },
+        ],
+        CredentialType::CodingPlan => vec![
+            CredentialField { label: "PROVIDER", placeholder: "Select provider", required: false, presets: CODING_PLAN_PROVIDERS },
+            CredentialField { label: "RAW_CURL", placeholder: "Paste curl command (auto-extracts)...", required: false, presets: &[] },
+            CredentialField { label: "API_KEY", placeholder: "Paste your API key here...", required: true, presets: &[] },
+            CredentialField { label: "COOKIE", placeholder: "Bailian console cookie...", required: false, presets: &[] },
+            CredentialField { label: "BASE_URL", placeholder: "Select base URL", required: true, presets: CODING_PLAN_BASE_URLS },
+        ],
+        CredentialType::Password => vec![
+            CredentialField { label: "PASSWORD_LABEL", placeholder: "Enter password...", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. google, github...", required: false, presets: SERVICE_PRESETS },
+            CredentialField { label: "USERNAME", placeholder: "Associated username", required: false, presets: &[] },
+            CredentialField { label: "PASSWORD_VALUE", placeholder: "Enter password again...", required: true, presets: &[] },
+        ],
+        CredentialType::Phone => vec![
+            CredentialField { label: "REGION", placeholder: "Select region", required: false, presets: REGION_PRESETS },
+            CredentialField { label: "PHONE_NUMBER", placeholder: "138 0000 0000", required: true, presets: &[] },
+            CredentialField { label: "NOTE", placeholder: "e.g. delivery, work contact...", required: false, presets: &[] },
+        ],
+        CredentialType::BankCard => vec![
+            CredentialField { label: "CARD_NUMBER", placeholder: "Card number...", required: true, presets: &[] },
+            CredentialField { label: "BANK", placeholder: "e.g. ICBC, BOC...", required: false, presets: BANK_PRESETS },
+            CredentialField { label: "CARDHOLDER", placeholder: "Cardholder name...", required: false, presets: &[] },
+            CredentialField { label: "CVV_EXPIRY", placeholder: "CVV or expiry", required: false, presets: &[] },
+        ],
+        CredentialType::Email => vec![
+            CredentialField { label: "SERVICE", placeholder: "Select provider", required: true, presets: EMAIL_SERVICE_PRESETS },
+            CredentialField { label: "EMAIL_PREFIX", placeholder: "e.g. john.doe", required: true, presets: &[] },
+            CredentialField { label: "PASSWORD", placeholder: "Password or app code...", required: true, presets: &[] },
+            CredentialField { label: "REGION", placeholder: "Select region...", required: false, presets: REGION_PRESETS },
+            CredentialField { label: "STREET", placeholder: "123 Main St", required: false, presets: &[] },
+            CredentialField { label: "CITY", placeholder: "New York", required: false, presets: &[] },
+            CredentialField { label: "STATE_ZIP", placeholder: "NY 10001", required: false, presets: &[] },
+        ],
+        CredentialType::Token => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. JWT_TOKEN", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. my-app...", required: false, presets: SERVICE_PRESETS },
+            CredentialField { label: "KEY_IDENTIFIER", placeholder: "e.g. default, production...", required: false, presets: &[] },
+            CredentialField { label: "TOKEN_VALUE", placeholder: "Paste token...", required: true, presets: &[] },
+        ],
+        CredentialType::SshKey => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. GITHUB_SSH", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. github, aws...", required: false, presets: SERVICE_PRESETS },
+            CredentialField { label: "KEY_IDENTIFIER", placeholder: "e.g. ed25519, rsa-4096...", required: false, presets: KEY_TYPE_PRESETS },
+            CredentialField { label: "PRIVATE_KEY", placeholder: "Paste private key...", required: true, presets: &[] },
+        ],
+        CredentialType::WebhookSecret => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. GITHUB_WEBHOOK", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. github, stripe...", required: false, presets: WEBHOOK_SERVICE_PRESETS },
+            CredentialField { label: "HEADER_KEY", placeholder: "e.g. X-Hub-Signature...", required: false, presets: &[] },
+            CredentialField { label: "SECRET_VALUE", placeholder: "Paste webhook secret...", required: true, presets: &[] },
+        ],
+        CredentialType::OAuthClient => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. GOOGLE_OAUTH", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. google, github...", required: false, presets: SERVICE_PRESETS },
+            CredentialField { label: "CLIENT_ID", placeholder: "Enter client ID...", required: true, presets: &[] },
+            CredentialField { label: "CLIENT_SECRET", placeholder: "Paste client secret...", required: true, presets: &[] },
+        ],
+        CredentialType::AwsCredential => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. AWS_PROD", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. aws, aws-prod...", required: false, presets: &[] },
+            CredentialField { label: "ACCESS_KEY", placeholder: "Enter access key ID...", required: true, presets: &[] },
+            CredentialField { label: "SECRET_KEY", placeholder: "Paste secret key...", required: true, presets: &[] },
+        ],
+        CredentialType::GpgKey => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. PERSONAL_GPG", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. personal, ci-cd...", required: false, presets: &[] },
+            CredentialField { label: "KEY_ID", placeholder: "e.g. key fingerprint...", required: false, presets: &[] },
+            CredentialField { label: "PRIVATE_KEY", placeholder: "Paste GPG private key...", required: true, presets: &[] },
+        ],
+        CredentialType::DatabaseUrl => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. POSTGRES_PROD", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. postgres, mongo...", required: false, presets: DB_PRESETS },
+            CredentialField { label: "KEY_IDENTIFIER", placeholder: "e.g. primary, replica...", required: false, presets: &[] },
+            CredentialField { label: "CONNECTION_URL", placeholder: "Paste connection string...", required: true, presets: &[] },
+        ],
+        CredentialType::IdCard => vec![
+            CredentialField { label: "CARDHOLDER", placeholder: "Name on ID...", required: true, presets: &[] },
+            CredentialField { label: "ISSUER", placeholder: "e.g. government, company...", required: false, presets: &[] },
+            CredentialField { label: "ID_NUMBER", placeholder: "ID number...", required: true, presets: &[] },
+            CredentialField { label: "EXTRA", placeholder: "Notes", required: false, presets: &[] },
+        ],
+        CredentialType::Note => vec![
+            CredentialField { label: "TITLE", placeholder: "e.g. WiFi Password, Server Info...", required: true, presets: &[] },
+            CredentialField { label: "TAGS", placeholder: "e.g. wifi, network, home...", required: false, presets: &[] },
+        ],
+        CredentialType::Custom => vec![
+            CredentialField { label: "NAME", placeholder: "e.g. MY_CUSTOM_KEY", required: true, presets: &[] },
+            CredentialField { label: "SERVICE", placeholder: "e.g. my-service...", required: false, presets: &[] },
+            CredentialField { label: "KEY", placeholder: "custom_key_identifier", required: false, presets: &[] },
+            CredentialField { label: "VALUE", placeholder: "Paste or enter the secret...", required: true, presets: &[] },
+        ],
+    }
 }

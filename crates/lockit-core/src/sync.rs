@@ -7,6 +7,8 @@ use rand::RngCore;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
+pub mod google_drive;
+
 const VERSION: u8 = 1;
 const NONCE_LEN: usize = 12;
 const KEY_LEN: usize = 32;
@@ -112,6 +114,8 @@ pub enum SyncError {
     DecryptFailed,
     #[error("base64 decode failed")]
     Base64(#[from] base64::DecodeError),
+    #[error("HTTP error: {0}")]
+    HttpError(String),
 }
 
 pub struct SyncCrypto;

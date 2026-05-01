@@ -5,7 +5,7 @@ use std::fmt;
 use std::str::FromStr;
 use uuid::Uuid;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum CredentialType {
     ApiKey,
@@ -25,6 +25,7 @@ pub enum CredentialType {
     DatabaseUrl,
     IdCard,
     Note,
+    #[default]
     Custom,
 }
 

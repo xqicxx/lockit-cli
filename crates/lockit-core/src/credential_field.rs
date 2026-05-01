@@ -34,7 +34,7 @@ impl TypeFieldMap {
                 CredentialFieldDef { label: "PASSWORD".into(), placeholder: "Enter password...".into(), required: true, is_dropdown: false, presets: vec![] },
             ],
             CredentialType::CodingPlan => vec![
-                CredentialFieldDef { label: "PROVIDER".into(), placeholder: "Select provider".into(), required: true, is_dropdown: true, presets: vec!["openai".into(), "chatgpt".into(), "anthropic".into(), "claude".into(), "google".into(), "deepseek".into(), "moonshot".into(), "minimax".into(), "glm".into(), "qwen".into(), "qwen_bailian".into(), "xiaomi_mimo".into()] },
+                CredentialFieldDef { label: "PROVIDER".into(), placeholder: "Select provider".into(), required: false, is_dropdown: true, presets: vec!["openai".into(), "chatgpt".into(), "anthropic".into(), "claude".into(), "google".into(), "deepseek".into(), "moonshot".into(), "minimax".into(), "glm".into(), "qwen".into(), "qwen_bailian".into(), "xiaomi_mimo".into()] },
                 CredentialFieldDef { label: "RAW_CURL".into(), placeholder: "Paste curl command (auto-extracts)...".into(), required: false, is_dropdown: false, presets: vec![] },
                 CredentialFieldDef { label: "API_KEY".into(), placeholder: "Paste your API key here...".into(), required: true, is_dropdown: false, presets: vec![] },
                 CredentialFieldDef { label: "COOKIE".into(), placeholder: "Bailian console cookie...".into(), required: false, is_dropdown: false, presets: vec![] },

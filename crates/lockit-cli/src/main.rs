@@ -1,3 +1,5 @@
+mod output;
+
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 use lockit_core::credential::{CredentialDraft, CredentialType};

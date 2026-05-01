@@ -28,6 +28,83 @@ pub enum CredentialType {
     Custom,
 }
 
+impl CredentialType {
+    pub fn all() -> Vec<CredentialType> {
+        vec![
+            Self::ApiKey, Self::GitHub, Self::Account, Self::CodingPlan,
+            Self::Password, Self::Phone, Self::BankCard, Self::Email,
+            Self::Token, Self::SshKey, Self::WebhookSecret, Self::OAuthClient,
+            Self::AwsCredential, Self::GpgKey, Self::DatabaseUrl,
+            Self::IdCard, Self::Note, Self::Custom,
+        ]
+    }
+
+    pub fn name(&self) -> &'static str {
+        match self {
+            Self::ApiKey => "api_key",
+            Self::GitHub => "github",
+            Self::Account => "account",
+            Self::CodingPlan => "coding_plan",
+            Self::Password => "password",
+            Self::Phone => "phone",
+            Self::BankCard => "bank_card",
+            Self::Email => "email",
+            Self::Token => "token",
+            Self::SshKey => "ssh_key",
+            Self::WebhookSecret => "webhook_secret",
+            Self::OAuthClient => "oauth_client",
+            Self::AwsCredential => "aws_credential",
+            Self::GpgKey => "gpg_key",
+            Self::DatabaseUrl => "database_url",
+            Self::IdCard => "id_card",
+            Self::Note => "note",
+            Self::Custom => "custom",
+        }
+    }
+
+    pub fn description(&self) -> &'static str {
+        match self {
+            Self::ApiKey => "Store API keys for AI services, cloud providers, or any REST API",
+            Self::GitHub => "Store GitHub credentials for private repos, CI/CD, and agent git operations",
+            Self::Account => "Store login credentials for websites or apps",
+            Self::CodingPlan => "Store coding agent plan tokens",
+            Self::Password => "Store standalone passwords (WiFi, shared, etc.)",
+            Self::Phone => "Store phone numbers with country codes",
+            Self::BankCard => "Store bank card details for payments",
+            Self::Email => "Store email accounts with passwords and regions",
+            Self::Token => "Store bearer tokens, session tokens, or auth tokens",
+            Self::SshKey => "Store SSH private keys for server access",
+            Self::WebhookSecret => "Store webhook signing secrets",
+            Self::OAuthClient => "Store OAuth2 client ID and secret",
+            Self::AwsCredential => "Store AWS access keys for cloud operations",
+            Self::GpgKey => "Store GPG signing keys for commits or package signing",
+            Self::DatabaseUrl => "Store database connection strings",
+            Self::IdCard => "Store ID card information",
+            Self::Note => "Store freeform notes like WiFi passwords, server info",
+            Self::Custom => "Generic key-value store for any credential type",
+        }
+    }
+
+    pub fn required_field_indices(&self) -> Vec<usize> {
+        match self {
+            Self::Account => vec![0, 3],
+            Self::Password => vec![0, 3],
+            Self::GitHub => vec![0, 3],
+            Self::Phone => vec![1],
+            Self::BankCard => vec![0],
+            Self::Email => vec![0, 1, 2],
+            Self::IdCard => vec![0],
+            Self::Note => vec![0],
+            Self::CodingPlan => vec![2, 4],
+            _ => {
+                let fields = crate::credential_field::TypeFieldMap::fields_for(self);
+                let last = fields.len().saturating_sub(1);
+                vec![0, last]
+            }
+        }
+    }
+}
+
 impl fmt::Display for CredentialType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let value = match self {

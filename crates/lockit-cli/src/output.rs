@@ -43,7 +43,10 @@ pub fn print_table(credentials: &[RedactedCredential]) {
 
 pub fn print_json(credentials: &[RedactedCredential]) {
     let output = JsonOutput { credentials: credentials.to_vec() };
-    println!("{}", serde_json::to_string_pretty(&output).unwrap());
+    match serde_json::to_string_pretty(&output) {
+        Ok(json) => println!("{json}"),
+        Err(e) => error(&format!("JSON serialization failed: {e}")),
+    }
 }
 
 pub fn success(msg: &str) {

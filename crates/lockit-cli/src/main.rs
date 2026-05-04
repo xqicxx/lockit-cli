@@ -124,7 +124,9 @@ fn main() -> anyhow::Result<()> {
             commands::show::run(&paths, cli.password, &name_or_id, json)
         }
         Commands::Edit { name_or_id } => commands::edit::run(&paths, cli.password, &name_or_id),
-        Commands::Delete { name_or_id, yes } => commands::delete::run(&paths, cli.password, &name_or_id, yes),
+        Commands::Delete { name_or_id, yes } => {
+            commands::delete::run(&paths, cli.password, &name_or_id, yes)
+        }
         Commands::Reveal { name_or_id, field } => {
             commands::reveal::run(&paths, cli.password, &name_or_id, &field)
         }

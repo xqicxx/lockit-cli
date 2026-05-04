@@ -57,9 +57,7 @@ pub fn start_oauth_flow() -> Result<OAuthTokens, String> {
     }
 
     // Set nonblocking so we can poll with a timeout
-    listener
-        .set_nonblocking(true)
-        .map_err(|e| format!("{e}"))?;
+    listener.set_nonblocking(true).map_err(|e| format!("{e}"))?;
 
     // Accept ONE connection, extract the auth code (120s timeout)
     let code = match wait_for_callback(&listener) {
@@ -96,7 +94,10 @@ fn wait_for_callback(listener: &TcpListener) -> Result<String, String> {
             }
             Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
                 if start.elapsed() > timeout {
-                    return Err("OAuth login timed out after 120s. Browser did not complete authorization.".to_string());
+                    return Err(
+                        "OAuth login timed out after 120s. Browser did not complete authorization."
+                            .to_string(),
+                    );
                 }
                 std::thread::sleep(std::time::Duration::from_millis(200));
                 continue;

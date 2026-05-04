@@ -1,0 +1,29 @@
+[package]
+name = "lockit-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+aes-gcm = { version = "0.10", features = ["aes"] }
+argon2 = "0.5"
+base64.workspace = true
+chrono.workspace = true
+directories.workspace = true
+rand.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+uuid.workspace = true
+zeroize.workspace = true
+open = "5"
+reqwest = { version = "0.12", features = ["json", "rustls-tls", "blocking"] }
+url = "2"
+
+[features]
+default = []
+coding-plan = []
+
+[dev-dependencies]
+tempfile = "3"

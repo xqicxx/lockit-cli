@@ -1,0 +1,22 @@
+[package]
+name = "lockit-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "lockit"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+inquire = "0.7"
+lockit-core = { path = "../lockit-core", features = ["coding-plan"] }
+rpassword = "7"
+serde = { version = "1", features = ["derive"] }
+serde_json.workspace = true
+tabled = "0.16"
+
+[dev-dependencies]
+tempfile = "3"

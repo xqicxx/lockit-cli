@@ -186,9 +186,9 @@ impl VaultSession {
     pub fn delete_credential(&mut self, id: &str) -> Result<()> {
         self.require_unlocked()?;
         let len = self.payload.credentials.len();
-        self.payload.credentials.retain(|c| {
-            c.id != id && !c.name.eq_ignore_ascii_case(id)
-        });
+        self.payload
+            .credentials
+            .retain(|c| c.id != id && !c.name.eq_ignore_ascii_case(id));
         if self.payload.credentials.len() == len {
             return Err(VaultError::CredentialNotFound);
         }

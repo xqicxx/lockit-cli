@@ -10,6 +10,12 @@ pub(crate) fn read_password(value: Option<String>, prompt: &str) -> anyhow::Resu
 pub(crate) fn sanitize_env_name(name: &str) -> String {
     name.to_uppercase()
         .chars()
-        .map(|c| if c.is_ascii_alphanumeric() || c == '_' { c } else { '_' })
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
         .collect()
 }

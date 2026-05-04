@@ -169,7 +169,7 @@ fn seal_with_key(
         nonce: B64.encode(nonce),
         ciphertext: B64.encode(ciphertext),
     };
-    serde_json::to_vec_pretty(&envelope).map_err(Into::into)
+    serde_json::to_vec(&envelope).map_err(Into::into)
 }
 
 fn derive_key(password: &str, salt: &[u8], params: &CryptoParams) -> Result<[u8; KEY_LEN]> {

@@ -121,12 +121,13 @@ pub fn refresh(
         return Ok(());
     }
 
+    let mut errors: Vec<String> = Vec::new();
+
     for info in &cp_infos {
-        // Reveal needed fields
         let api_key = match session.reveal_secret(&info.id, "api_key") {
             Ok(v) => v,
             Err(e) => {
-                output::error(&format!("{}: could not read API_KEY: {}", info.name, e));
+                errors.push(format!("{}: could not read API_KEY: {}", info.name, e));
                 continue;
             }
         };
@@ -209,6 +210,13 @@ pub fn refresh(
 
     // Save audit events from reveal_secret calls
     session.save().context("save vault after refresh")?;
+
+    if !errors.is_empty() {
+        eprintln!("\n{} provider(s) failed:", errors.len());
+        for err in &errors {
+            eprintln!("  - {err}");
+        }
+    }
 
     Ok(())
 }

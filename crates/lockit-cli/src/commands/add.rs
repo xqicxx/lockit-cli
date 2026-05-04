@@ -54,7 +54,7 @@ fn read_credential_input(
         let content = std::fs::read_to_string(&path).with_context(|| format!("read {path}"))?;
         parse_json_fields(&content)
     } else if let Some(json) = json_input {
-        eprintln!("⚠  Warning: --json exposes secrets in shell history. Prefer --stdin or --file.");
+        crate::output::error("--json exposes secrets in shell history. Prefer --stdin or --file.");
         parse_json_fields(&json)
     } else {
         let ct = interactive::select_credential_type()?;

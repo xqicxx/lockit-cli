@@ -242,7 +242,7 @@ impl VaultSession {
 
     pub fn save(&self) -> Result<()> {
         let key = self.require_unlocked()?;
-        let plaintext = serde_json::to_vec_pretty(&self.payload)?;
+        let plaintext = serde_json::to_vec(&self.payload)?;
         let encrypted = seal_opened_vault_bytes(&plaintext, key)?;
         fs::write(&self.paths.vault_path, encrypted)?;
         Ok(())

@@ -152,15 +152,18 @@ pub fn config(paths: &VaultPaths) -> anyhow::Result<()> {
         .prompt()
         .context("Failed to read client_id")?;
 
-    let client_secret = inquire::Text::new("Client secret:")
+    let client_secret = inquire::Password::new("Client secret:")
+        .without_confirmation()
         .prompt()
         .context("Failed to read client_secret")?;
 
-    let refresh_token = inquire::Text::new("Refresh token:")
+    let refresh_token = inquire::Password::new("Refresh token:")
+        .without_confirmation()
         .prompt()
         .context("Failed to read refresh_token")?;
 
-    let access_token = inquire::Text::new("Access token:")
+    let access_token = inquire::Password::new("Access token:")
+        .without_confirmation()
         .prompt()
         .context("Failed to read access_token")?;
 

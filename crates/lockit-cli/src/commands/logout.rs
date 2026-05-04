@@ -1,7 +1,7 @@
 use crate::output;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
-fn config_path(vault_dir: &PathBuf) -> PathBuf {
+fn config_path(vault_dir: &Path) -> PathBuf {
     vault_dir.join("sync_config.json")
 }
 
@@ -10,7 +10,7 @@ pub fn run(paths: &lockit_core::vault::VaultPaths) -> anyhow::Result<()> {
         .vault_path
         .parent()
         .unwrap_or_else(|| std::path::Path::new("."));
-    let cfg_file = config_path(&vault_dir.to_path_buf());
+    let cfg_file = config_path(vault_dir);
 
     if cfg_file.exists() {
         std::fs::remove_file(&cfg_file)?;

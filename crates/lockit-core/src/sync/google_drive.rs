@@ -20,6 +20,12 @@ pub struct GoogleDriveBackend {
     config: Option<GoogleDriveConfig>,
 }
 
+impl Default for GoogleDriveBackend {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl GoogleDriveBackend {
     /// Create a new unconfigured backend. Call [`configure`](Self::configure)
     /// before using it for sync operations.

@@ -56,13 +56,22 @@ pub fn start_oauth_flow() -> Result<OAuthTokens, String> {
         eprintln!("Browser opened. Authorize the app and return here.");
     }
 
-    // Set a read timeout so we don't block forever
-    listener
-        .set_nonblocking(false)
-        .map_err(|e| format!("{e}"))?;
+    // Set nonblocking so we can poll with a timeout
+    listener.set_nonblocking(true).map_err(|e| format!("{e}"))?;
 
-    // Accept ONE connection, extract the auth code
-    let code = wait_for_callback(&listener)?;
+    // Accept ONE connection, extract the auth code (120s timeout)
+    let code = match wait_for_callback(&listener) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!(
+                "OAuth login timed out or failed.\n\
+                 If the client ID is invalid, set LOCKIT_GOOGLE_CLIENT_ID env var.\n\
+                 Or configure manually: lockit sync config\n\
+                 Error: {e}"
+            );
+            return Err(e);
+        }
+    };
     drop(listener);
 
     // Exchange code for tokens
@@ -70,11 +79,35 @@ pub fn start_oauth_flow() -> Result<OAuthTokens, String> {
 }
 
 fn wait_for_callback(listener: &TcpListener) -> Result<String, String> {
-    let (mut stream, _) = listener
-        .accept()
-        .map_err(|e| format!("Connection error: {e}"))?;
+    let start = std::time::Instant::now();
+    let timeout = std::time::Duration::from_secs(120);
+    let stream = loop {
+        match listener.accept() {
+            Ok((stream, _)) => {
+                stream
+                    .set_nonblocking(false)
+                    .map_err(|e| format!("Failed to set stream blocking: {e}"))?;
+                stream
+                    .set_read_timeout(Some(timeout))
+                    .map_err(|e| format!("Failed to set read timeout: {e}"))?;
+                break stream;
+            }
+            Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                if start.elapsed() > timeout {
+                    return Err(
+                        "OAuth login timed out after 120s. Browser did not complete authorization."
+                            .to_string(),
+                    );
+                }
+                std::thread::sleep(std::time::Duration::from_millis(200));
+                continue;
+            }
+            Err(e) => return Err(format!("Connection error: {e}")),
+        }
+    };
 
     let mut reader = BufReader::new(stream.try_clone().map_err(|e| format!("{e}"))?);
+    let mut stream = stream;
     let mut request_line = String::new();
     reader
         .read_line(&mut request_line)

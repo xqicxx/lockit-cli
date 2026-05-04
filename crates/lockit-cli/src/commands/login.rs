@@ -23,7 +23,7 @@ pub fn run(paths: &lockit_core::vault::VaultPaths) -> anyhow::Result<()> {
         access_token: tokens.access_token,
         refresh_token: tokens.refresh_token,
         token_expiry: now + tokens.expires_in,
-        client_id: oauth::GOOGLE_CLIENT_ID.to_string(),
+        client_id: oauth::google_client_id(),
         client_secret: String::new(),
     };
 

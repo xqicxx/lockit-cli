@@ -98,7 +98,25 @@ pub fn pull(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
         anyhow::bail!("Sync backend not configured. Run 'lockit sync config' first.");
     }
 
-    // Validate password if provided (to ensure the user can unlock after pull)
+    // Fetch manifest first — cheap metadata, no large download yet
+    let cloud_manifest = backend
+        .get_manifest()
+        .map_err(|e| anyhow::anyhow!("Failed to fetch cloud manifest: {e}"))?
+        .context("No manifest found in cloud")?;
+    let cloud_checksum = &cloud_manifest.vault_checksum;
+
+    // Early-return if already up to date — skip password check and download
+    if paths.vault_path.exists() {
+        let local_bytes =
+            std::fs::read(&paths.vault_path).context("Failed to read local vault file")?;
+        let local_checksum = sha256_checksum(&local_bytes);
+        if local_checksum == *cloud_checksum {
+            crate::output::success("Already up to date.");
+            return Ok(());
+        }
+    }
+
+    // Validate password before network download — fail fast
     if let Some(p) = pw {
         lockit_core::vault::unlock_vault(paths, &p).context("Failed to unlock vault")?;
     }
@@ -107,25 +125,7 @@ pub fn pull(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
         .download_vault()
         .map_err(|e| anyhow::anyhow!("Download failed: {e}"))?;
 
-    let cloud_manifest = backend
-        .get_manifest()
-        .map_err(|e| anyhow::anyhow!("Failed to fetch cloud manifest: {e}"))?
-        .context("No manifest found in cloud")?;
-
-    let cloud_checksum = &cloud_manifest.vault_checksum;
-
-    if paths.vault_path.exists() {
-        let local_bytes =
-            std::fs::read(&paths.vault_path).context("Failed to read local vault file")?;
-        let local_checksum = sha256_checksum(&local_bytes);
-
-        if local_checksum == *cloud_checksum {
-            crate::output::success("Already up to date.");
-            return Ok(());
-        }
-    }
-
-    // Verify the downloaded data matches the manifest checksum
+    // Verify downloaded data matches the manifest checksum
     let downloaded_checksum = sha256_checksum(&cloud_bytes);
     if downloaded_checksum != *cloud_checksum {
         anyhow::bail!(

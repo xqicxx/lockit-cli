@@ -10,8 +10,13 @@ const GOOGLE_AUTH_URL: &str = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_TOKEN_URL: &str = "https://oauth2.googleapis.com/token";
 const GOOGLE_REDIRECT_PORT: u16 = 0; // 0 = OS picks a random port
 
-pub const GOOGLE_CLIENT_ID: &str =
+pub const GOOGLE_CLIENT_ID_DEFAULT: &str =
     "1067183645292-2dshqcfq5jfraokjn4p8davhgkponfua.apps.googleusercontent.com";
+
+pub fn google_client_id() -> String {
+    std::env::var("LOCKIT_GOOGLE_CLIENT_ID")
+        .unwrap_or_else(|_| GOOGLE_CLIENT_ID_DEFAULT.to_string())
+}
 const GOOGLE_DRIVE_SCOPE: &str = "https://www.googleapis.com/auth/drive.appdata";
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -33,10 +38,11 @@ pub fn start_oauth_flow() -> Result<OAuthTokens, String> {
     let redirect_uri = format!("http://127.0.0.1:{port}/callback");
 
     // Build the authorization URL
+    let client_id = google_client_id();
     let auth_url = format!(
         "{}?client_id={}&response_type=code&redirect_uri={}&scope={}&code_challenge={}&code_challenge_method=S256&access_type=offline",
         GOOGLE_AUTH_URL,
-        url_encode(GOOGLE_CLIENT_ID),
+        url_encode(client_id.as_str()),
         url_encode(&redirect_uri),
         url_encode(GOOGLE_DRIVE_SCOPE),
         url_encode(&code_challenge),
@@ -104,11 +110,12 @@ fn exchange_code(
     code_verifier: &str,
     redirect_uri: &str,
 ) -> Result<OAuthTokens, String> {
+    let cid = google_client_id();
     let client = reqwest::blocking::Client::new();
     let resp = client
         .post(GOOGLE_TOKEN_URL)
         .form(&[
-            ("client_id", GOOGLE_CLIENT_ID),
+            ("client_id", cid.as_str()),
             ("code", code),
             ("code_verifier", code_verifier),
             ("redirect_uri", redirect_uri),

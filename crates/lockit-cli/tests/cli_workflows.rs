@@ -140,7 +140,7 @@ fn manages_a_vault_through_non_interactive_cli_commands() {
     assert!(stdout(&export).contains("OPENAI_API_KEY"));
     assert!(stdout(&export).contains("sk-test-secret"));
 
-    let delete = run_lockit(&vault, &["delete", "OPENAI_API_KEY"]);
+    let delete = run_lockit(&vault, &["delete", "--yes", "OPENAI_API_KEY"]);
     assert!(stdout(&delete).contains("Deleted: OPENAI_API_KEY"));
 
     let empty = run_lockit(&vault, &["list", "--json"]);

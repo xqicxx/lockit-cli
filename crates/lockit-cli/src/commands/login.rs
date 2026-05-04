@@ -24,7 +24,7 @@ pub fn run(paths: &lockit_core::vault::VaultPaths) -> anyhow::Result<()> {
         refresh_token: tokens.refresh_token,
         token_expiry: now + tokens.expires_in,
         client_id: oauth::google_client_id(),
-        client_secret: String::new(),
+        client_secret: oauth::google_client_secret(),
     };
 
     let vault_dir = paths

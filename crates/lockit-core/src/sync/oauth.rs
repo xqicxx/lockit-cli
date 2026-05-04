@@ -89,6 +89,9 @@ fn wait_for_callback(listener: &TcpListener) -> Result<String, String> {
                 stream
                     .set_nonblocking(false)
                     .map_err(|e| format!("Failed to set stream blocking: {e}"))?;
+                stream
+                    .set_read_timeout(Some(timeout))
+                    .map_err(|e| format!("Failed to set read timeout: {e}"))?;
                 break stream;
             }
             Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {

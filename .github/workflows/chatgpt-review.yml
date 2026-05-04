@@ -1,0 +1,52 @@
+name: '🤖 ChatGPT Review'
+
+on:
+  workflow_call:
+    inputs:
+      additional_context:
+        type: string
+        description: 'Additional context for the review'
+        required: false
+
+concurrency:
+  group: '${{ github.workflow }}-review-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.issue.number }}'
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          git diff --name-only origin/main...HEAD > changed_files.txt
+          cat changed_files.txt
+
+      - name: ChatGPT Review via OpenAI API
+        env:
+          OPENAI_API_KEY: '${{ secrets.OPENAI_API_KEY }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          PR_NUMBER: '${{ github.event.pull_request.number }}'
+          REPO: '${{ github.repository }}'
+          CONTEXT: '${{ inputs.additional_context }}'
+        run: |
+          echo "ChatGPT review placeholder - files to review:"
+          cat changed_files.txt
+          # Post a placeholder comment
+          gh pr comment "${PR_NUMBER}" \
+            --repo "${REPO}" \
+            --body "🤖 ChatGPT review is in progress..."

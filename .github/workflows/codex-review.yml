@@ -1,0 +1,79 @@
+name: Codex PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    if: >-
+      (github.event_name == 'pull_request') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       contains(github.event.comment.body, '@codex'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get diff
+        id: diff
+        run: |
+          git diff origin/main...HEAD > /tmp/diff.txt
+          echo "lines=$(wc -l < /tmp/diff.txt)" >> $GITHUB_OUTPUT
+
+      - name: Codex Review via OpenAI
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          DIFF=$(cat /tmp/diff.txt | head -c 15000)
+          if [ -z "$DIFF" ]; then
+            echo "No diff to review"
+            exit 0
+          fi
+
+          PROMPT=$(cat <<'INNER'
+          审查以下 Rust 代码 diff。重点：
+          1) 关键逻辑错误和安全漏洞（加密误用、密钥泄露）
+          2) panic风险和unsafe代码问题
+          3) Rust最佳实践
+          不要提代码风格问题（clippy/rustfmt负责）。
+          如果代码逻辑正确，明确回复 'LGTM'。
+          请用中文回复，控制在 500 字以内。
+          INNER
+          )
+
+          RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -d "$(jq -n \
+              --arg model "gpt-4o" \
+              --arg prompt "$PROMPT" \
+              --arg diff "$DIFF" \
+              '{
+                model: $model,
+                messages: [
+                  {role: "system", content: $prompt},
+                  {role: "user", content: $diff}
+                ]
+              }')" | jq -r '.choices[0].message.content // empty')
+
+          if [ -n "$RESPONSE" ]; then
+            gh pr comment "${PR_NUMBER}" --repo "${REPO}" --body "## 🤖 Codex Review
+
+          ${RESPONSE}"
+          else
+            gh pr comment "${PR_NUMBER}" --repo "${REPO}" --body "🤖 Codex: unable to complete review (API error)"
+          fi

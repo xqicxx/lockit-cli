@@ -1,6 +1,6 @@
 # lockit
 
-Secure credential manager with an encrypted vault, cloud sync, and AI coding plan quota tracking.
+[中文版](README_CN.md) | Secure credential manager with an encrypted vault, cloud sync, and AI coding plan quota tracking.
 
 ## Architecture
 

@@ -86,6 +86,4 @@ jobs:
                 ]
               }
             }
-          extensions: |
-            ["https://github.com/gemini-cli-extensions/code-review"]
-          prompt: '/pr-code-review'
+          prompt: 'Review this PR for critical bugs, security issues, and logic errors. Focus on Rust-specific issues: unwrap/expect panics, unsafe blocks, crypto misuse, resource leaks. Ignore naming and formatting. Post inline comments on problematic lines. Be concise.'

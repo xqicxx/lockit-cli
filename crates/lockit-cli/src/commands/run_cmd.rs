@@ -19,7 +19,8 @@ pub fn run(
     child.args(&cmd[1..]);
     for field_name in credential.fields.keys() {
         let secret = session.reveal_secret(name, field_name)?;
-        let env_name = format!("{}_{}", prefix, field_name.to_uppercase());
+        let safe_field = crate::utils::sanitize_env_name(field_name);
+        let env_name = format!("{}_{}", prefix, safe_field);
         child.env(&env_name, secret);
     }
     session.save()?;

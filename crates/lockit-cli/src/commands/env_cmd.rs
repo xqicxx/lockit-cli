@@ -8,7 +8,8 @@ pub fn run(paths: &VaultPaths, password: Option<String>, name: &str) -> anyhow::
 
     for field_name in credential.fields.keys() {
         let secret = session.reveal_secret(name, field_name)?;
-        let env_name = format!("{}_{}", prefix, field_name.to_uppercase());
+        let safe_field = crate::utils::sanitize_env_name(field_name);
+        let env_name = format!("{}_{}", prefix, safe_field);
         let escaped = secret.replace('\'', "'\\''");
         println!("export {}='{}'", env_name, escaped);
     }

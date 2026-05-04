@@ -186,9 +186,9 @@ impl VaultSession {
     pub fn delete_credential(&mut self, id: &str) -> Result<()> {
         self.require_unlocked()?;
         let len = self.payload.credentials.len();
-        self.payload
-            .credentials
-            .retain(|c| !matches_id_or_name(c, id));
+        self.payload.credentials.retain(|c| {
+            c.id != id && !c.name.eq_ignore_ascii_case(id)
+        });
         if self.payload.credentials.len() == len {
             return Err(VaultError::CredentialNotFound);
         }
@@ -244,7 +244,9 @@ impl VaultSession {
         let key = self.require_unlocked()?;
         let plaintext = serde_json::to_vec(&self.payload)?;
         let encrypted = seal_opened_vault_bytes(&plaintext, key)?;
-        fs::write(&self.paths.vault_path, encrypted)?;
+        let tmp = self.paths.vault_path.with_extension(".tmp");
+        fs::write(&tmp, &encrypted)?;
+        fs::rename(&tmp, &self.paths.vault_path)?;
         Ok(())
     }
 
@@ -266,6 +268,9 @@ impl VaultSession {
 }
 
 fn matches_id_or_name(credential: &Credential, query: &str) -> bool {
+    if query.is_empty() {
+        return false;
+    }
     credential.id == query
         || credential.id.starts_with(query)
         || credential.name.eq_ignore_ascii_case(query)

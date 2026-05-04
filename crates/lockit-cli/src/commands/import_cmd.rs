@@ -9,27 +9,25 @@ pub fn run(paths: &VaultPaths, password: Option<String>, file: &PathBuf) -> anyh
     let value: serde_json::Value = serde_json::from_str(&content)?;
 
     // Export format: {"credentials": [...]}
-    let items: Vec<serde_json::Value> = if let Some(arr) = value
-        .get("credentials")
-        .and_then(|c| c.as_array())
-    {
-        arr.clone()
-    }
-    // Array format: [{...}, ...] (Android backup)
-    else if let Some(arr) = value.as_array() {
-        arr.clone()
-    }
-    // Legacy markdown
-    else {
-        let drafts = lockit_core::migration::parse_legacy_markdown(&content)?;
-        let count = drafts.len();
-        for draft in drafts {
-            session.add_credential(draft)?;
+    let items: Vec<serde_json::Value> =
+        if let Some(arr) = value.get("credentials").and_then(|c| c.as_array()) {
+            arr.clone()
         }
-        session.save()?;
-        println!("Imported {count} credentials from legacy format");
-        return Ok(());
-    };
+        // Array format: [{...}, ...] (Android backup)
+        else if let Some(arr) = value.as_array() {
+            arr.clone()
+        }
+        // Legacy markdown
+        else {
+            let drafts = lockit_core::migration::parse_legacy_markdown(&content)?;
+            let count = drafts.len();
+            for draft in drafts {
+                session.add_credential(draft)?;
+            }
+            session.save()?;
+            println!("Imported {count} credentials from legacy format");
+            return Ok(());
+        };
 
     let mut count = 0;
     for item in &items {

@@ -1,5 +1,5 @@
-use lockit_core::vault::{unlock_vault, VaultPaths};
 use crate::output::JsonExport;
+use lockit_core::vault::{unlock_vault, VaultPaths};
 
 pub fn run(
     paths: &VaultPaths,

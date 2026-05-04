@@ -31,7 +31,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-          provider: "openai"
           model: "gpt-4o"
           language: "chinese"
           custom_prompt: "审查重点：1) 关键逻辑错误和安全漏洞（加密误用、密钥泄露）2) panic风险和unsafe代码问题 3) Rust最佳实践。不要提代码风格问题（clippy/rustfmt负责）。如果代码逻辑正确，明确回复 'LGTM'。"

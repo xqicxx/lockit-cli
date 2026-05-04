@@ -1,0 +1,79 @@
+# Gemini Code Assist Configuration
+# https://developers.google.com/gemini-code-assist
+
+version: 1
+
+# Review settings for pull requests
+review:
+  enabled: true
+
+  # Manual trigger only - NO auto-review on push
+  # Trigger by commenting "@gemini" on PR
+  auto_review: false
+
+  # Review all file types
+  file_patterns:
+    - "**/*.rs"
+    - "**/*.toml"
+
+  # STRICT FOCUS - Only critical issues
+  focus_areas:
+    - security        # Crypto misuse, unsafe code, injection risks
+    - crashes         # unwrap/expect panics, index out of bounds
+    - memory          # Unsound unsafe blocks, resource leaks
+    - logic_bugs      # Incorrect algorithm, wrong conditionals
+    - concurrency     # Deadlock, race conditions
+
+  # EXPLICIT EXCLUSIONS - DO NOT COMMENT ON THESE
+  exclude_areas:
+    - naming          # Variable/function names - handled by clippy
+    - formatting      # Indentation, spacing - handled by rustfmt
+    - style           # Code style preferences - handled by clippy
+    - design_patterns # Subjective refactoring suggestions
+    - syntax_sugar    # Optional syntax improvements
+    - optimizations   # Minor performance nitpicks unless critical
+
+  # Maximum review comments to prevent spam
+  max_comments: 10
+
+  # When no critical issues found
+  default_response: "LGTM - No critical issues found"
+
+# Project context
+project:
+  language: rust
+  framework: cli
+  architecture: workspace
+
+  # Key constraints
+  constraints:
+    - "AES-256-GCM encryption with argon2id key derivation"
+    - "zeroize for sensitive data in memory"
+    - "Workspace: lockit-core (lib) + lockit-cli (binary)"
+    - "No unwrap() in production code paths"
+    - "All errors via thiserror + anyhow"
+
+# System prompt override
+system_prompt: |
+  你的唯一任务是寻找致命错误。
+
+  绝对禁止提出以下建议：
+  - 变量/函数命名
+  - 代码缩进和格式化
+  - 主观的设计模式重构
+  - 非必要的语法糖替换
+  - 性能微优化（除非导致严重问题）
+
+  仅在发现以下问题时才发表评论：
+  - 明显的 panic 风险（unwrap/expect 在可能失败的地方）
+  - unsafe 代码块的健全性问题
+  - 加密算法的错误使用（AES-256-GCM, argon2id）
+  - 资源泄漏（未关闭的文件句柄、连接）
+  - 并发死锁或竞态条件
+  - 逻辑漏洞（错误的算法、错误的条件判断）
+  - 严重的安全风险（密钥泄露、明文暴露）
+
+  如果没有发现上述致命问题，保持沉默或仅输出 'LGTM'。
+  绝对不要无病呻吟。
+
+  风格问题由 cargo clippy + rustfmt 处理，不要越界。

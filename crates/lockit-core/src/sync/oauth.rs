@@ -13,7 +13,7 @@ const GOOGLE_REDIRECT_PORT: u16 = 0; // 0 = OS picks a random port
 pub const GOOGLE_CLIENT_ID_DEFAULT: &str =
     "927834600586-oe5f5dff4jklbdu5mv7ahu612l3i2bc1.apps.googleusercontent.com";
 
-pub const GOOGLE_CLIENT_SECRET_DEFAULT: &str = "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";
+pub const GOOGLE_CLIENT_SECRET_DEFAULT: &str = "";
 
 pub fn google_client_id() -> String {
     std::env::var("LOCKIT_GOOGLE_CLIENT_ID")
@@ -154,16 +154,19 @@ fn exchange_code(
     let cid = google_client_id();
     let secret = google_client_secret();
     let client = reqwest::blocking::Client::new();
+    let mut params: Vec<(&str, &str)> = vec![
+        ("client_id", cid.as_str()),
+        ("code", code),
+        ("code_verifier", code_verifier),
+        ("redirect_uri", redirect_uri),
+        ("grant_type", "authorization_code"),
+    ];
+    if !secret.is_empty() {
+        params.push(("client_secret", secret.as_str()));
+    }
     let resp = client
         .post(GOOGLE_TOKEN_URL)
-        .form(&[
-            ("client_id", cid.as_str()),
-            ("client_secret", secret.as_str()),
-            ("code", code),
-            ("code_verifier", code_verifier),
-            ("redirect_uri", redirect_uri),
-            ("grant_type", "authorization_code"),
-        ])
+        .form(&params)
         .send()
         .map_err(|e| format!("Token request failed: {e}"))?;
 

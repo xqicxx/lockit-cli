@@ -85,7 +85,12 @@ fn wait_for_callback(listener: &TcpListener) -> Result<String, String> {
     let timeout = std::time::Duration::from_secs(120);
     let stream = loop {
         match listener.accept() {
-            Ok((stream, _)) => break stream,
+            Ok((stream, _)) => {
+                stream
+                    .set_nonblocking(false)
+                    .map_err(|e| format!("Failed to set stream blocking: {e}"))?;
+                break stream;
+            }
             Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
                 if start.elapsed() > timeout {
                     return Err("OAuth login timed out after 120s. Browser did not complete authorization.".to_string());

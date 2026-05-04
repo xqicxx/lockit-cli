@@ -45,7 +45,8 @@ jobs:
           upload_artifacts: false
           workflow_name: 'gemini-review'
           github_pr_number: '${{ github.event.pull_request.number }}'
-          flags: "--skip-trust"
+          environment: |
+            GEMINI_CLI_TRUST_WORKSPACE=true
           settings: |-
             {
               "model": {

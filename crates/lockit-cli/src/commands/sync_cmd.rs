@@ -102,10 +102,12 @@ pub fn push(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
     let upload_bytes = if let Some(ref key_b64) = sync_config.as_ref().and_then(|c| c.sync_key.as_ref()) {
         let sync_key = lockit_core::sync::SyncCrypto::decode_key(key_b64)
             .map_err(|e| anyhow::anyhow!("Invalid sync key: {e}"))?;
-        let payload_json = serde_json::to_vec(&session.payload)
+        let mut payload_json = serde_json::to_vec(&session.payload)
             .context("Failed to serialize vault payload")?;
-        lockit_core::sync::SyncCrypto::encrypt(&payload_json, &sync_key)
-            .map_err(|e| anyhow::anyhow!("Sync encryption failed: {e}"))?
+        let encrypted = lockit_core::sync::SyncCrypto::encrypt(&payload_json, &sync_key)
+            .map_err(|e| anyhow::anyhow!("Sync encryption failed: {e}"));
+        payload_json.zeroize();
+        encrypted?
     } else {
         std::fs::read(&paths.vault_path).context("Failed to read vault file")?
     };
@@ -183,13 +185,16 @@ pub fn pull(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
             let key = sync_key.ok_or_else(|| {
                 anyhow::anyhow!("Cloud vault is encrypted with a sync key, but none is configured locally. Use 'lockit sync key-set <KEY>' first.")
             })?;
-            let payload_json = lockit_core::sync::SyncCrypto::decrypt(&cloud_bytes, &key)
+            let mut payload_json = lockit_core::sync::SyncCrypto::decrypt(&cloud_bytes, &key)
                 .map_err(|e| anyhow::anyhow!("Sync decryption failed: {e}"))?;
             // Re-encrypt VaultPayload with master password to create vault.enc
-            let password = crate::utils::read_password(pw.as_ref().map(|s| s.clone()), "Master password")?;
+            let mut password = crate::utils::read_password(pw.as_ref().map(|s| s.clone()), "Master password")?;
             let params = lockit_core::crypto::CryptoParams::default_for_new_vault();
-            lockit_core::crypto::encrypt_vault_bytes(&payload_json, &password, &params)
-                .context("Failed to re-encrypt vault")?
+            let encrypted = lockit_core::crypto::encrypt_vault_bytes(&payload_json, &password, &params)
+                .context("Failed to re-encrypt vault");
+            payload_json.zeroize();
+            password.zeroize();
+            encrypted?
         }
         _ => cloud_bytes,
     };

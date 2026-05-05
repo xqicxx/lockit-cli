@@ -19,7 +19,7 @@ impl CodingPlanFetcher for QwenFetcher {
     ) -> Result<ProviderQuota, CodingPlanError> {
         let base_url = find_field_insensitive(credential_fields, "base_url")
             .map(|s| s.to_string())
-            .unwrap_or_else(|| "https://dashscope.aliyuncs.com".to_string());
+            .unwrap_or_else(|| "https://bailian.aliyuncs.com".to_string());
         let api_key = find_field_insensitive(credential_fields, "api_key")
             .ok_or_else(|| CodingPlanError::NotConfigured("api_key".to_string()))?
             .to_string();
@@ -74,7 +74,11 @@ impl CodingPlanFetcher for QwenFetcher {
         if body.get("Success").and_then(|v| v.as_bool()) == Some(false) {
             let code = body
                 .get("Code")
-                .map(|v| v.to_string())
+                .map(|v| {
+                    v.as_str()
+                        .map(|s| s.to_string())
+                        .unwrap_or_else(|| v.to_string())
+                })
                 .unwrap_or_else(|| "unknown".to_string());
             let msg = body
                 .get("Message")
@@ -93,7 +97,8 @@ impl CodingPlanFetcher for QwenFetcher {
         }
 
         // Try Bailian format: Data.used_tokens / Data.total_tokens
-        let data = body.get("Data");
+        // Falls back to lowercase 'data' for dashscope compatibility
+        let data = body.get("Data").or_else(|| body.get("data"));
 
         let used = data
             .and_then(|d: &serde_json::Value| d.get("used_tokens"))

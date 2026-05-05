@@ -103,6 +103,7 @@ impl CodingPlanFetcher for QwenFetcher {
         let used = data
             .and_then(|d: &serde_json::Value| d.get("used_tokens"))
             .or_else(|| data.and_then(|d: &serde_json::Value| d.get("usedTokens")))
+            .or_else(|| data.and_then(|d: &serde_json::Value| d.get("UsedTokens")))
             .or_else(|| body.get("used"))
             .or_else(|| body.get("used_tokens"))
             .and_then(|v: &serde_json::Value| v.as_u64())
@@ -111,9 +112,11 @@ impl CodingPlanFetcher for QwenFetcher {
         let total = data
             .and_then(|d: &serde_json::Value| d.get("total_tokens"))
             .or_else(|| data.and_then(|d: &serde_json::Value| d.get("totalTokens")))
+            .or_else(|| data.and_then(|d: &serde_json::Value| d.get("TotalTokens")))
             .or_else(|| data.and_then(|d: &serde_json::Value| d.get("quota_tokens")))
             .or_else(|| body.get("total"))
             .or_else(|| body.get("total_tokens"))
+            .or_else(|| body.get("quota"))
             .and_then(|v: &serde_json::Value| v.as_u64())
             .unwrap_or(0);
 

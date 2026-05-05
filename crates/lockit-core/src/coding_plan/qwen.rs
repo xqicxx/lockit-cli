@@ -19,12 +19,9 @@ impl CodingPlanFetcher for QwenFetcher {
     ) -> Result<ProviderQuota, CodingPlanError> {
         let base_url = find_field_insensitive(credential_fields, "base_url")
             .map(|s| s.to_string())
-            .unwrap_or_else(|| "https://dashscope.aliyuncs.com".to_string());
+            .unwrap_or_else(|| "https://bailian.aliyuncs.com".to_string());
         let api_key = find_field_insensitive(credential_fields, "api_key")
             .ok_or_else(|| CodingPlanError::NotConfigured("api_key".to_string()))?
-            .to_string();
-        let cookie = find_field_insensitive(credential_fields, "cookie")
-            .unwrap_or("")
             .to_string();
 
         let url = format!("{}/api/v1/usage/overview", base_url.trim_end_matches('/'));
@@ -34,23 +31,12 @@ impl CodingPlanFetcher for QwenFetcher {
             .build()
             .map_err(|e| CodingPlanError::ApiError(format!("client build: {}", e)))?;
 
-        let response = {
-            let mut request = client
-                .get(&url)
-                .header("Authorization", format!("Bearer {}", api_key))
-                .header("Content-Type", "application/json");
-
-            if !cookie.is_empty() {
-                request = request.header("Cookie", cookie.as_str());
-            }
-
-            match request.send() {
-                Ok(r) => r,
-                Err(e) => {
-                    return Err(CodingPlanError::ApiError(format!("request failed: {}", e)));
-                }
-            }
-        };
+        let response = client
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", api_key))
+            .header("Content-Type", "application/json")
+            .send()
+            .map_err(|e| CodingPlanError::ApiError(format!("request failed: {}", e)))?;
 
         let status = response.status();
         if status == reqwest::StatusCode::UNAUTHORIZED || status.as_u16() == 403 {
@@ -83,17 +69,51 @@ impl CodingPlanFetcher for QwenFetcher {
             .json()
             .map_err(|e| CodingPlanError::ParseError(format!("json parse: {}", e)))?;
 
-        let used = body
-            .get("data")
+        // Bailian API: { Code, Data, Success, Message }
+        // Check Success boolean first — more reliable than Code string matching
+        if body.get("Success").and_then(|v| v.as_bool()) == Some(false) {
+            let code = body
+                .get("Code")
+                .map(|v| {
+                    v.as_str()
+                        .map(|s| s.to_string())
+                        .unwrap_or_else(|| v.to_string())
+                })
+                .unwrap_or_else(|| "unknown".to_string());
+            let msg = body
+                .get("Message")
+                .and_then(|v| v.as_str())
+                .unwrap_or("unknown error");
+            return Ok(ProviderQuota {
+                provider: self.provider(),
+                plan: String::new(),
+                used: 0,
+                total: 0,
+                remaining: String::new(),
+                remaining_days: None,
+                status: QuotaStatus::Error(format!("{}: {}", code, msg)),
+                refreshed_at: Utc::now(),
+            });
+        }
+
+        // Try Bailian format: Data.used_tokens / Data.total_tokens
+        // Falls back to lowercase 'data' for dashscope compatibility
+        let data = body.get("Data").or_else(|| body.get("data"));
+
+        let used = data
             .and_then(|d: &serde_json::Value| d.get("used_tokens"))
+            .or_else(|| data.and_then(|d: &serde_json::Value| d.get("usedTokens")))
+            .or_else(|| data.and_then(|d: &serde_json::Value| d.get("UsedTokens")))
             .or_else(|| body.get("used"))
             .or_else(|| body.get("used_tokens"))
             .and_then(|v: &serde_json::Value| v.as_u64())
             .unwrap_or(0);
 
-        let total = body
-            .get("data")
+        let total = data
             .and_then(|d: &serde_json::Value| d.get("total_tokens"))
+            .or_else(|| data.and_then(|d: &serde_json::Value| d.get("totalTokens")))
+            .or_else(|| data.and_then(|d: &serde_json::Value| d.get("TotalTokens")))
+            .or_else(|| data.and_then(|d: &serde_json::Value| d.get("quota_tokens")))
             .or_else(|| body.get("total"))
             .or_else(|| body.get("total_tokens"))
             .or_else(|| body.get("quota"))

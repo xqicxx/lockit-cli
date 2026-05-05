@@ -5,6 +5,7 @@ use lockit_core::sync::{
 };
 use lockit_core::vault::VaultPaths;
 use std::path::PathBuf;
+use zeroize::Zeroize;
 
 fn config_path(paths: &VaultPaths) -> PathBuf {
     let mut p = paths.vault_path.clone();
@@ -241,8 +242,9 @@ pub fn config(paths: &VaultPaths) -> anyhow::Result<()> {
 }
 
 pub fn key_gen(paths: &VaultPaths) -> anyhow::Result<()> {
-    let key = lockit_core::sync::SyncCrypto::generate_key();
+    let mut key = lockit_core::sync::SyncCrypto::generate_key();
     let encoded = lockit_core::sync::SyncCrypto::encode_key(&key);
+    key.zeroize();
 
     let mut config = load_sync_config(paths).unwrap_or_else(empty_sync_config);
     config.sync_key = Some(encoded);

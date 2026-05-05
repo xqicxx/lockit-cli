@@ -1061,6 +1061,7 @@ dependencies = [
  "serde_json",
  "tabled",
  "tempfile",
+ "zeroize",
 ]
 
 [[package]]

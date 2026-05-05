@@ -2,7 +2,8 @@ use lockit_core::credential::{CredentialDraft, CredentialType};
 use lockit_core::crypto::{decrypt_vault_bytes, encrypt_vault_bytes, CryptoParams};
 use lockit_core::migration::parse_legacy_markdown;
 use lockit_core::sync::{
-    compute_sync_status, sha256_checksum, SyncCrypto, SyncInputs, SyncManifest, SyncStatus,
+    compute_sync_status, plan_smart_sync, sha256_checksum, SmartSyncPlan, SyncCheckpoint,
+    SyncCrypto, SyncInputs, SyncManifest, SyncStatus,
 };
 use lockit_core::vault::{init_vault, unlock_vault, VaultPaths};
 use tempfile::tempdir;
@@ -122,7 +123,10 @@ fn sync_manifest_checksum_status_and_sync_crypto_are_compatible() {
         compute_sync_status(SyncInputs {
             local_checksum: checksum_b.clone(),
             cloud_manifest: Some(parsed.clone()),
-            last_sync_checksum: Some(parsed.vault_checksum.clone()),
+            checkpoint: Some(SyncCheckpoint {
+                local_checksum: checksum_a.clone(),
+                cloud_checksum: parsed.vault_checksum.clone(),
+            }),
             sync_key_configured: true,
             backend_configured: true,
         }),
@@ -133,7 +137,10 @@ fn sync_manifest_checksum_status_and_sync_crypto_are_compatible() {
         compute_sync_status(SyncInputs {
             local_checksum: parsed.vault_checksum.clone(),
             cloud_manifest: Some(parsed),
-            last_sync_checksum: Some(checksum_b),
+            checkpoint: Some(SyncCheckpoint {
+                local_checksum: checksum_b,
+                cloud_checksum: checksum_a,
+            }),
             sync_key_configured: true,
             backend_configured: true,
         }),
@@ -145,4 +152,58 @@ fn sync_manifest_checksum_status_and_sync_crypto_are_compatible() {
     assert_eq!(SyncCrypto::decode_key(&encoded).unwrap(), key);
     let blob = SyncCrypto::encrypt(b"vault bytes", &key).unwrap();
     assert_eq!(SyncCrypto::decrypt(&blob, &key).unwrap(), b"vault bytes");
+}
+
+#[test]
+fn smart_sync_plan_matches_android_conflict_semantics() {
+    let cloud_manifest = SyncManifest::new(sha256_checksum(b"cloud-v1"), "android", 64, 2);
+    let checkpoint = SyncCheckpoint {
+        local_checksum: sha256_checksum(b"local-v1"),
+        cloud_checksum: cloud_manifest.vault_checksum.clone(),
+    };
+
+    assert_eq!(
+        plan_smart_sync(SyncInputs {
+            local_checksum: checkpoint.local_checksum.clone(),
+            cloud_manifest: None,
+            checkpoint: None,
+            sync_key_configured: true,
+            backend_configured: true,
+        }),
+        SmartSyncPlan::Push
+    );
+
+    assert_eq!(
+        plan_smart_sync(SyncInputs {
+            local_checksum: sha256_checksum(b"local-v2"),
+            cloud_manifest: Some(cloud_manifest.clone()),
+            checkpoint: Some(checkpoint.clone()),
+            sync_key_configured: true,
+            backend_configured: true,
+        }),
+        SmartSyncPlan::Push
+    );
+
+    let changed_cloud = SyncManifest::new(sha256_checksum(b"cloud-v2"), "android", 80, 2);
+    assert_eq!(
+        plan_smart_sync(SyncInputs {
+            local_checksum: checkpoint.local_checksum.clone(),
+            cloud_manifest: Some(changed_cloud.clone()),
+            checkpoint: Some(checkpoint.clone()),
+            sync_key_configured: true,
+            backend_configured: true,
+        }),
+        SmartSyncPlan::Pull
+    );
+
+    assert_eq!(
+        plan_smart_sync(SyncInputs {
+            local_checksum: sha256_checksum(b"local-v2"),
+            cloud_manifest: Some(changed_cloud),
+            checkpoint: Some(checkpoint),
+            sync_key_configured: true,
+            backend_configured: true,
+        }),
+        SmartSyncPlan::Conflict
+    );
 }

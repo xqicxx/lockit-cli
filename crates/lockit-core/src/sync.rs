@@ -58,11 +58,17 @@ pub enum SyncStatus {
     Conflict,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SyncCheckpoint {
+    pub local_checksum: String,
+    pub cloud_checksum: String,
+}
+
 #[derive(Debug, Clone)]
 pub struct SyncInputs {
     pub local_checksum: String,
     pub cloud_manifest: Option<SyncManifest>,
-    pub last_sync_checksum: Option<String>,
+    pub checkpoint: Option<SyncCheckpoint>,
     pub sync_key_configured: bool,
     pub backend_configured: bool,
 }
@@ -82,11 +88,64 @@ pub fn compute_sync_status(input: SyncInputs) -> SyncStatus {
         return SyncStatus::UpToDate;
     }
 
-    match input.last_sync_checksum {
+    match input.checkpoint {
         None => SyncStatus::CloudAhead,
-        Some(last) if cloud.vault_checksum == last => SyncStatus::LocalAhead,
-        Some(last) if input.local_checksum == last => SyncStatus::CloudAhead,
+        Some(checkpoint)
+            if input.local_checksum == checkpoint.local_checksum
+                && cloud.vault_checksum == checkpoint.cloud_checksum =>
+        {
+            SyncStatus::UpToDate
+        }
+        Some(checkpoint) if cloud.vault_checksum == checkpoint.cloud_checksum => {
+            SyncStatus::LocalAhead
+        }
+        Some(checkpoint) if input.local_checksum == checkpoint.local_checksum => {
+            SyncStatus::CloudAhead
+        }
         Some(_) => SyncStatus::Conflict,
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SmartSyncPlan {
+    AlreadyUpToDate,
+    Push,
+    Pull,
+    Conflict,
+    NotConfigured,
+    BackendError,
+}
+
+pub fn plan_smart_sync(input: SyncInputs) -> SmartSyncPlan {
+    if !input.sync_key_configured {
+        return SmartSyncPlan::NotConfigured;
+    }
+    if !input.backend_configured {
+        return SmartSyncPlan::BackendError;
+    }
+    let Some(cloud) = input.cloud_manifest else {
+        return SmartSyncPlan::Push;
+    };
+
+    if cloud.vault_checksum == input.local_checksum {
+        return SmartSyncPlan::AlreadyUpToDate;
+    }
+
+    match input.checkpoint {
+        None => SmartSyncPlan::Conflict,
+        Some(checkpoint)
+            if input.local_checksum == checkpoint.local_checksum
+                && cloud.vault_checksum == checkpoint.cloud_checksum =>
+        {
+            SmartSyncPlan::AlreadyUpToDate
+        }
+        Some(checkpoint) if cloud.vault_checksum == checkpoint.cloud_checksum => {
+            SmartSyncPlan::Push
+        }
+        Some(checkpoint) if input.local_checksum == checkpoint.local_checksum => {
+            SmartSyncPlan::Pull
+        }
+        Some(_) => SmartSyncPlan::Conflict,
     }
 }
 

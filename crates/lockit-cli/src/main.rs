@@ -98,6 +98,8 @@ enum CodingPlanCmd {
 
 #[derive(Subcommand)]
 enum SyncCmd {
+    #[command(about = "Smart sync: push or pull only when one side changed")]
+    Sync,
     Status,
     Push,
     Pull,
@@ -143,6 +145,7 @@ fn main() -> anyhow::Result<()> {
             }
         },
         Commands::Sync { cmd } => match cmd {
+            SyncCmd::Sync => commands::sync_cmd::sync(&paths, cli.password),
             SyncCmd::Status => commands::sync_cmd::status(&paths),
             SyncCmd::Push => commands::sync_cmd::push(&paths, cli.password),
             SyncCmd::Pull => commands::sync_cmd::pull(&paths, cli.password),

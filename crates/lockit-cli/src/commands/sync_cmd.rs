@@ -1,17 +1,18 @@
 use anyhow::Context;
+mod payload;
+mod state;
+
 use lockit_core::sync::google_drive::{GoogleDriveBackend, GoogleDriveConfig};
 use lockit_core::sync::{
-    compute_sync_status, sha256_checksum, SyncBackend, SyncInputs, SyncManifest,
+    compute_sync_status, plan_smart_sync, sha256_checksum, SmartSyncPlan, SyncBackend,
+    SyncCheckpoint, SyncInputs,
 };
 use lockit_core::vault::VaultPaths;
-use std::path::PathBuf;
+use payload::{materialize_download, prepare_upload};
+use state::{
+    config_path, empty_sync_config, load_checkpoint, load_sync_config, save_checkpoint, save_config,
+};
 use zeroize::Zeroize;
-
-fn config_path(paths: &VaultPaths) -> PathBuf {
-    let mut p = paths.vault_path.clone();
-    p.set_file_name("sync_config.json");
-    p
-}
 
 fn load_backend(paths: &VaultPaths) -> GoogleDriveBackend {
     let mut backend = GoogleDriveBackend::new();
@@ -24,33 +25,6 @@ fn load_backend(paths: &VaultPaths) -> GoogleDriveBackend {
         }
     }
     backend
-}
-
-fn load_sync_config(paths: &VaultPaths) -> Option<GoogleDriveConfig> {
-    let cfg_path = config_path(paths);
-    let data = std::fs::read_to_string(&cfg_path).ok()?;
-    serde_json::from_str::<GoogleDriveConfig>(&data).ok()
-}
-
-fn empty_sync_config() -> GoogleDriveConfig {
-    GoogleDriveConfig {
-        access_token: String::new(),
-        refresh_token: String::new(),
-        token_expiry: 0,
-        client_id: lockit_core::sync::oauth::google_client_id(),
-        client_secret: lockit_core::sync::oauth::google_client_secret(),
-        sync_key: None,
-    }
-}
-
-fn save_config(paths: &VaultPaths, config: &GoogleDriveConfig) -> anyhow::Result<()> {
-    let cfg_path = config_path(paths);
-    if let Some(parent) = cfg_path.parent() {
-        std::fs::create_dir_all(parent)?;
-    }
-    let json = serde_json::to_string_pretty(config)?;
-    std::fs::write(&cfg_path, json)?;
-    Ok(())
 }
 
 pub fn status(paths: &VaultPaths) -> anyhow::Result<()> {
@@ -75,7 +49,7 @@ pub fn status(paths: &VaultPaths) -> anyhow::Result<()> {
     let input = SyncInputs {
         local_checksum,
         cloud_manifest,
-        last_sync_checksum: None,
+        checkpoint: load_checkpoint(paths),
         sync_key_configured: true,
         backend_configured: true,
     };
@@ -85,42 +59,83 @@ pub fn status(paths: &VaultPaths) -> anyhow::Result<()> {
     Ok(())
 }
 
+pub fn sync(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
+    let backend = load_backend(paths);
+    if !backend.is_configured() {
+        anyhow::bail!("Sync backend not configured. Run 'lockit sync config' first.");
+    }
+
+    let sync_config = load_sync_config(paths);
+    let prepared = prepare_upload(paths, pw.clone(), sync_config.as_ref(), "lockit-cli")?;
+    let cloud_manifest = backend
+        .get_manifest()
+        .map_err(|e| anyhow::anyhow!("Failed to fetch cloud manifest: {e}"))?;
+
+    let plan = plan_smart_sync(SyncInputs {
+        local_checksum: prepared.local_checksum.clone(),
+        cloud_manifest: cloud_manifest.clone(),
+        checkpoint: load_checkpoint(paths),
+        sync_key_configured: true,
+        backend_configured: true,
+    });
+
+    match plan {
+        SmartSyncPlan::AlreadyUpToDate => {
+            crate::output::success("Already up to date.");
+        }
+        SmartSyncPlan::Push => {
+            backend
+                .upload_vault(&prepared.upload_bytes, &prepared.manifest)
+                .map_err(|e| anyhow::anyhow!("Upload failed: {e}"))?;
+            save_checkpoint(
+                paths,
+                SyncCheckpoint {
+                    local_checksum: prepared.local_checksum,
+                    cloud_checksum: prepared.manifest.vault_checksum,
+                },
+            )?;
+            crate::output::success("Vault pushed to cloud.");
+        }
+        SmartSyncPlan::Pull => {
+            let manifest = cloud_manifest.context("No manifest found in cloud")?;
+            pull_manifest(paths, pw, sync_config.as_ref(), &backend, manifest)?;
+            crate::output::success("Vault pulled from cloud.");
+        }
+        SmartSyncPlan::Conflict => {
+            anyhow::bail!(
+                "Sync conflict: local and cloud both changed. Use 'lockit sync push' to overwrite cloud or 'lockit sync pull' to overwrite local."
+            );
+        }
+        SmartSyncPlan::NotConfigured => {
+            anyhow::bail!("Sync key not configured. Run 'lockit sync key-gen' or 'lockit sync key-set' first.");
+        }
+        SmartSyncPlan::BackendError => {
+            anyhow::bail!("Sync backend not configured. Run 'lockit sync config' first.");
+        }
+    }
+
+    Ok(())
+}
+
 pub fn push(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
     let backend = load_backend(paths);
     if !backend.is_configured() {
         anyhow::bail!("Sync backend not configured. Run 'lockit sync config' first.");
     }
 
-    // Unlock vault to validate password and access payload
-    let _pw = crate::utils::read_password(pw, "Master password")?;
-    let session =
-        lockit_core::vault::unlock_vault(paths, &_pw).context("Failed to unlock vault")?;
-
-    // With sync key: export VaultPayload JSON (cross-platform compatible with Android)
-    // Without sync key: upload raw vault.enc bytes (backward compatible)
     let sync_config = load_sync_config(paths);
-    let upload_bytes = if let Some(ref key_b64) = sync_config.as_ref().and_then(|c| c.sync_key.as_ref()) {
-        let sync_key = lockit_core::sync::SyncCrypto::decode_key(key_b64)
-            .map_err(|e| anyhow::anyhow!("Invalid sync key: {e}"))?;
-        let mut payload_json = serde_json::to_vec(&session.payload)
-            .context("Failed to serialize vault payload")?;
-        let encrypted = lockit_core::sync::SyncCrypto::encrypt(&payload_json, &sync_key)
-            .map_err(|e| anyhow::anyhow!("Sync encryption failed: {e}"));
-        payload_json.zeroize();
-        encrypted?
-    } else {
-        std::fs::read(&paths.vault_path).context("Failed to read vault file")?
-    };
-
-    let checksum = sha256_checksum(&upload_bytes);
-    let encrypted_size = upload_bytes.len() as u64;
-    let schema_version = if sync_config.as_ref().and_then(|c| c.sync_key.as_ref()).is_some() { 2 } else { 1 };
-
-    let manifest = SyncManifest::new(checksum, "lockit-cli", encrypted_size, schema_version);
+    let prepared = prepare_upload(paths, pw, sync_config.as_ref(), "lockit-cli")?;
 
     backend
-        .upload_vault(&upload_bytes, &manifest)
+        .upload_vault(&prepared.upload_bytes, &prepared.manifest)
         .map_err(|e| anyhow::anyhow!("Upload failed: {e}"))?;
+    save_checkpoint(
+        paths,
+        SyncCheckpoint {
+            local_checksum: prepared.local_checksum,
+            cloud_checksum: prepared.manifest.vault_checksum,
+        },
+    )?;
 
     crate::output::success("Vault pushed to cloud.");
     Ok(())
@@ -165,43 +180,31 @@ pub fn pull(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
         lockit_core::vault::unlock_vault(paths, &p).context("Failed to unlock vault")?;
     }
 
+    pull_manifest(paths, pw, sync_config.as_ref(), &backend, cloud_manifest)?;
+
+    crate::output::success("Vault pulled from cloud.");
+    Ok(())
+}
+
+fn pull_manifest(
+    paths: &VaultPaths,
+    pw: Option<String>,
+    sync_config: Option<&GoogleDriveConfig>,
+    backend: &GoogleDriveBackend,
+    cloud_manifest: lockit_core::sync::SyncManifest,
+) -> anyhow::Result<()> {
     let cloud_bytes = backend
         .download_vault()
         .map_err(|e| anyhow::anyhow!("Download failed: {e}"))?;
-
-    // Verify checksum
-    let downloaded_checksum = sha256_checksum(&cloud_bytes);
-    if downloaded_checksum != *cloud_checksum {
-        anyhow::bail!(
-            "Checksum mismatch: downloaded data does not match manifest. Expected {}, got {}",
-            cloud_checksum,
-            downloaded_checksum
-        );
-    }
-
-    // Decrypt if cloud vault is sync-key encrypted (schema >= 2)
-    let vault_bytes = match cloud_manifest.schema_version {
-        v if v >= 2 => {
-            let key = sync_key.ok_or_else(|| {
-                anyhow::anyhow!("Cloud vault is encrypted with a sync key, but none is configured locally. Use 'lockit sync key-set <KEY>' first.")
-            })?;
-            let mut payload_json = lockit_core::sync::SyncCrypto::decrypt(&cloud_bytes, &key)
-                .map_err(|e| anyhow::anyhow!("Sync decryption failed: {e}"))?;
-            // Re-encrypt VaultPayload with master password to create vault.enc
-            let mut password = crate::utils::read_password(pw.as_ref().map(|s| s.clone()), "Master password")?;
-            let params = lockit_core::crypto::CryptoParams::default_for_new_vault();
-            let encrypted = lockit_core::crypto::encrypt_vault_bytes(&payload_json, &password, &params)
-                .context("Failed to re-encrypt vault");
-            payload_json.zeroize();
-            password.zeroize();
-            encrypted?
-        }
-        _ => cloud_bytes,
-    };
-
-    std::fs::write(&paths.vault_path, &vault_bytes).context("Failed to write vault file")?;
-
-    crate::output::success("Vault pulled from cloud.");
+    let pulled = materialize_download(pw, sync_config, &cloud_manifest, cloud_bytes)?;
+    std::fs::write(&paths.vault_path, &pulled.local_bytes).context("Failed to write vault file")?;
+    save_checkpoint(
+        paths,
+        SyncCheckpoint {
+            local_checksum: pulled.local_checksum,
+            cloud_checksum: pulled.cloud_checksum,
+        },
+    )?;
     Ok(())
 }
 
@@ -268,18 +271,18 @@ pub fn key_gen(paths: &VaultPaths) -> anyhow::Result<()> {
 }
 
 pub fn key_show(paths: &VaultPaths) -> anyhow::Result<()> {
-    let config = load_sync_config(paths)
-        .ok_or_else(|| anyhow::anyhow!("No sync configuration found."))?;
-    let key = config
-        .sync_key
-        .ok_or_else(|| anyhow::anyhow!("No sync key configured. Run 'lockit sync key-gen' first."))?;
+    let config =
+        load_sync_config(paths).ok_or_else(|| anyhow::anyhow!("No sync configuration found."))?;
+    let key = config.sync_key.ok_or_else(|| {
+        anyhow::anyhow!("No sync key configured. Run 'lockit sync key-gen' first.")
+    })?;
     println!("{key}");
     Ok(())
 }
 
 pub fn key_set(paths: &VaultPaths) -> anyhow::Result<()> {
-    let mut key = rpassword::prompt_password("Sync key (Base64): ")
-        .context("Failed to read sync key")?;
+    let mut key =
+        rpassword::prompt_password("Sync key (Base64): ").context("Failed to read sync key")?;
 
     lockit_core::sync::SyncCrypto::decode_key(key.trim())
         .map_err(|e| anyhow::anyhow!("Invalid sync key: {e}"))?;

@@ -27,12 +27,19 @@ fn load_backend(paths: &VaultPaths) -> GoogleDriveBackend {
 
 fn load_sync_config(paths: &VaultPaths) -> Option<GoogleDriveConfig> {
     let cfg_path = config_path(paths);
-    if cfg_path.exists() {
-        if let Ok(data) = std::fs::read_to_string(&cfg_path) {
-            return serde_json::from_str::<GoogleDriveConfig>(&data).ok();
-        }
+    let data = std::fs::read_to_string(&cfg_path).ok()?;
+    serde_json::from_str::<GoogleDriveConfig>(&data).ok()
+}
+
+fn empty_sync_config() -> GoogleDriveConfig {
+    GoogleDriveConfig {
+        access_token: String::new(),
+        refresh_token: String::new(),
+        token_expiry: 0,
+        client_id: lockit_core::sync::oauth::google_client_id(),
+        client_secret: lockit_core::sync::oauth::google_client_secret(),
+        sync_key: None,
     }
-    None
 }
 
 fn save_config(paths: &VaultPaths, config: &GoogleDriveConfig) -> anyhow::Result<()> {
@@ -237,14 +244,7 @@ pub fn key_gen(paths: &VaultPaths) -> anyhow::Result<()> {
     let key = lockit_core::sync::SyncCrypto::generate_key();
     let encoded = lockit_core::sync::SyncCrypto::encode_key(&key);
 
-    let mut config = load_sync_config(paths).unwrap_or(GoogleDriveConfig {
-        access_token: String::new(),
-        refresh_token: String::new(),
-        token_expiry: 0,
-        client_id: String::new(),
-        client_secret: String::new(),
-        sync_key: None,
-    });
+    let mut config = load_sync_config(paths).unwrap_or_else(empty_sync_config);
     config.sync_key = Some(encoded);
     save_config(paths, &config)?;
 
@@ -272,14 +272,7 @@ pub fn key_set(paths: &VaultPaths) -> anyhow::Result<()> {
     lockit_core::sync::SyncCrypto::decode_key(key)
         .map_err(|e| anyhow::anyhow!("Invalid sync key: {e}"))?;
 
-    let mut config = load_sync_config(paths).unwrap_or(GoogleDriveConfig {
-        access_token: String::new(),
-        refresh_token: String::new(),
-        token_expiry: 0,
-        client_id: String::new(),
-        client_secret: String::new(),
-        sync_key: None,
-    });
+    let mut config = load_sync_config(paths).unwrap_or_else(empty_sync_config);
     config.sync_key = Some(key.to_string());
     save_config(paths, &config)?;
 

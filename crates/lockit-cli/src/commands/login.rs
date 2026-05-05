@@ -19,12 +19,21 @@ pub fn run(paths: &lockit_core::vault::VaultPaths) -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_secs() as i64)
         .unwrap_or(0);
+    // Preserve existing sync key if already configured
+    let existing_key = std::fs::read_to_string(
+        paths.vault_path.with_file_name("sync_config.json"),
+    )
+    .ok()
+    .and_then(|s| serde_json::from_str::<GoogleDriveConfig>(&s).ok())
+    .and_then(|c| c.sync_key);
+
     let cfg = GoogleDriveConfig {
         access_token: tokens.access_token,
         refresh_token: tokens.refresh_token,
         token_expiry: now + tokens.expires_in,
         client_id: oauth::google_client_id(),
         client_secret: oauth::google_client_secret(),
+        sync_key: existing_key,
     };
 
     let vault_dir = paths

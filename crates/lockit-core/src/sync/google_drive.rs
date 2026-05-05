@@ -12,6 +12,8 @@ pub struct GoogleDriveConfig {
     pub token_expiry: i64,
     pub client_id: String,
     pub client_secret: String,
+    #[serde(default)]
+    pub sync_key: Option<String>,
 }
 
 /// A [`SyncBackend`] implementation that stores the encrypted vault and

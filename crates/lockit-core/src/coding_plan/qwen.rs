@@ -69,25 +69,27 @@ impl CodingPlanFetcher for QwenFetcher {
             .json()
             .map_err(|e| CodingPlanError::ParseError(format!("json parse: {}", e)))?;
 
-        // Bailian API wraps response in PascalCase: { Code, Data, Success, Message }
-        // Check for API-level error first
-        if let Some(code) = body.get("Code").and_then(|v| v.as_str()) {
-            if !code.is_empty() && code != "0" {
-                let msg = body
-                    .get("Message")
-                    .and_then(|v| v.as_str())
-                    .unwrap_or("unknown error");
-                return Ok(ProviderQuota {
-                    provider: self.provider(),
-                    plan: String::new(),
-                    used: 0,
-                    total: 0,
-                    remaining: String::new(),
-                    remaining_days: None,
-                    status: QuotaStatus::Error(format!("{}: {}", code, msg)),
-                    refreshed_at: Utc::now(),
-                });
-            }
+        // Bailian API: { Code, Data, Success, Message }
+        // Check Success boolean first — more reliable than Code string matching
+        if body.get("Success").and_then(|v| v.as_bool()) == Some(false) {
+            let code = body
+                .get("Code")
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "unknown".to_string());
+            let msg = body
+                .get("Message")
+                .and_then(|v| v.as_str())
+                .unwrap_or("unknown error");
+            return Ok(ProviderQuota {
+                provider: self.provider(),
+                plan: String::new(),
+                used: 0,
+                total: 0,
+                remaining: String::new(),
+                remaining_days: None,
+                status: QuotaStatus::Error(format!("{}: {}", code, msg)),
+                refreshed_at: Utc::now(),
+            });
         }
 
         // Try Bailian format: Data.used_tokens / Data.total_tokens

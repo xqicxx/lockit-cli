@@ -92,7 +92,7 @@ pub fn push(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
 
     // Encrypt with sync key if configured (cross-platform compatible)
     let sync_config = load_sync_config(paths);
-    let upload_bytes = if let Some(ref key_b64) = sync_config.and_then(|c| c.sync_key) {
+    let upload_bytes = if let Some(ref key_b64) = sync_config.as_ref().and_then(|c| c.sync_key.as_ref()) {
         let sync_key = lockit_core::sync::SyncCrypto::decode_key(key_b64)
             .map_err(|e| anyhow::anyhow!("Invalid sync key: {e}"))?;
         lockit_core::sync::SyncCrypto::encrypt(&vault_bytes, &sync_key)
@@ -103,8 +103,9 @@ pub fn push(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
 
     let checksum = sha256_checksum(&upload_bytes);
     let encrypted_size = upload_bytes.len() as u64;
+    let schema_version = if sync_config.as_ref().and_then(|c| c.sync_key.as_ref()).is_some() { 2 } else { 1 };
 
-    let manifest = SyncManifest::new(checksum, "lockit-cli", encrypted_size, 2);
+    let manifest = SyncManifest::new(checksum, "lockit-cli", encrypted_size, schema_version);
 
     backend
         .upload_vault(&upload_bytes, &manifest)
@@ -137,17 +138,11 @@ pub fn pull(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
         .context("No manifest found in cloud")?;
     let cloud_checksum = &cloud_manifest.vault_checksum;
 
-    // Early-return if already up to date
-    if paths.vault_path.exists() {
+    // Early-return if already up to date (non-sync-key only — sync key random nonce prevents matching)
+    if paths.vault_path.exists() && sync_key.is_none() {
         let local_bytes =
             std::fs::read(&paths.vault_path).context("Failed to read local vault file")?;
-        let local_checksum = if let Some(ref key) = sync_key {
-            let encrypted = lockit_core::sync::SyncCrypto::encrypt(&local_bytes, key)
-                .context("Failed to encrypt for checksum comparison")?;
-            sha256_checksum(&encrypted)
-        } else {
-            sha256_checksum(&local_bytes)
-        };
+        let local_checksum = sha256_checksum(&local_bytes);
         if local_checksum == *cloud_checksum {
             crate::output::success("Already up to date.");
             return Ok(());
@@ -173,12 +168,16 @@ pub fn pull(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
         );
     }
 
-    // Decrypt with sync key if configured
-    let vault_bytes = if let Some(ref key) = sync_key {
-        lockit_core::sync::SyncCrypto::decrypt(&cloud_bytes, key)
-            .map_err(|e| anyhow::anyhow!("Sync decryption failed: {e}"))?
-    } else {
-        cloud_bytes
+    // Decrypt if cloud vault is sync-key encrypted (schema >= 2)
+    let vault_bytes = match cloud_manifest.schema_version {
+        v if v >= 2 => {
+            let key = sync_key.ok_or_else(|| {
+                anyhow::anyhow!("Cloud vault is encrypted with a sync key, but none is configured locally. Use 'lockit sync key-set <KEY>' first.")
+            })?;
+            lockit_core::sync::SyncCrypto::decrypt(&cloud_bytes, &key)
+                .map_err(|e| anyhow::anyhow!("Sync decryption failed: {e}"))?
+        }
+        _ => cloud_bytes,
     };
 
     std::fs::write(&paths.vault_path, &vault_bytes).context("Failed to write vault file")?;
@@ -255,6 +254,30 @@ pub fn key_gen(paths: &VaultPaths) -> anyhow::Result<()> {
     println!();
     println!("Share this key with other devices to sync the same vault.");
     println!("Keep it secret — anyone with this key can decrypt your synced data.");
+    println!();
+    println!("On Android: Config → Sync → paste this key.");
+
+    Ok(())
+}
+
+pub fn key_set(paths: &VaultPaths, key: &str) -> anyhow::Result<()> {
+    // Validate the key format
+    lockit_core::sync::SyncCrypto::decode_key(key)
+        .map_err(|e| anyhow::anyhow!("Invalid sync key: {e}"))?;
+
+    let mut config = load_sync_config(paths).unwrap_or(GoogleDriveConfig {
+        access_token: String::new(),
+        refresh_token: String::new(),
+        token_expiry: 0,
+        client_id: String::new(),
+        client_secret: String::new(),
+        sync_key: None,
+    });
+    config.sync_key = Some(key.trim().to_string());
+    save_config(paths, &config)?;
+
+    crate::output::success("Sync key configured.");
+    println!("Push and pull will now use this key for cross-platform sync.");
 
     Ok(())
 }

@@ -105,7 +105,7 @@ pub fn unlock_vault(paths: &VaultPaths, password: &str) -> Result<VaultSession> 
 #[derive(Debug)]
 pub struct VaultSession {
     paths: VaultPaths,
-    payload: VaultPayload,
+    pub payload: VaultPayload,
     key: Option<VaultMasterKey>,
 }
 

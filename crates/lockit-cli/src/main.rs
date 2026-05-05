@@ -104,8 +104,10 @@ enum SyncCmd {
     Config,
     #[command(about = "Generate a new sync key for cross-platform sync")]
     KeyGen,
-    #[command(about = "Set sync key from Android (paste Base64 key)")]
-    KeySet { key: String },
+    #[command(about = "Set sync key from Android (prompts securely)")]
+    KeySet,
+    #[command(about = "Show current sync key for sharing")]
+    KeyShow,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -146,7 +148,8 @@ fn main() -> anyhow::Result<()> {
             SyncCmd::Pull => commands::sync_cmd::pull(&paths, cli.password),
             SyncCmd::Config => commands::sync_cmd::config(&paths),
             SyncCmd::KeyGen => commands::sync_cmd::key_gen(&paths),
-            SyncCmd::KeySet { key } => commands::sync_cmd::key_set(&paths, &key),
+            SyncCmd::KeySet => commands::sync_cmd::key_set(&paths),
+            SyncCmd::KeyShow => commands::sync_cmd::key_show(&paths),
         },
         Commands::Env { name } => commands::env_cmd::run(&paths, cli.password, &name),
         Commands::Run { name, cmd } => commands::run_cmd::run(&paths, cli.password, &name, &cmd),

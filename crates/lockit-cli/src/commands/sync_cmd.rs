@@ -218,7 +218,7 @@ pub fn config(paths: &VaultPaths) -> anyhow::Result<()> {
         refresh_token: refresh_token.trim().to_string(),
         access_token: access_token.trim().to_string(),
         token_expiry: 0,
-        sync_key: None,
+        sync_key: load_sync_config(paths).and_then(|c| c.sync_key),
     };
 
     // Save config to file next to vault
@@ -245,23 +245,30 @@ pub fn key_gen(paths: &VaultPaths) -> anyhow::Result<()> {
         client_secret: String::new(),
         sync_key: None,
     });
-    config.sync_key = Some(encoded.clone());
+    config.sync_key = Some(encoded);
     save_config(paths, &config)?;
 
-    println!("Sync key generated and saved.");
-    println!();
-    println!("Key (Base64): {encoded}");
-    println!();
-    println!("Share this key with other devices to sync the same vault.");
-    println!("Keep it secret — anyone with this key can decrypt your synced data.");
-    println!();
-    println!("On Android: Config → Sync → paste this key.");
+    crate::output::success("Sync key generated and saved.");
+    println!("Use 'lockit sync key-show' to reveal the key for cross-platform setup.");
 
     Ok(())
 }
 
-pub fn key_set(paths: &VaultPaths, key: &str) -> anyhow::Result<()> {
-    // Validate the key format
+pub fn key_show(paths: &VaultPaths) -> anyhow::Result<()> {
+    let config = load_sync_config(paths)
+        .ok_or_else(|| anyhow::anyhow!("No sync configuration found."))?;
+    let key = config
+        .sync_key
+        .ok_or_else(|| anyhow::anyhow!("No sync key configured. Run 'lockit sync key-gen' first."))?;
+    println!("{key}");
+    Ok(())
+}
+
+pub fn key_set(paths: &VaultPaths) -> anyhow::Result<()> {
+    let key = rpassword::prompt_password("Sync key (Base64): ")
+        .context("Failed to read sync key")?;
+    let key = key.trim();
+
     lockit_core::sync::SyncCrypto::decode_key(key)
         .map_err(|e| anyhow::anyhow!("Invalid sync key: {e}"))?;
 
@@ -273,7 +280,7 @@ pub fn key_set(paths: &VaultPaths, key: &str) -> anyhow::Result<()> {
         client_secret: String::new(),
         sync_key: None,
     });
-    config.sync_key = Some(key.trim().to_string());
+    config.sync_key = Some(key.to_string());
     save_config(paths, &config)?;
 
     crate::output::success("Sync key configured.");

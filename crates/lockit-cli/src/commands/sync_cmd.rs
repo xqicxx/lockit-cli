@@ -267,16 +267,17 @@ pub fn key_show(paths: &VaultPaths) -> anyhow::Result<()> {
 }
 
 pub fn key_set(paths: &VaultPaths) -> anyhow::Result<()> {
-    let key = rpassword::prompt_password("Sync key (Base64): ")
+    let mut key = rpassword::prompt_password("Sync key (Base64): ")
         .context("Failed to read sync key")?;
-    let key = key.trim();
 
-    lockit_core::sync::SyncCrypto::decode_key(key)
+    lockit_core::sync::SyncCrypto::decode_key(key.trim())
         .map_err(|e| anyhow::anyhow!("Invalid sync key: {e}"))?;
 
     let mut config = load_sync_config(paths).unwrap_or_else(empty_sync_config);
-    config.sync_key = Some(key.to_string());
-    save_config(paths, &config)?;
+    config.sync_key = Some(key.trim().to_string());
+    let result = save_config(paths, &config);
+    key.zeroize();
+    result?;
 
     crate::output::success("Sync key configured.");
     println!("Push and pull will now use this key for cross-platform sync.");

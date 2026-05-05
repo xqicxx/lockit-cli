@@ -102,6 +102,8 @@ enum SyncCmd {
     Push,
     Pull,
     Config,
+    #[command(about = "Generate a new sync key for cross-platform sync")]
+    KeyGen,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -141,6 +143,7 @@ fn main() -> anyhow::Result<()> {
             SyncCmd::Push => commands::sync_cmd::push(&paths, cli.password),
             SyncCmd::Pull => commands::sync_cmd::pull(&paths, cli.password),
             SyncCmd::Config => commands::sync_cmd::config(&paths),
+            SyncCmd::KeyGen => commands::sync_cmd::key_gen(&paths),
         },
         Commands::Env { name } => commands::env_cmd::run(&paths, cli.password, &name),
         Commands::Run { name, cmd } => commands::run_cmd::run(&paths, cli.password, &name, &cmd),

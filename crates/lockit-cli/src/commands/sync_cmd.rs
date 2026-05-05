@@ -91,22 +91,23 @@ pub fn push(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
         anyhow::bail!("Sync backend not configured. Run 'lockit sync config' first.");
     }
 
-    // Unlock vault to validate password
+    // Unlock vault to validate password and access payload
     let _pw = crate::utils::read_password(pw, "Master password")?;
-    let _session =
+    let session =
         lockit_core::vault::unlock_vault(paths, &_pw).context("Failed to unlock vault")?;
 
-    let vault_bytes = std::fs::read(&paths.vault_path).context("Failed to read vault file")?;
-
-    // Encrypt with sync key if configured (cross-platform compatible)
+    // With sync key: export VaultPayload JSON (cross-platform compatible with Android)
+    // Without sync key: upload raw vault.enc bytes (backward compatible)
     let sync_config = load_sync_config(paths);
     let upload_bytes = if let Some(ref key_b64) = sync_config.as_ref().and_then(|c| c.sync_key.as_ref()) {
         let sync_key = lockit_core::sync::SyncCrypto::decode_key(key_b64)
             .map_err(|e| anyhow::anyhow!("Invalid sync key: {e}"))?;
-        lockit_core::sync::SyncCrypto::encrypt(&vault_bytes, &sync_key)
+        let payload_json = serde_json::to_vec(&session.payload)
+            .context("Failed to serialize vault payload")?;
+        lockit_core::sync::SyncCrypto::encrypt(&payload_json, &sync_key)
             .map_err(|e| anyhow::anyhow!("Sync encryption failed: {e}"))?
     } else {
-        vault_bytes
+        std::fs::read(&paths.vault_path).context("Failed to read vault file")?
     };
 
     let checksum = sha256_checksum(&upload_bytes);
@@ -158,7 +159,7 @@ pub fn pull(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
     }
 
     // Validate password before network download
-    if let Some(p) = pw {
+    if let Some(ref p) = pw {
         lockit_core::vault::unlock_vault(paths, &p).context("Failed to unlock vault")?;
     }
 
@@ -182,8 +183,13 @@ pub fn pull(paths: &VaultPaths, pw: Option<String>) -> anyhow::Result<()> {
             let key = sync_key.ok_or_else(|| {
                 anyhow::anyhow!("Cloud vault is encrypted with a sync key, but none is configured locally. Use 'lockit sync key-set <KEY>' first.")
             })?;
-            lockit_core::sync::SyncCrypto::decrypt(&cloud_bytes, &key)
-                .map_err(|e| anyhow::anyhow!("Sync decryption failed: {e}"))?
+            let payload_json = lockit_core::sync::SyncCrypto::decrypt(&cloud_bytes, &key)
+                .map_err(|e| anyhow::anyhow!("Sync decryption failed: {e}"))?;
+            // Re-encrypt VaultPayload with master password to create vault.enc
+            let password = crate::utils::read_password(pw.as_ref().map(|s| s.clone()), "Master password")?;
+            let params = lockit_core::crypto::CryptoParams::default_for_new_vault();
+            lockit_core::crypto::encrypt_vault_bytes(&payload_json, &password, &params)
+                .context("Failed to re-encrypt vault")?
         }
         _ => cloud_bytes,
     };

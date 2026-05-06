@@ -27,7 +27,7 @@ pub fn prompt_fields_interactive(
     for field in &fields {
         let answer = prompt_single_field(field)?;
         if !answer.is_empty() {
-            let key = field.label.to_lowercase().replace(' ', "_");
+            let key = crate::utils::field_label_key(field.label);
             values.insert(key, answer);
         }
     }
@@ -38,11 +38,11 @@ pub fn prompt_fields_interactive(
 fn prompt_single_field(field: &CredentialField) -> Result<String, anyhow::Error> {
     if field.is_dropdown() {
         prompt_dropdown(field)
-    } else if is_secret_field(field.label) {
+    } else if field.secret {
         let prompt = format!("{}: ", field.label);
         Ok(rpassword::prompt_password(prompt).context("read secret field")?)
     } else {
-        let key = field.label.to_lowercase().replace(' ', "_");
+        let key = crate::utils::field_label_key(field.label);
         let default = if key == "key_identifier" {
             Some("default")
         } else {
@@ -68,19 +68,4 @@ fn prompt_dropdown(field: &CredentialField) -> Result<String, anyhow::Error> {
     } else {
         Ok(selection.to_string())
     }
-}
-
-fn is_secret_field(label: &str) -> bool {
-    matches!(
-        label,
-        "SECRET_VALUE"
-            | "PASSWORD"
-            | "PASSWORD_VALUE"
-            | "TOKEN_VALUE"
-            | "PRIVATE_KEY"
-            | "SECRET_KEY"
-            | "API_KEY"
-            | "CONNECTION_URL"
-    ) || label.ends_with("_VALUE")
-        || label.ends_with("_KEY")
 }

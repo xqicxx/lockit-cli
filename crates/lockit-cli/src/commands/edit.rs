@@ -1,4 +1,3 @@
-use anyhow::Context;
 use lockit_core::credential::CredentialDraft;
 use lockit_core::vault::{unlock_vault, VaultPaths};
 
@@ -6,7 +5,7 @@ use crate::interactive;
 use crate::output;
 
 pub fn run(paths: &VaultPaths, password: Option<String>, name_or_id: &str) -> anyhow::Result<()> {
-    let pw = read_password(password)?;
+    let pw = crate::utils::read_password(password, "Master password")?;
     let mut session = unlock_vault(paths, &pw)?;
     let existing = session.get_credential(name_or_id)?;
 
@@ -43,11 +42,4 @@ pub fn run(paths: &VaultPaths, password: Option<String>, name_or_id: &str) -> an
     session.save()?;
     output::success(&format!("Updated: {name_or_id}"));
     Ok(())
-}
-
-fn read_password(value: Option<String>) -> anyhow::Result<String> {
-    match value {
-        Some(v) => Ok(v),
-        None => rpassword::prompt_password("Master password: ").context("read password"),
-    }
 }

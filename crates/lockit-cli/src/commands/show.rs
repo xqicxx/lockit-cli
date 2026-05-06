@@ -1,4 +1,3 @@
-use anyhow::Context;
 use lockit_core::credential_field::credential_fields_for;
 use lockit_core::vault::{unlock_vault, VaultPaths};
 
@@ -10,7 +9,7 @@ pub fn run(
     name_or_id: &str,
     json: bool,
 ) -> anyhow::Result<()> {
-    let pw = read_password(password)?;
+    let pw = crate::utils::read_password(password, "Master password")?;
     let session = unlock_vault(paths, &pw)?;
     let credential = session.get_credential(name_or_id)?;
 
@@ -37,22 +36,11 @@ fn display_credential(credential: &lockit_core::credential::RedactedCredential) 
 
     println!();
     for field in &field_defs {
-        let key = field_label_key(field.label);
+        let key = crate::utils::field_label_key(field.label);
         if let Some(value) = credential.fields.get(&key) {
             if !value.is_empty() {
                 println!("  {}: {}", field.label, value);
             }
         }
-    }
-}
-
-fn field_label_key(label: &str) -> String {
-    label.to_lowercase().replace(' ', "_")
-}
-
-fn read_password(value: Option<String>) -> anyhow::Result<String> {
-    match value {
-        Some(v) => Ok(v),
-        None => rpassword::prompt_password("Master password: ").context("read password"),
     }
 }

@@ -1,31 +1,24 @@
 use lockit_core::sync::google_drive::GoogleDriveConfig;
 use lockit_core::sync::oauth;
-use std::path::{Path, PathBuf};
 
+use crate::commands::sync_cmd::state::config_path;
 use crate::output;
-
-fn config_path(vault_dir: &Path) -> PathBuf {
-    vault_dir.join("sync_config.json")
-}
 
 pub fn run(paths: &lockit_core::vault::VaultPaths) -> anyhow::Result<()> {
     eprintln!("Starting Google OAuth login...");
     eprintln!("A browser window will open for authorization.\n");
 
-    let tokens =
-        oauth::start_oauth_flow().map_err(|e| anyhow::anyhow!("OAuth flow failed: {e}"))?;
+    let tokens = oauth::start_oauth_flow()?;
 
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_secs() as i64)
         .unwrap_or(0);
     // Preserve existing sync key if already configured
-    let existing_key = std::fs::read_to_string(
-        paths.vault_path.with_file_name("sync_config.json"),
-    )
-    .ok()
-    .and_then(|s| serde_json::from_str::<GoogleDriveConfig>(&s).ok())
-    .and_then(|c| c.sync_key);
+    let existing_key = std::fs::read_to_string(config_path(paths))
+        .ok()
+        .and_then(|s| serde_json::from_str::<GoogleDriveConfig>(&s).ok())
+        .and_then(|c| c.sync_key);
 
     let cfg = GoogleDriveConfig {
         access_token: tokens.access_token,
@@ -36,12 +29,10 @@ pub fn run(paths: &lockit_core::vault::VaultPaths) -> anyhow::Result<()> {
         sync_key: existing_key,
     };
 
-    let vault_dir = paths
-        .vault_path
-        .parent()
-        .unwrap_or_else(|| std::path::Path::new("."));
-    let cfg_file = config_path(vault_dir);
-    std::fs::create_dir_all(vault_dir)?;
+    let cfg_file = config_path(paths);
+    if let Some(parent) = cfg_file.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
     let json = serde_json::to_string_pretty(&cfg)?;
     std::fs::write(&cfg_file, json)?;
 

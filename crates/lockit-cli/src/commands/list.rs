@@ -1,4 +1,3 @@
-use anyhow::Context;
 use lockit_core::vault::{unlock_vault, VaultPaths};
 
 use crate::output;
@@ -9,7 +8,7 @@ pub fn run(
     json: bool,
     query: Option<String>,
 ) -> anyhow::Result<()> {
-    let pw = read_password(password)?;
+    let pw = crate::utils::read_password(password, "Master password")?;
     let session = unlock_vault(paths, &pw)?;
 
     let credentials = match &query {
@@ -24,11 +23,4 @@ pub fn run(
     }
 
     Ok(())
-}
-
-fn read_password(value: Option<String>) -> anyhow::Result<String> {
-    match value {
-        Some(v) => Ok(v),
-        None => rpassword::prompt_password("Master password: ").context("read password"),
-    }
 }

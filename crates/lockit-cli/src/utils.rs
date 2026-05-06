@@ -7,6 +7,10 @@ pub(crate) fn read_password(value: Option<String>, prompt: &str) -> anyhow::Resu
     }
 }
 
+pub(crate) fn field_label_key(label: &str) -> String {
+    label.to_lowercase().replace(' ', "_")
+}
+
 pub(crate) fn sanitize_env_name(name: &str) -> String {
     name.to_uppercase()
         .chars()

@@ -1,3 +1,4 @@
+use anyhow::Context;
 use base64::engine::general_purpose::URL_SAFE_NO_PAD;
 use base64::Engine;
 use rand::RngCore;
@@ -34,15 +35,15 @@ pub struct OAuthTokens {
     pub expires_in: i64,
 }
 
-pub fn start_oauth_flow() -> Result<OAuthTokens, String> {
+pub fn start_oauth_flow() -> Result<OAuthTokens, anyhow::Error> {
     // Generate PKCE code verifier and challenge
     let code_verifier = generate_code_verifier();
     let code_challenge = base64url_sha256(&code_verifier);
 
     // Bind to a random port
     let listener = TcpListener::bind(("127.0.0.1", GOOGLE_REDIRECT_PORT))
-        .map_err(|e| format!("Failed to bind localhost: {e}"))?;
-    let port = listener.local_addr().map_err(|e| format!("{e}"))?.port();
+        .context("Failed to bind localhost")?;
+    let port = listener.local_addr().context("get local addr")?.port();
     let redirect_uri = format!("http://127.0.0.1:{port}/callback");
 
     // Build the authorization URL
@@ -65,7 +66,7 @@ pub fn start_oauth_flow() -> Result<OAuthTokens, String> {
     }
 
     // Set nonblocking so we can poll with a timeout
-    listener.set_nonblocking(true).map_err(|e| format!("{e}"))?;
+    listener.set_nonblocking(true).context("set nonblocking")?;
 
     // Accept ONE connection, extract the auth code (120s timeout)
     let code = match wait_for_callback(&listener) {
@@ -86,40 +87,35 @@ pub fn start_oauth_flow() -> Result<OAuthTokens, String> {
     exchange_code(&code, &code_verifier, &redirect_uri)
 }
 
-fn wait_for_callback(listener: &TcpListener) -> Result<String, String> {
+fn wait_for_callback(listener: &TcpListener) -> Result<String, anyhow::Error> {
     let start = std::time::Instant::now();
     let timeout = std::time::Duration::from_secs(120);
     let stream = loop {
         match listener.accept() {
             Ok((stream, _)) => {
-                stream
-                    .set_nonblocking(false)
-                    .map_err(|e| format!("Failed to set stream blocking: {e}"))?;
+                stream.set_nonblocking(false).context("set stream blocking")?;
                 stream
                     .set_read_timeout(Some(timeout))
-                    .map_err(|e| format!("Failed to set read timeout: {e}"))?;
+                    .context("set read timeout")?;
                 break stream;
             }
             Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
                 if start.elapsed() > timeout {
-                    return Err(
-                        "OAuth login timed out after 120s. Browser did not complete authorization."
-                            .to_string(),
-                    );
+                    anyhow::bail!("OAuth login timed out after 120s. Browser did not complete authorization.");
                 }
                 std::thread::sleep(std::time::Duration::from_millis(200));
                 continue;
             }
-            Err(e) => return Err(format!("Connection error: {e}")),
+            Err(e) => return Err(e).context("Connection error"),
         }
     };
 
-    let mut reader = BufReader::new(stream.try_clone().map_err(|e| format!("{e}"))?);
+    let mut reader = BufReader::new(stream.try_clone().context("clone stream")?);
     let mut stream = stream;
     let mut request_line = String::new();
     reader
         .read_line(&mut request_line)
-        .map_err(|e| format!("{e}"))?;
+        .context("read request line")?;
 
     // Parse GET /callback?code=...&scope=... HTTP/1.1
     let path = request_line.split_whitespace().nth(1).unwrap_or("");
@@ -134,9 +130,9 @@ fn wait_for_callback(listener: &TcpListener) -> Result<String, String> {
                     None
                 }
             })
-            .ok_or_else(|| "No authorization code in callback".to_string())?
+            .ok_or_else(|| anyhow::anyhow!("No authorization code in callback"))?
     } else {
-        return Err("Invalid callback path".to_string());
+        anyhow::bail!("Invalid callback path");
     };
 
     // Send success response to browser
@@ -150,7 +146,7 @@ fn exchange_code(
     code: &str,
     code_verifier: &str,
     redirect_uri: &str,
-) -> Result<OAuthTokens, String> {
+) -> Result<OAuthTokens, anyhow::Error> {
     let cid = google_client_id();
     let secret = google_client_secret();
     let client = reqwest::blocking::Client::new();
@@ -165,12 +161,12 @@ fn exchange_code(
             ("grant_type", "authorization_code"),
         ])
         .send()
-        .map_err(|e| format!("Token request failed: {e}"))?;
+        .context("Token request failed")?;
 
-    let json: serde_json::Value = resp.json().map_err(|e| format!("Parse error: {e}"))?;
+    let json: serde_json::Value = resp.json().context("Parse error")?;
 
     if let Some(err) = json.get("error") {
-        return Err(format!("OAuth error: {err}"));
+        anyhow::bail!("OAuth error: {err}");
     }
 
     Ok(OAuthTokens {

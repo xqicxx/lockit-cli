@@ -205,14 +205,47 @@ pub enum Commands {
 /// Actions for the sync subcommand.
 #[derive(Subcommand, Debug)]
 pub enum SyncAction {
-    /// Push vault to remote backend.
+    /// Push vault to Google Drive.
     Push,
-    /// Pull vault from remote backend.
+    /// Pull vault from Google Drive.
     Pull,
     /// Show sync status.
     Status,
     /// Show sync config.
     Config,
+    /// Bidirectional sync: automatically push or pull as needed.
+    /// Resolves conflicts using the --strategy flag.
+    Sync {
+        /// Conflict resolution strategy (default: last-write-wins).
+        #[arg(long, value_enum, default_value = "last-write-wins")]
+        strategy: SyncStrategy,
+    },
+    /// Check if remote vault changed since last sync (for polling / scripts).
+    /// Exits 0 and prints remote checksum if changed, exits 1 if unchanged.
+    Poll,
+    /// Log in to Google Drive (OAuth).
+    Login,
+    /// Log out from Google Drive (remove stored tokens).
+    Logout,
+    /// Generate a new Sync Key or show the existing one.
+    Key,
+    /// Set the Sync Key from Base64 (to sync with Android or another device).
+    SetKey {
+        /// Base64-encoded 32-byte sync key.
+        key: String,
+    },
+}
+
+/// Conflict resolution strategy for sync operations.
+#[derive(clap::ValueEnum, Debug, Clone, Copy, Default)]
+pub enum SyncStrategy {
+    /// Keep local version, overwrite remote.
+    KeepLocal,
+    /// Keep remote version, overwrite local.
+    KeepRemote,
+    /// Newer timestamp wins.
+    #[default]
+    LastWriteWins,
 }
 
 /// Import file format.

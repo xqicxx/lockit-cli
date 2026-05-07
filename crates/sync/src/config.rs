@@ -1,121 +1,85 @@
-//! Backend configuration types, suitable for deserialization from `config.toml`.
+//! Backend configuration — Google Drive only.
 
-use secrecy::Secret;
-use serde::{Deserialize, Serialize};
+use secrecy::{ExposeSecret, Secret};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-/// Top-level backend selector.
-///
-/// Configure in `~/.lockit/config.toml`:
-///
-/// ```toml
-/// [sync]
-/// backend = "s3"
-/// bucket  = "my-lockit-vault"
-/// region  = "us-east-1"
-/// ```
-///
-/// `Serialize` is omitted because `WebDavConfig` contains a `Secret<String>`
-/// password field that cannot be serialized; the config is only *read*.
+/// Sync backend config.  Only Google Drive is supported.
 #[derive(Debug, Clone, Deserialize)]
-#[serde(tag = "backend", rename_all = "lowercase")]
-pub enum BackendConfig {
-    Local(LocalConfig),
-    S3(S3Config),
-    WebDav(WebDavConfig),
-    Git(GitConfig),
+pub struct GoogleDriveConfig {
+    /// OAuth client ID (from Google Cloud Console).
+    pub client_id: String,
+    /// OAuth client secret (from Google Cloud Console).
+    pub client_secret: String,
 }
 
-/// Sync to a local directory (useful for testing or network-mounted volumes).
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct LocalConfig {
-    /// Absolute path to the sync directory.
-    pub path: String,
+/// Google OAuth tokens stored separately from config.
+#[derive(Debug, Clone)]
+pub struct GoogleTokenStore {
+    /// Access token (may expire).
+    pub access_token: Secret<String>,
+    /// Refresh token (long-lived).
+    pub refresh_token: Secret<String>,
+    /// Access token expiry (Unix timestamp).
+    pub expires_at: Option<u64>,
 }
 
-/// Configuration for any S3-compatible object-storage backend.
-///
-/// Works with AWS S3, Aliyun OSS, Tencent COS, Huawei OBS, MinIO, Qiniu Kodo,
-/// and any other service that implements the S3 REST API.
-///
-/// # Example — Aliyun OSS
-/// ```toml
-/// [sync]
-/// backend            = "s3"
-/// bucket             = "my-lockit-vault"
-/// region             = "cn-hangzhou"
-/// endpoint           = "https://oss-cn-hangzhou.aliyuncs.com"
-/// path_style         = false
-/// access_key_id      = "..."   # or leave empty to read from env
-/// secret_access_key  = "..."
-/// ```
-///
-/// # Example — MinIO (local dev)
-/// ```toml
-/// [sync]
-/// backend            = "s3"
-/// bucket             = "lockit"
-/// region             = "us-east-1"
-/// endpoint           = "http://localhost:9000"
-/// path_style         = true
-/// access_key_id      = "minioadmin"
-/// secret_access_key  = "minioadmin"
-/// ```
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct S3Config {
-    /// Target bucket name.
-    pub bucket: String,
-
-    /// Optional key prefix applied to every object (e.g. `"lockit/"`).
-    #[serde(default)]
-    pub prefix: String,
-
-    /// Custom endpoint URL.  `None` → use the default AWS S3 endpoint.
-    ///
-    /// Set this for any non-AWS provider.
-    pub endpoint: Option<String>,
-
-    /// AWS region or equivalent (e.g. `"cn-hangzhou"` for Aliyun).
-    pub region: String,
-
-    /// Use path-style URLs (`endpoint/bucket/key` instead of `bucket.endpoint/key`).
-    ///
-    /// Required for MinIO and some Chinese cloud providers.
-    #[serde(default)]
-    pub path_style: bool,
-
-    /// Access key ID.  Falls back to `AWS_ACCESS_KEY_ID` env var when empty.
-    #[serde(default)]
-    pub access_key_id: String,
-
-    /// Secret access key.  Falls back to `AWS_SECRET_ACCESS_KEY` env var when empty.
-    #[serde(default)]
-    pub secret_access_key: String,
+impl Serialize for GoogleTokenStore {
+    fn serialize<S: Serializer>(&self, ser: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeStruct;
+        let mut s = ser.serialize_struct("GoogleTokenStore", 3)?;
+        s.serialize_field("access_token", self.access_token.expose_secret())?;
+        s.serialize_field("refresh_token", self.refresh_token.expose_secret())?;
+        s.serialize_field("expires_at", &self.expires_at)?;
+        s.end()
+    }
 }
 
-/// WebDAV backend configuration (e.g. Nextcloud, 坚果云).
-///
-/// `Serialize` is intentionally omitted: the password is a `Secret<String>`
-/// that does not implement `SerializableSecret`, and the config is only ever
-/// *read* from `config.toml`, never written back.
-#[derive(Debug, Clone, Deserialize)]
-pub struct WebDavConfig {
-    /// Full WebDAV base URL.
-    pub url: String,
-    pub username: String,
-    /// WebDAV password; zeroized on drop.
-    pub password: Secret<String>,
+impl<'de> Deserialize<'de> for GoogleTokenStore {
+    fn deserialize<D: Deserializer<'de>>(de: D) -> Result<Self, D::Error> {
+        #[derive(Deserialize)]
+        struct Raw {
+            access_token: String,
+            refresh_token: String,
+            expires_at: Option<u64>,
+        }
+        let raw = Raw::deserialize(de)?;
+        Ok(GoogleTokenStore {
+            access_token: Secret::new(raw.access_token),
+            refresh_token: Secret::new(raw.refresh_token),
+            expires_at: raw.expires_at,
+        })
+    }
 }
 
-/// Git repository backend configuration.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GitConfig {
-    /// Remote repository URL (HTTPS or SSH).
-    pub repo_url: String,
-    /// Branch to commit vault files to.
-    #[serde(default = "default_branch")]
-    pub branch: String,
+/// Load tokens from a TOML file.
+pub fn load_tokens(path: &std::path::Path) -> Result<Option<GoogleTokenStore>, std::io::Error> {
+    if !path.exists() {
+        return Ok(None);
+    }
+    let content = std::fs::read_to_string(path)?;
+    let tokens: GoogleTokenStore = toml::from_str(&content)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e.to_string()))?;
+    Ok(Some(tokens))
 }
 
-fn default_branch() -> String {
-    "main".to_string()
+/// Save tokens to a TOML file.
+pub fn save_tokens(
+    path: &std::path::Path,
+    tokens: &GoogleTokenStore,
+) -> Result<(), std::io::Error> {
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    let content = toml::to_string(tokens)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e.to_string()))?;
+    std::fs::write(path, content)?;
+    // Restrict permissions
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mut perms = std::fs::metadata(path)?.permissions();
+        perms.set_mode(0o600);
+        std::fs::set_permissions(path, perms)?;
+    }
+    Ok(())
 }

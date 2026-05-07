@@ -41,13 +41,17 @@ impl MockBackend {
     }
 
     /// Return the number of objects currently stored.
-    pub fn len(&self) -> usize {
-        self.store.lock().unwrap().len()
+    pub fn len(&self) -> Result<usize> {
+        Ok(self.store()?.len())
     }
 
     /// Return `true` when the store contains no objects.
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
+    pub fn is_empty(&self) -> Result<bool> {
+        Ok(self.len()? == 0)
+    }
+
+    fn store(&self) -> Result<std::sync::MutexGuard<'_, HashMap<String, Vec<u8>>>> {
+        self.store.lock().map_err(|e| Error::Config(e.to_string()))
     }
 }
 
@@ -60,18 +64,13 @@ impl Default for MockBackend {
 #[async_trait]
 impl SyncBackend for MockBackend {
     async fn upload(&self, key: &str, data: &[u8]) -> Result<()> {
-        self.store
-            .lock()
-            .unwrap()
-            .insert(key.to_string(), data.to_vec());
+        self.store()?.insert(key.to_string(), data.to_vec());
         tracing::debug!(key, bytes = data.len(), "mock upload");
         Ok(())
     }
 
     async fn download(&self, key: &str) -> Result<Vec<u8>> {
-        self.store
-            .lock()
-            .unwrap()
+        self.store()?
             .get(key)
             .cloned()
             .ok_or_else(|| Error::NotFound {
@@ -80,7 +79,7 @@ impl SyncBackend for MockBackend {
     }
 
     async fn list(&self, prefix: &str) -> Result<Vec<String>> {
-        let store = self.store.lock().unwrap();
+        let store = self.store()?;
         let mut keys: Vec<String> = store
             .keys()
             .filter(|k| k.starts_with(prefix))
@@ -91,9 +90,7 @@ impl SyncBackend for MockBackend {
     }
 
     async fn delete(&self, key: &str) -> Result<()> {
-        self.store
-            .lock()
-            .unwrap()
+        self.store()?
             .remove(key)
             .ok_or_else(|| Error::NotFound {
                 key: key.to_string(),
@@ -102,7 +99,7 @@ impl SyncBackend for MockBackend {
     }
 
     async fn metadata(&self, key: &str) -> Result<SyncMetadata> {
-        let store = self.store.lock().unwrap();
+        let store = self.store()?;
         let data = store.get(key).ok_or_else(|| Error::NotFound {
             key: key.to_string(),
         })?;
@@ -174,9 +171,9 @@ mod tests {
     async fn delete_removes_object() {
         let b = MockBackend::new();
         b.upload("k", b"v").await.unwrap();
-        assert_eq!(b.len(), 1);
+        assert_eq!(b.len().unwrap(), 1);
         b.delete("k").await.unwrap();
-        assert!(b.is_empty());
+        assert!(b.is_empty().unwrap());
     }
 
     #[tokio::test]

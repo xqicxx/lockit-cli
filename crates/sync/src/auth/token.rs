@@ -33,12 +33,14 @@ pub fn is_token_valid(store: &GoogleTokenStore) -> bool {
 /// Exchange an authorization code for access and refresh tokens.
 pub(crate) fn exchange_code(
     client_id: &str,
+    client_secret: &str,
     code: &str,
     verifier: &str,
     redirect_uri: &str,
 ) -> Result<GoogleTokenStore> {
     let params = [
         ("client_id", client_id),
+        ("client_secret", client_secret),
         ("code", code),
         ("code_verifier", verifier),
         ("grant_type", "authorization_code"),
@@ -55,11 +57,12 @@ pub(crate) fn exchange_code(
 /// Use a refresh token to obtain a fresh access token.
 pub fn refresh_tokens(
     client_id: &str,
-    _client_secret: &str,
+    client_secret: &str,
     refresh_token: &str,
 ) -> Result<GoogleTokenStore> {
     let params = [
         ("client_id", client_id),
+        ("client_secret", client_secret),
         ("refresh_token", refresh_token),
         ("grant_type", "refresh_token"),
     ];

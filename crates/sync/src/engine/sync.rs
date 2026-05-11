@@ -177,6 +177,11 @@ impl SmartSyncEngine {
             .await
             .map_err(|e| SyncError::Backend(e.to_string()))?;
 
+        // Upload a timestamped backup for Android restore visibility (best-effort)
+        let timestamp = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+        let backup_key = format!("vault_{timestamp}.enc");
+        let _ = self.backend.upload(&backup_key, &encrypted).await;
+
         self.record_sync(
             local_checksum,
             manifest.vault_checksum.clone(),

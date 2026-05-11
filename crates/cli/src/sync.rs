@@ -4,6 +4,7 @@ use std::path::PathBuf;
 
 use anyhow::{Context, Result, bail};
 use lockit_sync::auth::{login as google_login, token};
+use lockit_sync::backends::google_drive::GoogleDriveSyncConfig;
 use lockit_sync::config::{GoogleDriveConfig, GoogleTokenStore, load_tokens, save_tokens};
 use lockit_sync::conflict::ResolveStrategy;
 use lockit_sync::engine::vault_key::VaultKey;
@@ -28,6 +29,11 @@ fn sync_state_path() -> Result<PathBuf> {
 /// Path to sync key.
 fn sync_key_path() -> Result<PathBuf> {
     Ok(config_dir()?.join("sync-key.txt"))
+}
+
+/// Path to sync backend config (folder_id cache, etc).
+fn sync_config_path() -> Result<PathBuf> {
+    Ok(config_dir()?.join("gdrive-sync-config.json"))
 }
 
 fn load_sync_state() -> Result<Option<SyncState>> {
@@ -162,7 +168,8 @@ pub fn handle_sync(action: &SyncAction) -> Result<()> {
 fn build_engine(vault_path: PathBuf) -> Result<SmartSyncEngine> {
     let tokens = ensure_logged_in()?;
     let state = load_sync_state()?;
-    let backend = SyncBackendFactory::from_token_store(tokens)?;
+    let sync_config = load_sync_config()?;
+    let backend = SyncBackendFactory::from_token_store(tokens, sync_config)?;
     let mut engine = SmartSyncEngine::new(backend, state, vault_path);
 
     // Load sync key if available
@@ -171,6 +178,24 @@ fn build_engine(vault_path: PathBuf) -> Result<SmartSyncEngine> {
     }
 
     Ok(engine)
+}
+
+/// Load Google Drive sync config (folder_id cache, migration flag).
+fn load_sync_config() -> Result<GoogleDriveSyncConfig> {
+    let path = sync_config_path()?;
+    if path.exists() {
+        let raw = std::fs::read_to_string(&path)?;
+        if let Ok(cfg) = serde_json::from_str(&raw) {
+            return Ok(cfg);
+        }
+    }
+    let gconfig = load_google_config()?;
+    Ok(GoogleDriveSyncConfig {
+        client_id: gconfig.client_id,
+        client_secret: gconfig.client_secret,
+        folder_id: None,
+        migrated_from_appdata: false,
+    })
 }
 
 fn persist_state(engine: &SmartSyncEngine) -> Result<()> {
@@ -270,7 +295,8 @@ fn handle_pull() -> Result<()> {
 fn handle_status() -> Result<()> {
     let tokens = ensure_logged_in()?;
     let state = load_sync_state()?;
-    let backend = SyncBackendFactory::from_token_store(tokens)?;
+    let sync_config = load_sync_config()?;
+    let backend = SyncBackendFactory::from_token_store(tokens, sync_config)?;
 
     let vault_path = vault_path()?;
     let local_checksum = if vault_path.exists() {

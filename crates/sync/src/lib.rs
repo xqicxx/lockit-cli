@@ -30,7 +30,7 @@
 //! | Module | Contents |
 //! |--------|----------|
 //! | [`backend`] | `SyncBackend` trait and `SyncMetadata` |
-//! | [`backends::google_drive`] | Google Drive backend (appDataFolder) |
+//! | [`backends::google_drive`] | Google Drive backend (lockit-sync/ folder) |
 //! | [`backends::mock`] | In-memory backend for tests |
 //! | [`auth`] | Google OAuth 2.0 login and token refresh |
 //! | [`config`] | `GoogleDriveConfig` and `GoogleTokenStore` |

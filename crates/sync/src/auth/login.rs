@@ -64,8 +64,8 @@ pub fn login(client_id: &str, _client_secret: &str) -> Result<GoogleTokenStore> 
         AUTH_URL,
         url_encode(client_id),
         url_encode(&redirect_uri),
+        url_encode("https://www.googleapis.com/auth/drive"),
         url_encode("https://www.googleapis.com/auth/drive.appdata"),
-        url_encode("https://www.googleapis.com/auth/drive.file"),
         state,
         challenge,
     );
@@ -82,7 +82,7 @@ pub fn login(client_id: &str, _client_secret: &str) -> Result<GoogleTokenStore> 
     let code = wait_for_callback(listener, &state)?;
 
     // Exchange code for tokens
-    token::exchange_code(client_id, &code, &verifier, &redirect_uri)
+    token::exchange_code(client_id, _client_secret, &code, &verifier, &redirect_uri)
 }
 
 fn open_browser(url: &str) {
